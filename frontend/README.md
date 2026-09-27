@@ -44,8 +44,9 @@ L'application est disponible sur http://127.0.0.1:5173.
 
 | Chemin        | Vue              | Description             |
 | ------------- | ---------------- | ----------------------- |
-| `/`           | `TrekList.vue`   | Liste, ajout, suppression |
-| `/treks/:id`  | `TrekDetail.vue` | Détail d'une rando      |
+| `/`           | `TrekList.vue`    | Liste des treks          |
+| `/treks/:id`  | `TrekDetail.vue`  | Étapes d'un trek         |
+| `/etapes/:id` | `EtapeDetail.vue` | Détail d'une étape + POI |
 
 ## Structure
 
@@ -54,11 +55,18 @@ src/
 ├── main.ts                  # création de l'app (Pinia + Router)
 ├── App.vue                  # <RouterView />
 ├── router/index.ts          # définition des routes
-├── stores/treks.ts          # store Pinia + type Trek
-├── composables/useTreks.ts  # appels à l'API (fetch, create, delete)
+├── types/trek.ts            # types Trek, Etape, POI, Difficulty (GeoJSON)
+├── data/mockTreks.ts        # données de démo (utilisées par le store)
+├── stores/treks.ts          # store Pinia (treks, étapes, totaux)
+├── composables/useTreks.ts  # appels à l'API (pas encore branché)
+├── utils/format.ts          # formatDuration
+├── styles/tokens.css        # variables CSS + styles globaux
+├── components/
+│   └── DifficultyBadge.vue
 └── views/
     ├── TrekList.vue
-    └── TrekDetail.vue
+    ├── TrekDetail.vue
+    └── EtapeDetail.vue
 ```
 
 ## IDE recommandé

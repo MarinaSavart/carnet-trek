@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import type { Trek } from '../stores/treks'
+import type { Trek } from '../types/trek'
 
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000/api'
 
