@@ -1,0 +1,54 @@
+:root {
+  /* Couleurs */
+  --color-bg: #161F1B;
+  --color-surface: #212C26;
+  --color-surface-raised: #283730;
+  --color-text: #E8E4D9;
+  --color-text-muted: rgba(232, 228, 217, 0.65);
+  --color-accent: #6FCFC0;
+  --color-accent-hover: #8AE0D2;
+
+  /* Difficulté (convention balisage rando) */
+  --color-diff-facile: #4CAF6D;
+  --color-diff-moyen: #4A90D9;
+  --color-diff-difficile: #D9534F;
+  --color-diff-tres-difficile: #1A1A1A;
+
+  /* Typo */
+  --font-display: 'Big Shoulders Display', sans-serif;
+  --font-body: 'Public Sans', sans-serif;
+
+  /* Structure — volontairement peu arrondi, pas l'esthétique "SaaS card" */
+  --radius: 2px;
+  --border-hairline: 1px solid rgba(232, 228, 217, 0.12);
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2.5rem;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  margin: 0;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  margin: 0;
+}
+
+h1 { font-size: 3rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.25rem; }
+
+.stat-number {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 500;
+  line-height: 1;
+}
