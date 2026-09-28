@@ -7,6 +7,7 @@ import { useTrek } from '../composables/useTrek'
 import DifficultyBadge from '../components/DifficultyBadge.vue'
 import TrekOverviewMap from '../components/TrekOverviewMap.vue'
 import PhotoGallery from '../components/PhotoGallery.vue'
+import NavigateToStart from '../components/NavigateToStart.vue'
 import ElevationProfile, {
   type ProfileHover,
   type ProfileSegment,
@@ -35,6 +36,12 @@ const totals = computed(() =>
     { distanceKm: 0, elevationGain: 0, elevationLoss: 0, durationMin: 0 },
   ),
 )
+
+// Départ du trek : début du tracé de la première étape (à défaut, son premier point d'intérêt)
+const start = computed(() => {
+  const first = etapes.value[0]
+  return first?.gpxTrack?.coordinates[0] ?? first?.pois[0]?.location.coordinates ?? null
+})
 
 // Toutes les photos du trek, dans l'ordre des étapes, avec le nom de l'étape en légende
 const photos = computed<GalleryPhoto[]>(() =>
@@ -111,6 +118,7 @@ function openEtape(etapeId: string) {
       <h1>{{ trek.name }}</h1>
       <p class="region">{{ trek.region }}</p>
       <p class="description">{{ trek.description }}</p>
+      <NavigateToStart v-if="start" :start="start" class="navigate" />
 
       <PhotoGallery :photos="photos" />
 
@@ -235,6 +243,9 @@ function openEtape(etapeId: string) {
 .description {
   color: var(--color-text-muted);
   max-width: 65ch;
+}
+.navigate {
+  margin-top: var(--space-xs);
 }
 .totals {
   display: grid;

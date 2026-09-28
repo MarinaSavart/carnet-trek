@@ -5,6 +5,7 @@ import { useTrek } from '../composables/useTrek'
 import DifficultyBadge from '../components/DifficultyBadge.vue'
 import TrekOverviewMap from '../components/TrekOverviewMap.vue'
 import PhotoGallery from '../components/PhotoGallery.vue'
+import NavigateToStart from '../components/NavigateToStart.vue'
 import ElevationProfile, {
   type ProfileHover,
   type ProfileSegment,
@@ -23,6 +24,16 @@ const etapes = computed(() => [...(trek.value?.etapes ?? [])].sort((a, b) => a.o
 const index = computed(() => etapes.value.findIndex((e) => e._id === etape.value?._id))
 const previous = computed(() => etapes.value[index.value - 1])
 const next = computed(() => etapes.value[index.value + 1])
+
+// Départ de l'étape : début de son tracé (à défaut, son premier point d'intérêt)
+const start = computed(
+  () => etape.value?.gpxTrack?.coordinates[0] ?? etape.value?.pois[0]?.location.coordinates ?? null,
+)
+const gpxDownload = computed(() =>
+  etape.value?.gpxFile
+    ? { url: etape.value.gpxFile.url, name: etape.value.gpxFile.originalName }
+    : null,
+)
 
 const profileSegments = computed<ProfileSegment[]>(() =>
   etape.value?.elevationProfile?.length
@@ -71,6 +82,7 @@ function openEtape(etapeId: string) {
         <DifficultyBadge :difficulty="etape.difficulty" />
       </div>
       <p v-if="etape.description" class="description">{{ etape.description }}</p>
+      <NavigateToStart v-if="start" :start="start" :gpx="gpxDownload" class="navigate" />
 
       <PhotoGallery :photos="etape.photos ?? []" />
 
@@ -202,6 +214,9 @@ function openEtape(etapeId: string) {
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--space-sm);
+}
+.navigate {
+  margin-top: var(--space-sm);
 }
 .description {
   color: var(--color-text-muted);

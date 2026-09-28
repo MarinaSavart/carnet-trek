@@ -10,6 +10,7 @@ function withAbsoluteUrls(trek: Trek): Trek {
     etapes: (trek.etapes ?? []).map((etape) => ({
       ...etape,
       photos: etape.photos?.map((photo) => ({ ...photo, url: absoluteUrl(photo.url) })),
+      gpxFile: etape.gpxFile && { ...etape.gpxFile, url: absoluteUrl(etape.gpxFile.url) },
     })),
   }
 }
