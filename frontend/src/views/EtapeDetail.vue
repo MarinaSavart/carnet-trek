@@ -5,6 +5,7 @@ import { useTreksStore } from '../stores/treks'
 import DifficultyBadge from '../components/DifficultyBadge.vue'
 import { formatDuration } from '../utils/format'
 import type { POIType } from '../types/trek'
+import TrekMap from '../components/TrekMap.vue'
 
 const route = useRoute()
 const store = useTreksStore()
@@ -48,7 +49,7 @@ const poiIcons: Record<POIType, string> = {
       </div>
     </div>
 
-    <div class="map-placeholder">Carte à venir (MapLibre)</div>
+    <TrekMap :track="etape.gpxTrack" :pois="etape.pois" />
 
     <h2>Points d'intérêt</h2>
     <ul class="pois">
