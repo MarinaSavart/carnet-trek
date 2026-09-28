@@ -18,6 +18,8 @@ const props = defineProps<{
   segments: ProfileSegment[]
   /** Segment à mettre en avant (étape survolée ailleurs sur la page) */
   highlightedId?: string | null
+  /** Position survolée ailleurs (sur la carte) : le curseur du profil s'y cale */
+  cursor?: ProfileHover | null
 }>()
 
 const emit = defineEmits<{
@@ -125,9 +127,32 @@ const paths = computed(() => {
 // --- Survol : le curseur se cale sur le point le plus proche en distance ---
 
 const hoveredIndex = ref<number | null>(null)
-const hovered = computed(() =>
-  hoveredIndex.value === null ? undefined : flatPoints.value[hoveredIndex.value],
-)
+
+// Point du profil correspondant à la position survolée sur la carte
+const cursorIndex = computed(() => {
+  const cursor = props.cursor
+  if (!cursor) return null
+  const [lon, lat] = cursor.coordinates
+  const points = flatPoints.value
+  let best: number | null = null
+  let bestDistance = Infinity
+  for (let i = 0; i < points.length; i++) {
+    const p = points[i]!
+    if (p.segment.id !== cursor.segmentId) continue
+    const distance = (p.coordinates[0] - lon) ** 2 + (p.coordinates[1] - lat) ** 2
+    if (distance < bestDistance) {
+      best = i
+      bestDistance = distance
+    }
+  }
+  return best
+})
+
+// Le survol direct du profil prime sur la position venue de la carte
+const hovered = computed(() => {
+  const index = hoveredIndex.value ?? cursorIndex.value
+  return index === null ? undefined : flatPoints.value[index]
+})
 
 function nearestIndex(km: number): number {
   const points = flatPoints.value

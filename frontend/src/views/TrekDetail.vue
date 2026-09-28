@@ -58,10 +58,17 @@ const profileSegments = computed<ProfileSegment[]>(() =>
 
 // Étape survolée, dans la liste, sur la carte ou sur le profil : mise en avant partout
 const highlightedId = ref<string | null>(null)
+// Position commune au profil et à la carte, quel que soit celui qu'on survole
 const mapCursor = ref<[number, number] | null>(null)
+const profileCursor = ref<ProfileHover | null>(null)
 
 function onProfileHover(value: ProfileHover | null) {
   highlightedId.value = value?.segmentId ?? null
+  mapCursor.value = value?.coordinates ?? null
+}
+
+function onTrackHover(value: ProfileHover | null) {
+  profileCursor.value = value
   mapCursor.value = value?.coordinates ?? null
 }
 
@@ -108,6 +115,7 @@ function openEtape(etapeId: string) {
       <ElevationProfile
         :segments="profileSegments"
         :highlighted-id="highlightedId"
+        :cursor="profileCursor"
         @hover="onProfileHover"
       />
     </header>
@@ -156,6 +164,7 @@ function openEtape(etapeId: string) {
         :highlighted-id="highlightedId"
         :cursor="mapCursor"
         @hover="highlightedId = $event"
+        @track-hover="onTrackHover"
         @select="openEtape"
       />
     </aside>

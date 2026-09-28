@@ -5,6 +5,7 @@ import maplibregl, { MAP_STYLE_URL } from '../lib/maplibre'
 import type { Etape, POI } from '../types/trek'
 import { getEtapeColor } from '../utils/etapeColors'
 import { POI_ICONS } from '../utils/poi'
+import type { ProfileHover } from './ElevationProfile.vue'
 
 const props = defineProps<{
   etapes: Etape[]
@@ -22,7 +23,29 @@ const emit = defineEmits<{
   hover: [etapeId: string | null]
   select: [etapeId: string]
   poiHover: [poiId: string | null]
+  /** Point du tracé le plus proche de la souris, pour caler le curseur du profil */
+  trackHover: [value: ProfileHover | null]
 }>()
+
+// Point du GPX le plus proche de la souris sur le tracé d'une étape.
+// Les longitudes sont ramenées à l'échelle des latitudes (cos φ) : en Islande, un degré
+// de longitude ne vaut que ~45 % d'un degré de latitude.
+function nearestTrackPoint(etapeId: string, { lng, lat }: maplibregl.LngLat) {
+  const coordinates = props.etapes.find((e) => e._id === etapeId)?.gpxTrack?.coordinates
+  if (!coordinates?.length) return null
+  const lonScale = Math.cos((lat * Math.PI) / 180)
+
+  let best = coordinates[0]!
+  let bestDistance = Infinity
+  for (const coord of coordinates) {
+    const distance = ((coord[0] - lng) * lonScale) ** 2 + (coord[1] - lat) ** 2
+    if (distance < bestDistance) {
+      best = coord
+      bestDistance = distance
+    }
+  }
+  return best
+}
 
 const SOURCE_ID = 'etapes'
 const LINE_LAYER_ID = 'etapes-line'
@@ -227,11 +250,15 @@ onMounted(() => {
 
   map.on('mousemove', HIT_LAYER_ID, (e) => {
     map!.getCanvas().style.cursor = 'pointer'
-    emit('hover', etapeIdFromEvent(e))
+    const etapeId = etapeIdFromEvent(e)
+    emit('hover', etapeId)
+    const coordinates = etapeId ? nearestTrackPoint(etapeId, e.lngLat) : null
+    emit('trackHover', etapeId && coordinates ? { segmentId: etapeId, coordinates } : null)
   })
   map.on('mouseleave', HIT_LAYER_ID, () => {
     map!.getCanvas().style.cursor = ''
     emit('hover', null)
+    emit('trackHover', null)
   })
   map.on('click', HIT_LAYER_ID, (e) => {
     const id = etapeIdFromEvent(e)

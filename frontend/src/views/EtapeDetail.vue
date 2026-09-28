@@ -5,7 +5,10 @@ import { useTreksStore } from '../stores/treks'
 import DifficultyBadge from '../components/DifficultyBadge.vue'
 import TrekOverviewMap from '../components/TrekOverviewMap.vue'
 import PhotoGallery from '../components/PhotoGallery.vue'
-import ElevationProfile, { type ProfileSegment } from '../components/ElevationProfile.vue'
+import ElevationProfile, {
+  type ProfileHover,
+  type ProfileSegment,
+} from '../components/ElevationProfile.vue'
 import { formatDuration } from '../utils/format'
 import { getEtapeColor } from '../utils/etapeColors'
 import { POI_ICONS } from '../utils/poi'
@@ -38,7 +41,16 @@ const profileSegments = computed<ProfileSegment[]>(() =>
       ]
     : [],
 )
+// Position commune au profil et à la carte, quel que soit celui qu'on survole
 const mapCursor = ref<[number, number] | null>(null)
+const profileCursor = ref<ProfileHover | null>(null)
+
+// Seul le tracé de l'étape affichée a un profil ici : on ignore les étapes voisines
+function onTrackHover(value: ProfileHover | null) {
+  const isCurrent = value?.segmentId === etape.value?._id
+  profileCursor.value = isCurrent ? value : null
+  mapCursor.value = isCurrent ? (value?.coordinates ?? null) : null
+}
 
 const highlightedEtapeId = ref<string | null>(null)
 const highlightedPoiId = ref<string | null>(null)
@@ -87,6 +99,7 @@ function openEtape(etapeId: string) {
 
       <ElevationProfile
         :segments="profileSegments"
+        :cursor="profileCursor"
         @hover="mapCursor = $event?.coordinates ?? null"
       />
     </header>
@@ -132,6 +145,7 @@ function openEtape(etapeId: string) {
         :highlighted-poi-id="highlightedPoiId"
         :cursor="mapCursor"
         @hover="highlightedEtapeId = $event"
+        @track-hover="onTrackHover"
         @select="openEtape"
         @poi-hover="highlightedPoiId = $event"
       />
