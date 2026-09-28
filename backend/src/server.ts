@@ -11,5 +11,12 @@ mongoose
   })
   .catch((err) => {
     console.error('Erreur de connexion MongoDB :', err)
+    // Piège fréquent : l'URI Docker (hôte « mongo ») utilisée pour un lancement local
+    if (String(err).includes('ENOTFOUND mongo')) {
+      console.error(
+        "\n→ L'hôte « mongo » n'existe que dans le réseau Docker. En local (npm run dev)," +
+          '\n  utilise MONGO_URI=mongodb://localhost:27017/carnet-trek dans backend/.env.\n',
+      )
+    }
     process.exit(1)
   })
