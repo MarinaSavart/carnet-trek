@@ -2,9 +2,10 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { Trek, Etape } from '../types/trek'
 import { mockTreks } from '../data/mockTreks'
+import { withEtapeAssets } from '../data/etapeAssets'
 
 export const useTreksStore = defineStore('treks', () => {
-  const treks = ref<Trek[]>(mockTreks)
+  const treks = ref<Trek[]>(withEtapeAssets(mockTreks))
 
   function getTrekById(id: string): Trek | undefined {
     return treks.value.find((t) => t._id === id)

@@ -4,6 +4,8 @@ import { useRoute, useRouter } from 'vue-router'
 import { useTreksStore } from '../stores/treks'
 import DifficultyBadge from '../components/DifficultyBadge.vue'
 import TrekOverviewMap from '../components/TrekOverviewMap.vue'
+import PhotoGallery from '../components/PhotoGallery.vue'
+import ElevationProfile, { type ProfileSegment } from '../components/ElevationProfile.vue'
 import { formatDuration } from '../utils/format'
 import { getEtapeColor } from '../utils/etapeColors'
 import { POI_ICONS } from '../utils/poi'
@@ -23,6 +25,20 @@ const etapes = computed(() => {
 const index = computed(() => etapes.value.findIndex((e) => e._id === etape.value?._id))
 const previous = computed(() => etapes.value[index.value - 1])
 const next = computed(() => etapes.value[index.value + 1])
+
+const profileSegments = computed<ProfileSegment[]>(() =>
+  etape.value?.elevationProfile?.length
+    ? [
+        {
+          id: etape.value._id,
+          label: etape.value.name,
+          color: getEtapeColor(index.value),
+          points: etape.value.elevationProfile,
+        },
+      ]
+    : [],
+)
+const mapCursor = ref<[number, number] | null>(null)
 
 const highlightedEtapeId = ref<string | null>(null)
 const highlightedPoiId = ref<string | null>(null)
@@ -48,6 +64,8 @@ function openEtape(etapeId: string) {
         <DifficultyBadge :difficulty="etape.difficulty" />
       </div>
 
+      <PhotoGallery :photos="etape.photos ?? []" />
+
       <dl class="stats">
         <div class="stat">
           <dt>Distance</dt>
@@ -66,6 +84,11 @@ function openEtape(etapeId: string) {
           <dd class="stat-number">{{ formatDuration(etape.durationMin) }}</dd>
         </div>
       </dl>
+
+      <ElevationProfile
+        :segments="profileSegments"
+        @hover="mapCursor = $event?.coordinates ?? null"
+      />
     </header>
 
     <section class="content">
@@ -107,6 +130,7 @@ function openEtape(etapeId: string) {
         :highlighted-id="highlightedEtapeId"
         :pois="etape.pois"
         :highlighted-poi-id="highlightedPoiId"
+        :cursor="mapCursor"
         @hover="highlightedEtapeId = $event"
         @select="openEtape"
         @poi-hover="highlightedPoiId = $event"

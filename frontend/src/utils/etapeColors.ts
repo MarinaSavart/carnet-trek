@@ -1,6 +1,7 @@
-// Une couleur par étape, partagée entre la carte et la liste pour les relier visuellement.
-// Tons saturés, lisibles sur le fond de carte clair et avec un texte blanc par-dessus.
-const ETAPE_COLORS = ['#1f6fd1', '#c0392b', '#7b5cd6', '#6d4c41', '#0e8a7d', '#d35400']
+// Une couleur par étape, partagée entre la carte, la liste et le profil d'altitude.
+// Ordre fixe, validé (daltonisme, luminosité, contraste) sur le fond sombre de l'appli
+// comme sur le fond de carte clair : ne pas réordonner sans revalider.
+const ETAPE_COLORS = ['#2a78d6', '#d95926', '#8a6ee8', '#199e70', '#c98500', '#d55181']
 
 export function getEtapeColor(index: number): string {
   return ETAPE_COLORS[index % ETAPE_COLORS.length]!

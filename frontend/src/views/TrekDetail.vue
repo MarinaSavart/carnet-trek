@@ -4,6 +4,12 @@ import { useRoute, useRouter } from 'vue-router'
 import { useTreksStore } from '../stores/treks'
 import DifficultyBadge from '../components/DifficultyBadge.vue'
 import TrekOverviewMap from '../components/TrekOverviewMap.vue'
+import PhotoGallery from '../components/PhotoGallery.vue'
+import ElevationProfile, {
+  type ProfileHover,
+  type ProfileSegment,
+} from '../components/ElevationProfile.vue'
+import type { GalleryPhoto } from '../types/trek'
 import { formatDuration } from '../utils/format'
 import { getEtapeColor } from '../utils/etapeColors'
 
@@ -27,8 +33,37 @@ const totals = computed(() =>
   ),
 )
 
-// Étape survolée, dans la liste ou sur la carte : mise en avant des deux côtés
+// Toutes les photos du trek, dans l'ordre des étapes, avec le nom de l'étape en légende
+const photos = computed<GalleryPhoto[]>(() =>
+  etapes.value.flatMap((etape) =>
+    (etape.photos ?? []).map((photo) => ({ ...photo, label: etape.name })),
+  ),
+)
+
+// Profil d'altitude du trek : les étapes à la suite, chacune dans sa couleur
+const profileSegments = computed<ProfileSegment[]>(() =>
+  etapes.value.flatMap((etape, index) =>
+    etape.elevationProfile?.length
+      ? [
+          {
+            id: etape._id,
+            label: `Étape ${etape.order}`,
+            color: getEtapeColor(index),
+            points: etape.elevationProfile,
+          },
+        ]
+      : [],
+  ),
+)
+
+// Étape survolée, dans la liste, sur la carte ou sur le profil : mise en avant partout
 const highlightedId = ref<string | null>(null)
+const mapCursor = ref<[number, number] | null>(null)
+
+function onProfileHover(value: ProfileHover | null) {
+  highlightedId.value = value?.segmentId ?? null
+  mapCursor.value = value?.coordinates ?? null
+}
 
 function openEtape(etapeId: string) {
   router.push(`/etapes/${etapeId}`)
@@ -42,6 +77,8 @@ function openEtape(etapeId: string) {
       <h1>{{ trek.name }}</h1>
       <p class="region">{{ trek.region }}</p>
       <p class="description">{{ trek.description }}</p>
+
+      <PhotoGallery :photos="photos" />
 
       <dl class="totals">
         <div class="total">
@@ -67,6 +104,12 @@ function openEtape(etapeId: string) {
           <dd class="stat-number">{{ etapes.length }}</dd>
         </div>
       </dl>
+
+      <ElevationProfile
+        :segments="profileSegments"
+        :highlighted-id="highlightedId"
+        @hover="onProfileHover"
+      />
     </header>
 
     <section class="etapes-column" aria-label="Étapes">
@@ -94,8 +137,13 @@ function openEtape(etapeId: string) {
               <span title="Dénivelé positif">↗ {{ etape.elevationGain }} m</span>
               <span title="Dénivelé négatif">↘ {{ etape.elevationLoss }} m</span>
             </p>
-            <p v-if="etape.pois.length" class="etape-pois">
-              {{ etape.pois.length }} point{{ etape.pois.length > 1 ? 's' : '' }} d'intérêt
+            <p v-if="etape.pois.length || etape.photos?.length" class="etape-pois">
+              <span v-if="etape.pois.length">
+                {{ etape.pois.length }} point{{ etape.pois.length > 1 ? 's' : '' }} d'intérêt
+              </span>
+              <span v-if="etape.photos?.length">
+                {{ etape.photos.length }} photo{{ etape.photos.length > 1 ? 's' : '' }}
+              </span>
             </p>
           </RouterLink>
         </li>
@@ -106,6 +154,7 @@ function openEtape(etapeId: string) {
       <TrekOverviewMap
         :etapes="etapes"
         :highlighted-id="highlightedId"
+        :cursor="mapCursor"
         @hover="highlightedId = $event"
         @select="openEtape"
       />
@@ -236,6 +285,8 @@ function openEtape(etapeId: string) {
   font-size: 0.9rem;
 }
 .etape-pois {
+  display: flex;
+  gap: var(--space-sm);
   color: var(--color-text-muted);
   font-size: 0.85rem;
   margin: 0.25rem 0 0;

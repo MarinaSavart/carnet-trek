@@ -14,6 +14,8 @@ const props = defineProps<{
   focusedId?: string | null
   pois?: POI[]
   highlightedPoiId?: string | null
+  /** Position survolée sur le profil d'altitude */
+  cursor?: [number, number] | null
 }>()
 
 const emit = defineEmits<{
@@ -31,6 +33,7 @@ const mapContainer = ref<HTMLDivElement | null>(null)
 let map: maplibregl.Map | null = null
 let etapeMarkers = new Map<string, maplibregl.Marker>()
 let poiMarkers = new Map<string, maplibregl.Marker>()
+let cursorMarker: maplibregl.Marker | null = null
 let resizeObserver: ResizeObserver | null = null
 // Tant que l'utilisateur n'a pas déplacé la carte, on garde le cadrage automatique
 let userHasMoved = false
@@ -258,6 +261,23 @@ watch(
 watch(() => props.highlightedId, applyHighlight)
 watch(() => props.highlightedPoiId, applyPoiHighlight)
 
+watch(
+  () => props.cursor,
+  (cursor) => {
+    if (!map) return
+    if (!cursor) {
+      cursorMarker?.remove()
+      return
+    }
+    if (!cursorMarker) {
+      const el = document.createElement('div')
+      el.className = 'profile-cursor'
+      cursorMarker = new maplibregl.Marker({ element: el })
+    }
+    cursorMarker.setLngLat(cursor).addTo(map)
+  },
+)
+
 onUnmounted(() => {
   resizeObserver?.disconnect()
   map?.remove()
@@ -322,6 +342,16 @@ onUnmounted(() => {
   width: 32px;
   height: 32px;
   z-index: 3;
+}
+.profile-cursor {
+  width: 14px;
+  height: 14px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: #1a1a1a;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  z-index: 4;
 }
 .maplibregl-popup-content {
   color: #1a1a1a;
