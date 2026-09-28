@@ -26,18 +26,18 @@ L'API écoute sur http://localhost:3000.
 
 ## Scripts
 
-| Commande        | Description                                        |
-| --------------- | -------------------------------------------------- |
+| Commande        | Description                                         |
+| --------------- | --------------------------------------------------- |
 | `npm run dev`   | Lancement avec rechargement automatique (tsx watch) |
-| `npm run build` | Compilation TypeScript dans `dist/`                |
-| `npm start`     | Lancement de la version compilée                   |
+| `npm run build` | Compilation TypeScript dans `dist/`                 |
+| `npm start`     | Lancement de la version compilée                    |
 
 ## Variables d'environnement
 
-| Variable    | Défaut                                    | Description           |
-| ----------- | ----------------------------------------- | --------------------- |
-| `PORT`      | `3000`                                    | Port du serveur       |
-| `MONGO_URI` | `mongodb://localhost:27017/carnet-trek`   | Connexion à MongoDB   |
+| Variable    | Défaut                                  | Description         |
+| ----------- | --------------------------------------- | ------------------- |
+| `PORT`      | `3000`                                  | Port du serveur     |
+| `MONGO_URI` | `mongodb://localhost:27017/carnet-trek` | Connexion à MongoDB |
 
 Avec Docker Compose, `MONGO_URI` vaut `mongodb://mongo:27017/carnet-trek` (nom du service Mongo).
 
@@ -45,12 +45,12 @@ Avec Docker Compose, `MONGO_URI` vaut `mongodb://mongo:27017/carnet-trek` (nom d
 
 Base : `/api/treks`
 
-| Méthode  | Route            | Description                  | Réponse          |
-| -------- | ---------------- | ---------------------------- | ---------------- |
-| `GET`    | `/api/treks`     | Liste des randos (date desc) | `200` + tableau  |
-| `GET`    | `/api/treks/:id` | Détail d'une rando           | `200` / `404`    |
-| `POST`   | `/api/treks`     | Création d'une rando         | `201` / `400`    |
-| `DELETE` | `/api/treks/:id` | Suppression d'une rando      | `204`            |
+| Méthode  | Route            | Description                  | Réponse         |
+| -------- | ---------------- | ---------------------------- | --------------- |
+| `GET`    | `/api/treks`     | Liste des randos (date desc) | `200` + tableau |
+| `GET`    | `/api/treks/:id` | Détail d'une rando           | `200` / `404`   |
+| `POST`   | `/api/treks`     | Création d'une rando         | `201` / `400`   |
+| `DELETE` | `/api/treks/:id` | Suppression d'une rando      | `204`           |
 
 Exemple de création :
 
@@ -62,13 +62,13 @@ curl -X POST http://localhost:3000/api/treks \
 
 ## Modèle `Trek`
 
-| Champ           | Type   | Requis | Défaut       |
-| --------------- | ------ | ------ | ------------ |
-| `name`          | String | oui    |              |
-| `distanceKm`    | Number | oui    |              |
-| `elevationGain` | Number | oui    |              |
-| `date`          | Date   | non    | `Date.now`   |
-| `notes`         | String | non    | `""`         |
+| Champ           | Type   | Requis | Défaut     |
+| --------------- | ------ | ------ | ---------- |
+| `name`          | String | oui    |            |
+| `distanceKm`    | Number | oui    |            |
+| `elevationGain` | Number | oui    |            |
+| `date`          | Date   | non    | `Date.now` |
+| `notes`         | String | non    | `""`       |
 
 `createdAt` et `updatedAt` sont ajoutés automatiquement.
 
