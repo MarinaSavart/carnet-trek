@@ -1,4 +1,4 @@
-import { DOMParser, type Element } from '@xmldom/xmldom'
+import { DOMParser, onErrorStopParsing, type Element } from '@xmldom/xmldom'
 import type { PoiType } from '../models/Trek.js'
 
 // Même logique que frontend/src/utils/gpx.ts : le front s'en sert pour pré-remplir le
@@ -99,7 +99,10 @@ function downsample<T>(items: T[], max: number): T[] {
 export function parseGpx(xml: string): ParsedGpx {
   let doc
   try {
-    doc = new DOMParser().parseFromString(xml, 'application/xml')
+    // Toute erreur XML (entité inconnue, balise mal fermée…) rejette le fichier au lieu
+    // d'être seulement journalisée. Les entités du DTD ne sont jamais développées
+    // (pas d'attaque « billion laughs » ni de lecture de fichier via XXE).
+    doc = new DOMParser({ onError: onErrorStopParsing }).parseFromString(xml, 'application/xml')
   } catch {
     throw new GpxError('Fichier GPX illisible')
   }

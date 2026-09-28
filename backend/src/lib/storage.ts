@@ -21,6 +21,21 @@ export const PHOTO_EXTENSIONS: Record<string, string> = {
   'image/avif': '.avif',
 }
 
+/**
+ * Type réel d'une image d'après ses premiers octets (signature). Le type annoncé par le
+ * client (Content-Type) n'est pas fiable : une page HTML peut être envoyée en « image/png ».
+ */
+export function detectImageType(buffer: Buffer): keyof typeof PHOTO_EXTENSIONS | null {
+  const ascii = (start: number, end: number) => buffer.subarray(start, end).toString('latin1')
+  if (buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff) return 'image/jpeg'
+  if (buffer.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))) {
+    return 'image/png'
+  }
+  if (ascii(0, 4) === 'RIFF' && ascii(8, 12) === 'WEBP') return 'image/webp'
+  if (ascii(4, 8) === 'ftyp' && ['avif', 'avis'].includes(ascii(8, 12))) return 'image/avif'
+  return null
+}
+
 function trekDir(trekId: string): string {
   return path.join(config.uploadDir, 'treks', trekId)
 }
@@ -40,7 +55,10 @@ export async function saveGpx(trekId: string, etapeId: string, file: IncomingFil
 }
 
 export async function savePhoto(trekId: string, etapeId: string, file: IncomingFile) {
-  const extension = PHOTO_EXTENSIONS[file.mimetype] ?? ''
+  // Extension déduite du contenu réel (validé en amont par le service), jamais du client
+  const type = detectImageType(file.buffer)
+  if (!type) throw new Error(`Photo non reconnue : ${file.originalname}`)
+  const extension = PHOTO_EXTENSIONS[type]
   const url = await save(
     ['treks', trekId, etapeId, 'photos', `${randomUUID()}${extension}`],
     file.buffer,

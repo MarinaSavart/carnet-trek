@@ -40,13 +40,14 @@ L'API écoute sur http://localhost:3000.
 
 ## Variables d'environnement
 
-| Variable           | Défaut                                  | Description                                         |
-| ------------------ | --------------------------------------- | --------------------------------------------------- |
-| `PORT`             | `3000`                                  | Port du serveur                                     |
-| `MONGO_URI`        | `mongodb://localhost:27017/carnet-trek` | Connexion à MongoDB                                 |
-| `UPLOAD_DIR`       | `uploads`                               | Dossier des fichiers envoyés (relatif à `backend/`) |
-| `CORS_ORIGIN`      | `*`                                     | Origines autorisées, séparées par des virgules      |
-| `MAX_FILE_SIZE_MB` | `20`                                    | Taille maximale d'un fichier envoyé                 |
+| Variable                | Défaut                                        | Description                                                      |
+| ----------------------- | --------------------------------------------- | ---------------------------------------------------------------- |
+| `PORT`                  | `3000`                                        | Port du serveur                                                  |
+| `MONGO_URI`             | `mongodb://localhost:27017/carnet-trek`       | Connexion à MongoDB                                              |
+| `UPLOAD_DIR`            | `uploads`                                     | Dossier des fichiers envoyés (relatif à `backend/`)              |
+| `CORS_ORIGIN`           | `http://localhost:5173,http://127.0.0.1:5173` | Origines du front autorisées, séparées par des virgules          |
+| `MAX_FILE_SIZE_MB`      | `20`                                          | Taille maximale d'un fichier envoyé                              |
+| `MAX_FILES_PER_REQUEST` | `60`                                          | Nombre maximal de fichiers par envoi (borne la mémoire utilisée) |
 
 Avec Docker Compose, `MONGO_URI` vaut `mongodb://mongo:27017/carnet-trek` (nom du service Mongo).
 
@@ -62,6 +63,14 @@ Avec Docker Compose, `MONGO_URI` vaut `mongodb://mongo:27017/carnet-trek` (nom d
 
 Les erreurs ont toujours la forme `{ "error": "message", "details"?: ["…"] }`.
 
+## Sécurité
+
+- **Pas d'authentification** pour l'instant : l'API est prévue pour un usage local. Ne pas l'exposer sur Internet en l'état.
+- **CORS** : seules les origines de `CORS_ORIGIN` (le front) peuvent appeler l'API depuis un navigateur.
+- **CSRF** : les requêtes qui modifient des données (`POST`, `DELETE`…) doivent envoyer l'en-tête `X-Requested-With: carnet-trek`, sinon `403`.
+- **Fichiers envoyés** : les photos sont vérifiées d'après leur contenu réel (signature), pas le type annoncé ; les GPX invalides (entités inconnues, XML mal formé) sont refusés. Tout ce qui est servi sous `/uploads` porte `Content-Security-Policy: sandbox` et `nosniff`, et les GPX sont servis en téléchargement : aucun contenu envoyé ne peut s'exécuter dans le navigateur.
+- **En-têtes** : `helmet` applique les en-têtes de sécurité standard.
+
 ### Création d'un trek
 
 Requête `multipart/form-data` :
@@ -74,6 +83,7 @@ Requête `multipart/form-data` :
 
 ```bash
 curl -X POST http://localhost:3000/api/treks \
+  -H 'X-Requested-With: carnet-trek' \
   -F 'data={"name":"Laugavegur","region":"Islande","etapes":[
         {"name":"Landmannalaugar → Hrafntinnusker","difficulty":"difficile"},
         {"name":"Jour de repos","difficulty":"facile","distanceKm":5,"durationMin":90}]}' \

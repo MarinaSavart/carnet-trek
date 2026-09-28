@@ -21,10 +21,14 @@ export class ApiError extends Error {
   }
 }
 
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
+async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
+  // Exigé par l'API sur les requêtes qui modifient des données (protection CSRF)
+  const headers = new Headers(init.headers)
+  if (init.method && init.method !== 'GET') headers.set('X-Requested-With', 'carnet-trek')
+
   let response: Response
   try {
-    response = await fetch(`${API_URL}${path}`, init)
+    response = await fetch(`${API_URL}${path}`, { ...init, headers })
   } catch {
     throw new ApiError(0, 'Serveur injoignable. Vérifie que le backend est lancé.')
   }

@@ -24,7 +24,7 @@ const FILE_FIELD = /^etapes\[(\d+)\]\[(gpx|photos)\]$/
 // Fichiers gardés en mémoire le temps de tout valider, puis écrits sur disque par le service
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: config.maxFileSizeMb * 1024 * 1024, files: 300 },
+  limits: { fileSize: config.maxFileSizeMb * 1024 * 1024, files: config.maxFilesPerRequest },
   fileFilter: (_req, file, callback) => {
     const kind = FILE_FIELD.exec(file.fieldname)?.[2]
     if (kind === 'gpx' && file.originalname.toLowerCase().endsWith('.gpx')) {

@@ -1,7 +1,13 @@
 import { Types } from 'mongoose'
 import { HttpError } from '../lib/errors.js'
 import { GpxError, parseGpx, type ParsedGpx } from '../lib/gpx.js'
-import { removeTrekFiles, saveGpx, savePhoto, type IncomingFile } from '../lib/storage.js'
+import {
+  detectImageType,
+  removeTrekFiles,
+  saveGpx,
+  savePhoto,
+  type IncomingFile,
+} from '../lib/storage.js'
 import { Trek } from '../models/Trek.js'
 import type { EtapeInput, TrekInput } from '../validation/trek.js'
 
@@ -42,6 +48,14 @@ function resolveStats(input: EtapeInput, gpx: ParsedGpx | null, etapeNumber: num
 export async function createTrek(input: TrekInput, files: EtapeFiles[]) {
   const prepared = input.etapes.map((etape, index) => {
     const gpx = parseEtapeGpx(files[index]?.gpx, index + 1)
+    for (const photo of files[index]?.photos ?? []) {
+      if (!detectImageType(photo.buffer)) {
+        throw new HttpError(
+          400,
+          `Étape ${index + 1} : « ${photo.originalname} » n'est pas une image valide`,
+        )
+      }
+    }
     return { etape, gpx, stats: resolveStats(etape, gpx, index + 1) }
   })
 
