@@ -32,5 +32,10 @@ export const useTreksStore = defineStore('treks', () => {
     return totals
   })
 
-  return { treks, getTrekById, getEtapeById, getTrekByEtapeId, totalDistanceByTrek }
+  // En attendant l'API : le trek n'existe qu'en mémoire (perdu au rechargement)
+  function addTrek(trek: Trek) {
+    treks.value.push(trek)
+  }
+
+  return { treks, getTrekById, getEtapeById, getTrekByEtapeId, totalDistanceByTrek, addTrek }
 })

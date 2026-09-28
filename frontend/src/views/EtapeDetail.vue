@@ -75,6 +75,7 @@ function openEtape(etapeId: string) {
         <h1>{{ etape.name }}</h1>
         <DifficultyBadge :difficulty="etape.difficulty" />
       </div>
+      <p v-if="etape.description" class="description">{{ etape.description }}</p>
 
       <PhotoGallery :photos="etape.photos ?? []" />
 
@@ -185,6 +186,11 @@ function openEtape(etapeId: string) {
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--space-sm);
+}
+.description {
+  color: var(--color-text-muted);
+  max-width: 65ch;
+  white-space: pre-line;
 }
 .title-row h1 {
   line-height: 1.15;

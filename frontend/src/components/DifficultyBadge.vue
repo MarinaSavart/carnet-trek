@@ -1,21 +1,15 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { Difficulty } from '../types/trek'
+import { DIFFICULTY_LABELS } from '../utils/difficulty'
 
 const props = defineProps<{ difficulty: Difficulty }>()
-
-const labels: Record<Difficulty, string> = {
-  facile: 'Facile',
-  moyen: 'Moyen',
-  difficile: 'Difficile',
-  tres_difficile: 'Très difficile',
-}
 
 const color = computed(() => `var(--color-diff-${props.difficulty.replace('_', '-')})`)
 </script>
 
 <template>
-  <span class="badge" :style="{ background: color }">{{ labels[difficulty] }}</span>
+  <span class="badge" :style="{ background: color }">{{ DIFFICULTY_LABELS[difficulty] }}</span>
 </template>
 
 <style scoped>

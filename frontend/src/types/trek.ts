@@ -45,6 +45,7 @@ export interface Etape {
   _id: string
   order: number
   name: string
+  description?: string
   distanceKm: number
   elevationGain: number
   elevationLoss: number

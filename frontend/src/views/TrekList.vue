@@ -8,7 +8,10 @@ const { treks, totalDistanceByTrek } = storeToRefs(store)
 
 <template>
   <div class="page">
-    <h1>Mes treks</h1>
+    <div class="heading">
+      <h1>Mes treks</h1>
+      <RouterLink to="/treks/new" class="btn btn-primary">+ Nouveau trek</RouterLink>
+    </div>
     <ul class="treks">
       <li v-for="trek in treks" :key="trek._id" class="trek-item">
         <RouterLink :to="`/treks/${trek._id}`" class="trek-link">
@@ -29,6 +32,13 @@ const { treks, totalDistanceByTrek } = storeToRefs(store)
   max-width: 720px;
   margin: 0 auto;
   padding: var(--space-lg) var(--space-md);
+}
+.heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
 }
 .treks {
   list-style: none;
