@@ -3,11 +3,12 @@ import { computed, nextTick, onBeforeUnmount, reactive, ref } from 'vue'
 import { onBeforeRouteLeave, useRouter } from 'vue-router'
 import { useTreksStore } from '../stores/treks'
 import EtapeFormCard from '../components/EtapeFormCard.vue'
+import { ApiError } from '../api/treks'
 import { formatDuration } from '../utils/format'
 import {
   createEtapeDraft,
   createTrekDraft,
-  draftToTrek,
+  draftToFormData,
   hasErrors,
   validateTrekDraft,
   type TrekDraftErrors,
@@ -23,6 +24,8 @@ const errors = computed<TrekDraftErrors>(() =>
   submitted.value ? validateTrekDraft(draft) : { byEtape: {} },
 )
 let saved = false
+const isSubmitting = ref(false)
+const serverError = ref<{ message: string; details: string[] } | null>(null)
 
 const totals = computed(() => ({
   distanceKm: draft.etapes.reduce((sum, e) => sum + (e.distanceKm ?? 0), 0),
@@ -59,10 +62,22 @@ async function submit() {
     return
   }
 
-  const trek = draftToTrek(draft)
-  store.addTrek(trek)
-  saved = true
-  router.push(`/treks/${trek._id}`)
+  isSubmitting.value = true
+  serverError.value = null
+  try {
+    const trek = await store.createTrek(draftToFormData(draft))
+    saved = true
+    router.push(`/treks/${trek._id}`)
+  } catch (e) {
+    serverError.value = {
+      message: e instanceof Error ? e.message : 'Enregistrement impossible',
+      details: e instanceof ApiError ? e.details : [],
+    }
+    await nextTick()
+    document.getElementById('server-error')?.focus()
+  } finally {
+    isSubmitting.value = false
+  }
 }
 
 const isDirty = computed(
@@ -76,9 +91,8 @@ onBeforeRouteLeave(() => {
   return window.confirm('Quitter sans enregistrer ? Les informations saisies seront perdues.')
 })
 
-// Les aperçus photo ne sont conservés que si le trek a été enregistré
+// Aperçus locaux : une fois le trek enregistré, les photos sont servies par le backend
 onBeforeUnmount(() => {
-  if (saved) return
   draft.etapes.forEach((e) => e.photos.forEach((p) => URL.revokeObjectURL(p.url)))
 })
 </script>
@@ -152,6 +166,13 @@ onBeforeUnmount(() => {
       <button type="button" class="btn add-etape" @click="addEtape">+ Ajouter une étape</button>
     </section>
 
+    <div v-if="serverError" id="server-error" class="server-error" role="alert" tabindex="-1">
+      <strong>{{ serverError.message }}</strong>
+      <ul v-if="serverError.details.length">
+        <li v-for="detail in serverError.details" :key="detail">{{ detail }}</li>
+      </ul>
+    </div>
+
     <footer class="footer">
       <p class="summary">
         {{ draft.etapes.length }} étape{{ draft.etapes.length > 1 ? 's' : '' }} ·
@@ -159,7 +180,9 @@ onBeforeUnmount(() => {
       </p>
       <div class="footer-actions">
         <RouterLink to="/" class="btn">Annuler</RouterLink>
-        <button type="submit" class="btn btn-primary">Créer le trek</button>
+        <button type="submit" class="btn btn-primary" :disabled="isSubmitting">
+          {{ isSubmitting ? 'Enregistrement…' : 'Créer le trek' }}
+        </button>
       </div>
     </footer>
   </form>
@@ -264,6 +287,18 @@ h1 {
   margin: 0;
   color: var(--color-text-muted);
   font-size: 0.9rem;
+}
+.server-error {
+  margin-bottom: var(--space-md);
+  padding: var(--space-sm);
+  border: 1px solid #f08c89;
+  border-radius: var(--radius);
+  background: rgba(240, 140, 137, 0.08);
+  color: #f08c89;
+}
+.server-error ul {
+  margin: var(--space-xs) 0 0;
+  padding-left: 1.25rem;
 }
 .footer-actions {
   display: flex;

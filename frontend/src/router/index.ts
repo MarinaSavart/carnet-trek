@@ -11,7 +11,7 @@ const router = createRouter({
     { path: '/', name: 'home', component: TrekList },
     { path: '/treks/new', name: 'trek-create', component: () => import('../views/TrekCreate.vue') },
     { path: '/treks/:id', name: 'trek-detail', component: TrekDetail },
-    { path: '/etapes/:id', name: 'etape-detail', component: EtapeDetail },
+    { path: '/treks/:trekId/etapes/:etapeId', name: 'etape-detail', component: EtapeDetail },
   ],
 })
 

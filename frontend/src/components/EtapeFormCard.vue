@@ -61,7 +61,7 @@ async function loadGpx(file: File | undefined) {
       return
     }
     Object.assign(etape.value, {
-      gpxFileName: file.name,
+      gpxFile: file,
       gpx,
       distanceKm: gpx.distanceKm,
       elevationGain: gpx.elevationGain,
@@ -76,7 +76,7 @@ async function loadGpx(file: File | undefined) {
 }
 
 function removeGpx() {
-  Object.assign(etape.value, { gpxFileName: null, gpx: null })
+  Object.assign(etape.value, { gpxFile: null, gpx: null })
 }
 
 function onGpxDrop(e: DragEvent) {
@@ -185,7 +185,7 @@ function onPhotosDrop(e: DragEvent) {
           >
         </span>
         <div v-if="etape.gpx" class="gpx-loaded">
-          <span class="gpx-name">✓ {{ etape.gpxFileName }}</span>
+          <span class="gpx-name">✓ {{ etape.gpxFile?.name }}</span>
           <span class="field-hint">
             {{ etape.gpx.waypoints.length }} point{{ etape.gpx.waypoints.length > 1 ? 's' : '' }}
             d'intérêt

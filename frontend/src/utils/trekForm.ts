@@ -1,4 +1,4 @@
-import type { Difficulty, Trek } from '../types/trek'
+import type { Difficulty } from '../types/trek'
 import type { ParsedGpx } from './gpx'
 
 export interface PhotoDraft {
@@ -13,7 +13,9 @@ export interface EtapeDraft {
   name: string
   description: string
   difficulty: Difficulty
-  gpxFileName: string | null
+  /** Fichier d'origine, envoyé tel quel au serveur */
+  gpxFile: File | null
+  /** Analyse locale, pour pré-remplir les stats et afficher un résumé */
   gpx: ParsedGpx | null
   distanceKm: number | null
   elevationGain: number | null
@@ -43,7 +45,7 @@ export function createEtapeDraft(): EtapeDraft {
     name: '',
     description: '',
     difficulty: 'moyen',
-    gpxFileName: null,
+    gpxFile: null,
     gpx: null,
     distanceKm: null,
     elevationGain: null,
@@ -83,27 +85,33 @@ export function hasErrors(errors: TrekDraftErrors): boolean {
   return Boolean(errors.name || errors.etapes || Object.keys(errors.byEtape).length)
 }
 
-export function draftToTrek(draft: TrekDraft): Trek {
-  const trekId = crypto.randomUUID()
-  return {
-    _id: trekId,
+/**
+ * Corps multipart attendu par POST /api/treks :
+ *   data                → JSON du trek (les stats saisies priment sur celles du GPX)
+ *   etapes[i][gpx]      → fichier GPX d'origine, analysé à nouveau par le serveur
+ *   etapes[i][photos]   → photos de l'étape
+ */
+export function draftToFormData(draft: TrekDraft): FormData {
+  const formData = new FormData()
+  const data = {
     name: draft.name.trim(),
     region: draft.region.trim(),
     description: draft.description.trim(),
-    etapes: draft.etapes.map((etape, index) => ({
-      _id: crypto.randomUUID(),
-      order: index + 1,
+    etapes: draft.etapes.map((etape) => ({
       name: etape.name.trim(),
-      description: etape.description.trim() || undefined,
+      description: etape.description.trim(),
       difficulty: etape.difficulty,
-      distanceKm: etape.distanceKm ?? 0,
-      elevationGain: etape.elevationGain ?? 0,
-      elevationLoss: etape.elevationLoss ?? 0,
-      durationMin: etape.durationMin ?? 0,
-      gpxTrack: etape.gpx?.track,
-      elevationProfile: etape.gpx?.elevationProfile,
-      pois: etape.gpx?.waypoints ?? [],
-      photos: etape.photos.map((photo) => ({ _id: photo.id, url: photo.url })),
+      distanceKm: etape.distanceKm,
+      elevationGain: etape.elevationGain,
+      elevationLoss: etape.elevationLoss,
+      durationMin: etape.durationMin,
     })),
   }
+  formData.append('data', JSON.stringify(data))
+
+  draft.etapes.forEach((etape, index) => {
+    if (etape.gpxFile) formData.append(`etapes[${index}][gpx]`, etape.gpxFile)
+    etape.photos.forEach((photo) => formData.append(`etapes[${index}][photos]`, photo.file))
+  })
+  return formData
 }

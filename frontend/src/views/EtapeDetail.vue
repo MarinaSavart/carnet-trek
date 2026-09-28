@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useTreksStore } from '../stores/treks'
+import { useTrek } from '../composables/useTrek'
 import DifficultyBadge from '../components/DifficultyBadge.vue'
 import TrekOverviewMap from '../components/TrekOverviewMap.vue'
 import PhotoGallery from '../components/PhotoGallery.vue'
@@ -15,16 +15,11 @@ import { POI_ICONS } from '../utils/poi'
 
 const route = useRoute()
 const router = useRouter()
-const store = useTreksStore()
-
-const etape = computed(() => store.getEtapeById(route.params.id as string))
-const trek = computed(() => store.getTrekByEtapeId(route.params.id as string))
+const { trek, error } = useTrek(() => route.params.trekId as string)
+const etape = computed(() => trek.value?.etapes.find((e) => e._id === route.params.etapeId))
 
 // Toutes les étapes du trek, pour la carte et la navigation précédente / suivante
-const etapes = computed(() => {
-  if (trek.value) return [...trek.value.etapes].sort((a, b) => a.order - b.order)
-  return etape.value ? [etape.value] : []
-})
+const etapes = computed(() => [...(trek.value?.etapes ?? [])].sort((a, b) => a.order - b.order))
 const index = computed(() => etapes.value.findIndex((e) => e._id === etape.value?._id))
 const previous = computed(() => etapes.value[index.value - 1])
 const next = computed(() => etapes.value[index.value + 1])
@@ -56,7 +51,7 @@ const highlightedEtapeId = ref<string | null>(null)
 const highlightedPoiId = ref<string | null>(null)
 
 function openEtape(etapeId: string) {
-  router.push(`/etapes/${etapeId}`)
+  router.push(`/treks/${trek.value?._id}/etapes/${etapeId}`)
 }
 </script>
 
@@ -126,11 +121,19 @@ function openEtape(etapeId: string) {
       <p v-else class="empty">Aucun point d'intérêt pour cette étape.</p>
 
       <nav v-if="previous || next" class="etape-nav" aria-label="Étapes voisines">
-        <RouterLink v-if="previous" :to="`/etapes/${previous._id}`" class="etape-nav-link">
+        <RouterLink
+          v-if="previous"
+          :to="`/treks/${trek?._id}/etapes/${previous._id}`"
+          class="etape-nav-link"
+        >
           <span class="etape-nav-label">← Étape précédente</span>
           {{ previous.name }}
         </RouterLink>
-        <RouterLink v-if="next" :to="`/etapes/${next._id}`" class="etape-nav-link is-next">
+        <RouterLink
+          v-if="next"
+          :to="`/treks/${trek?._id}/etapes/${next._id}`"
+          class="etape-nav-link is-next"
+        >
           <span class="etape-nav-label">Étape suivante →</span>
           {{ next.name }}
         </RouterLink>
@@ -152,7 +155,12 @@ function openEtape(etapeId: string) {
       />
     </aside>
   </div>
-  <p v-else>Étape introuvable</p>
+  <div v-else class="page-status">
+    <RouterLink :to="trek ? `/treks/${trek._id}` : '/'" class="back-link">← Retour</RouterLink>
+    <p :role="error || trek ? 'alert' : 'status'">
+      {{ error ?? (trek ? 'Étape introuvable' : 'Chargement…') }}
+    </p>
+  </div>
 </template>
 
 <style scoped>
@@ -160,6 +168,12 @@ function openEtape(etapeId: string) {
   max-width: 1200px;
   margin: 0 auto;
   padding: var(--space-lg) var(--space-md);
+}
+.page-status {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-lg) var(--space-md);
+  color: var(--color-text-muted);
 }
 .back-link {
   color: var(--color-text-muted);

@@ -57,6 +57,19 @@ export interface Etape {
   photos?: Photo[]
 }
 
+/** Version allégée renvoyée par la liste (GET /api/treks) : ni tracés ni profils */
+export interface TrekSummary {
+  _id: string
+  name: string
+  region: string
+  description: string
+  etapeCount: number
+  distanceKm: number
+  durationMin: number
+  elevationGain: number
+  coverPhotoUrl: string | null
+}
+
 export interface Trek {
   _id: string
   name: string
