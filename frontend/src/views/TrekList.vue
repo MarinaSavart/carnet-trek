@@ -25,10 +25,32 @@ const { treks, totalDistanceByTrek } = storeToRefs(store)
 </template>
 
 <style scoped>
-.page { max-width: 720px; margin: 0 auto; padding: var(--space-lg) var(--space-md); }
-.treks { list-style: none; padding: 0; }
-.trek-item { border-bottom: var(--border-hairline); }
-.trek-link { display: block; padding: var(--space-md) 0; text-decoration: none; color: inherit; }
-.region { color: var(--color-text-muted); margin: 0.25rem 0; }
-.stat-unit { font-family: var(--font-body); font-size: 1rem; color: var(--color-text-muted); margin-left: var(--space-xs); }
+.page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--space-lg) var(--space-md);
+}
+.treks {
+  list-style: none;
+  padding: 0;
+}
+.trek-item {
+  border-bottom: var(--border-hairline);
+}
+.trek-link {
+  display: block;
+  padding: var(--space-md) 0;
+  text-decoration: none;
+  color: inherit;
+}
+.region {
+  color: var(--color-text-muted);
+  margin: 0.25rem 0;
+}
+.stat-unit {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  margin-left: var(--space-xs);
+}
 </style>

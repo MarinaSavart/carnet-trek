@@ -26,24 +26,24 @@ L'application est disponible sur http://127.0.0.1:5173.
 
 ## Scripts
 
-| Commande          | Description                                  |
-| ----------------- | -------------------------------------------- |
-| `npm run dev`     | Serveur de développement Vite (HMR)          |
-| `npm run build`   | Vérification des types (vue-tsc) + build     |
-| `npm run preview` | Prévisualisation du build de production      |
+| Commande          | Description                              |
+| ----------------- | ---------------------------------------- |
+| `npm run dev`     | Serveur de développement Vite (HMR)      |
+| `npm run build`   | Vérification des types (vue-tsc) + build |
+| `npm run preview` | Prévisualisation du build de production  |
 
 ## Variables d'environnement
 
-| Variable       | Défaut                      | Description        |
-| -------------- | --------------------------- | ------------------ |
+| Variable       | Défaut                      | Description          |
+| -------------- | --------------------------- | -------------------- |
 | `VITE_API_URL` | `http://localhost:3000/api` | URL de base de l'API |
 
 ⚠️ Vite ne lit le `.env` qu'au démarrage : après une modification, redémarrer le serveur (`docker compose restart frontend`).
 
 ## Routes
 
-| Chemin        | Vue              | Description             |
-| ------------- | ---------------- | ----------------------- |
+| Chemin        | Vue               | Description              |
+| ------------- | ----------------- | ------------------------ |
 | `/`           | `TrekList.vue`    | Liste des treks          |
 | `/treks/:id`  | `TrekDetail.vue`  | Étapes d'un trek         |
 | `/etapes/:id` | `EtapeDetail.vue` | Détail d'une étape + POI |

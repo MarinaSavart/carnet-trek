@@ -37,13 +37,46 @@ const trek = computed(() => store.getTrekById(route.params.id as string))
 </template>
 
 <style scoped>
-.page { max-width: 720px; margin: 0 auto; padding: var(--space-lg) var(--space-md); }
-.back-link { color: var(--color-text-muted); text-decoration: none; font-size: 0.9rem; }
-.description { color: var(--color-text-muted); }
-.etapes { list-style: none; padding: 0; margin-top: var(--space-md); }
-.etape-item { border-bottom: var(--border-hairline); }
-.etape-link { display: flex; align-items: center; gap: var(--space-sm); padding: var(--space-sm) 0; text-decoration: none; color: inherit; }
-.etape-order { font-size: 1.5rem; color: var(--color-accent); min-width: 2ch; }
-.etape-info { flex: 1; }
-.etape-meta { color: var(--color-text-muted); font-size: 0.9rem; margin: 0.15rem 0 0; }
+.page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--space-lg) var(--space-md);
+}
+.back-link {
+  color: var(--color-text-muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+.description {
+  color: var(--color-text-muted);
+}
+.etapes {
+  list-style: none;
+  padding: 0;
+  margin-top: var(--space-md);
+}
+.etape-item {
+  border-bottom: var(--border-hairline);
+}
+.etape-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) 0;
+  text-decoration: none;
+  color: inherit;
+}
+.etape-order {
+  font-size: 1.5rem;
+  color: var(--color-accent);
+  min-width: 2ch;
+}
+.etape-info {
+  flex: 1;
+}
+.etape-meta {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  margin: 0.15rem 0 0;
+}
 </style>

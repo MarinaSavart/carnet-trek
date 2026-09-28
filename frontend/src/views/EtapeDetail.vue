@@ -65,11 +65,34 @@ const poiIcons: Record<POIType, string> = {
 </template>
 
 <style scoped>
-.page { max-width: 720px; margin: 0 auto; padding: var(--space-lg) var(--space-md); }
-.back-link { color: var(--color-text-muted); text-decoration: none; font-size: 0.9rem; }
-.header { display: flex; align-items: center; gap: var(--space-sm); margin: var(--space-sm) 0 var(--space-md); }
-.stats { display: flex; gap: var(--space-lg); flex-wrap: wrap; margin-bottom: var(--space-md); }
-.stat-unit { font-family: var(--font-body); font-size: 0.9rem; color: var(--color-text-muted); margin-left: 0.25rem; }
+.page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--space-lg) var(--space-md);
+}
+.back-link {
+  color: var(--color-text-muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin: var(--space-sm) 0 var(--space-md);
+}
+.stats {
+  display: flex;
+  gap: var(--space-lg);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-md);
+}
+.stat-unit {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  margin-left: 0.25rem;
+}
 .map-placeholder {
   height: 240px;
   background: var(--color-surface);
@@ -80,7 +103,19 @@ const poiIcons: Record<POIType, string> = {
   color: var(--color-text-muted);
   margin-bottom: var(--space-md);
 }
-.pois { list-style: none; padding: 0; }
-.poi-item { display: flex; gap: var(--space-sm); padding: var(--space-xs) 0; border-bottom: var(--border-hairline); }
-.poi-notes { color: var(--color-text-muted); font-size: 0.9rem; margin: 0.15rem 0 0; }
+.pois {
+  list-style: none;
+  padding: 0;
+}
+.poi-item {
+  display: flex;
+  gap: var(--space-sm);
+  padding: var(--space-xs) 0;
+  border-bottom: var(--border-hairline);
+}
+.poi-notes {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  margin: 0.15rem 0 0;
+}
 </style>

@@ -1,10 +1,4 @@
-export type POIType =
-  | 'refuge'
-  | 'camping'
-  | 'point_eau'
-  | 'sommet'
-  | 'ravitaillement'
-  | 'autre'
+export type POIType = 'refuge' | 'camping' | 'point_eau' | 'sommet' | 'ravitaillement' | 'autre'
 
 export type Difficulty = 'facile' | 'moyen' | 'difficile' | 'tres_difficile'
 
