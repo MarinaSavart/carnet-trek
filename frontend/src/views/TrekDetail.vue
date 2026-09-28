@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useTreksStore } from '../stores/treks'
+import { useAuthStore } from '../stores/auth'
 import { useTrek } from '../composables/useTrek'
 import DifficultyBadge from '../components/DifficultyBadge.vue'
 import TrekOverviewMap from '../components/TrekOverviewMap.vue'
@@ -17,6 +18,7 @@ import { getEtapeColor } from '../utils/etapeColors'
 const route = useRoute()
 const router = useRouter()
 const store = useTreksStore()
+const auth = useAuthStore()
 
 const { trek, error } = useTrek(() => route.params.id as string)
 
@@ -99,7 +101,13 @@ function openEtape(etapeId: string) {
     <header class="header">
       <div class="header-top">
         <RouterLink to="/" class="back-link">← Treks</RouterLink>
-        <button type="button" class="btn" :disabled="isDeleting" @click="removeTrek">
+        <button
+          v-if="auth.canEdit(trek)"
+          type="button"
+          class="btn"
+          :disabled="isDeleting"
+          @click="removeTrek"
+        >
           {{ isDeleting ? 'Suppression…' : 'Supprimer' }}
         </button>
       </div>

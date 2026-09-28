@@ -71,6 +71,8 @@ export interface TrekSummary {
 }
 
 export interface Trek {
+  /** Identifiant de l'auteur ; absent pour les treks antérieurs à l'authentification */
+  owner?: string | null
   _id: string
   name: string
   description: string

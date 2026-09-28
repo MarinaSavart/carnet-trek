@@ -1,44 +1,7 @@
 import type { Trek, TrekSummary } from '../types/trek'
+import { absoluteUrl, request } from './http'
 
-const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000/api'
-
-// Les fichiers (photos, GPX) sont servis par le backend sous /uploads, à côté de l'API :
-// l'URL relative renvoyée est complétée avec l'origine de l'API.
-const API_ORIGIN = new URL(API_URL).origin
-
-function absoluteUrl(url: string): string {
-  return url.startsWith('/') ? `${API_ORIGIN}${url}` : url
-}
-
-export class ApiError extends Error {
-  readonly status: number
-  readonly details: string[]
-
-  constructor(status: number, message: string, details: string[] = []) {
-    super(message)
-    this.status = status
-    this.details = details
-  }
-}
-
-async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
-  // Exigé par l'API sur les requêtes qui modifient des données (protection CSRF)
-  const headers = new Headers(init.headers)
-  if (init.method && init.method !== 'GET') headers.set('X-Requested-With', 'carnet-trek')
-
-  let response: Response
-  try {
-    response = await fetch(`${API_URL}${path}`, { ...init, headers })
-  } catch {
-    throw new ApiError(0, 'Serveur injoignable. Vérifie que le backend est lancé.')
-  }
-
-  if (!response.ok) {
-    const body = await response.json().catch(() => ({}))
-    throw new ApiError(response.status, body.error ?? `Erreur ${response.status}`, body.details)
-  }
-  return response.status === 204 ? (undefined as T) : response.json()
-}
+export { ApiError } from './http'
 
 function withAbsoluteUrls(trek: Trek): Trek {
   return {

@@ -69,8 +69,15 @@ async function submit() {
     saved = true
     router.push(`/treks/${trek._id}`)
   } catch (e) {
+    // Session expirée pendant la saisie : le brouillon reste là, il suffit de se reconnecter
+    // (dans un autre onglet, pour ne rien perdre)
+    const sessionExpired = e instanceof ApiError && e.status === 401
     serverError.value = {
-      message: e instanceof Error ? e.message : 'Enregistrement impossible',
+      message: sessionExpired
+        ? 'Ta session a expiré : reconnecte-toi dans un autre onglet, puis renvoie le formulaire.'
+        : e instanceof Error
+          ? e.message
+          : 'Enregistrement impossible',
       details: e instanceof ApiError ? e.details : [],
     }
     await nextTick()

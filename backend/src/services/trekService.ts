@@ -45,7 +45,7 @@ function resolveStats(input: EtapeInput, gpx: ParsedGpx | null, etapeNumber: num
  * Crée un trek et enregistre ses fichiers. Tout est validé avant la moindre écriture ;
  * si l'enregistrement en base échoue, les fichiers déjà écrits sont supprimés.
  */
-export async function createTrek(input: TrekInput, files: EtapeFiles[]) {
+export async function createTrek(input: TrekInput, files: EtapeFiles[], ownerId?: string) {
   const prepared = input.etapes.map((etape, index) => {
     const gpx = parseEtapeGpx(files[index]?.gpx, index + 1)
     for (const photo of files[index]?.photos ?? []) {
@@ -93,6 +93,7 @@ export async function createTrek(input: TrekInput, files: EtapeFiles[]) {
       region: input.region,
       description: input.description,
       etapes,
+      owner: ownerId,
     })
   } catch (err) {
     await removeTrekFiles(trekId.toString())
@@ -100,10 +101,21 @@ export async function createTrek(input: TrekInput, files: EtapeFiles[]) {
   }
 }
 
-export async function deleteTrek(id: string): Promise<boolean> {
-  const deleted = await Trek.findByIdAndDelete(id)
-  if (deleted) await removeTrekFiles(id)
-  return Boolean(deleted)
+/**
+ * Un trek ne peut être modifié ou supprimé que par son auteur. Les treks sans auteur
+ * (antérieurs à l'authentification, ou issus du seed) restent gérables par tout utilisateur connecté.
+ */
+export function canEditTrek(trek: { owner?: unknown }, userId: string): boolean {
+  return !trek.owner || String(trek.owner) === userId
+}
+
+export async function deleteTrek(id: string, userId: string): Promise<void> {
+  const trek = await Trek.findById(id).select('owner').lean()
+  if (!trek) throw new HttpError(404, 'Trek introuvable')
+  if (!canEditTrek(trek, userId))
+    throw new HttpError(403, 'Seul l\x27auteur du trek peut le supprimer')
+  await Trek.deleteOne({ _id: id })
+  await removeTrekFiles(id)
 }
 
 /** Liste allégée : ni tracés ni profils, seulement de quoi afficher une carte de trek */

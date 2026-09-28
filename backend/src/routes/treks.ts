@@ -4,6 +4,7 @@ import { isValidObjectId } from 'mongoose'
 import { config } from '../config.js'
 import { HttpError } from '../lib/errors.js'
 import { PHOTO_EXTENSIONS } from '../lib/storage.js'
+import { requireAuth } from '../middleware/auth.js'
 import { Trek } from '../models/Trek.js'
 import {
   createTrek,
@@ -71,16 +72,18 @@ router.get('/:id', async (req, res) => {
   res.json(trek)
 })
 
-router.post('/', upload.any(), async (req, res) => {
+// requireAuth avant multer : un visiteur non connecté ne peut pas faire charger de fichiers
+router.post('/', requireAuth, upload.any(), async (req, res) => {
   const input = trekInputSchema.parse(parseJsonField(req.body.data))
   const files = groupFilesByEtape((req.files as Express.Multer.File[]) ?? [], input.etapes.length)
-  const trek = await createTrek(input, files)
+  const trek = await createTrek(input, files, req.user!._id)
   res.status(201).json(trek)
 })
 
-router.delete('/:id', async (req, res) => {
-  const deleted = isValidObjectId(req.params.id) && (await deleteTrek(req.params.id))
-  if (!deleted) throw new HttpError(404, 'Trek introuvable')
+router.delete('/:id', requireAuth, async (req, res) => {
+  const id = String(req.params.id)
+  if (!isValidObjectId(id)) throw new HttpError(404, 'Trek introuvable')
+  await deleteTrek(id, req.user!._id)
   res.status(204).send()
 })
 
