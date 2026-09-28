@@ -2,17 +2,24 @@
 import { ref, onMounted, onUnmounted, watch } from 'vue'
 import type { FeatureCollection, LineString } from 'geojson'
 import maplibregl, { MAP_STYLE_URL } from '../lib/maplibre'
-import type { Etape } from '../types/trek'
+import type { Etape, POI } from '../types/trek'
 import { getEtapeColor } from '../utils/etapeColors'
+import { POI_ICONS } from '../utils/poi'
 
 const props = defineProps<{
   etapes: Etape[]
+  /** Étape survolée (liste ou carte) : mise en avant temporaire */
   highlightedId?: string | null
+  /** Étape affichée (page étape) : mise en avant permanente et cadrage de la carte */
+  focusedId?: string | null
+  pois?: POI[]
+  highlightedPoiId?: string | null
 }>()
 
 const emit = defineEmits<{
   hover: [etapeId: string | null]
   select: [etapeId: string]
+  poiHover: [poiId: string | null]
 }>()
 
 const SOURCE_ID = 'etapes'
@@ -22,9 +29,10 @@ const HIT_LAYER_ID = 'etapes-hit'
 
 const mapContainer = ref<HTMLDivElement | null>(null)
 let map: maplibregl.Map | null = null
-let markers = new Map<string, maplibregl.Marker>()
+let etapeMarkers = new Map<string, maplibregl.Marker>()
+let poiMarkers = new Map<string, maplibregl.Marker>()
 let resizeObserver: ResizeObserver | null = null
-// Tant que l'utilisateur n'a pas déplacé la carte, on garde toutes les étapes cadrées
+// Tant que l'utilisateur n'a pas déplacé la carte, on garde le cadrage automatique
 let userHasMoved = false
 
 function buildFeatureCollection(): FeatureCollection<LineString> {
@@ -79,14 +87,15 @@ function renderEtapes() {
   }
 
   renderStartMarkers()
-  fitToEtapes()
+  renderPoiMarkers()
+  fitToContent(false)
   applyHighlight()
 }
 
 // Pastille numérotée au départ de chaque étape
 function renderStartMarkers() {
-  markers.forEach((m) => m.remove())
-  markers = new Map()
+  etapeMarkers.forEach((m) => m.remove())
+  etapeMarkers = new Map()
 
   props.etapes.forEach((etape, index) => {
     const start = etape.gpxTrack?.coordinates[0]
@@ -102,13 +111,42 @@ function renderStartMarkers() {
     el.addEventListener('mouseleave', () => emit('hover', null))
     el.addEventListener('click', () => emit('select', etape._id))
 
-    markers.set(etape._id, new maplibregl.Marker({ element: el }).setLngLat(start).addTo(map!))
+    etapeMarkers.set(etape._id, new maplibregl.Marker({ element: el }).setLngLat(start).addTo(map!))
   })
 }
 
-function fitToEtapes() {
+function renderPoiMarkers() {
+  poiMarkers.forEach((m) => m.remove())
+  poiMarkers = new Map()
+
+  props.pois?.forEach((poi) => {
+    const el = document.createElement('div')
+    el.className = 'poi-marker'
+    el.textContent = POI_ICONS[poi.type]
+    el.addEventListener('mouseenter', () => emit('poiHover', poi._id))
+    el.addEventListener('mouseleave', () => emit('poiHover', null))
+
+    const popup = new maplibregl.Popup({ offset: 16, closeButton: false }).setText(poi.name)
+    poiMarkers.set(
+      poi._id,
+      new maplibregl.Marker({ element: el })
+        .setLngLat(poi.location.coordinates)
+        .setPopup(popup)
+        .addTo(map!),
+    )
+  })
+}
+
+// Cadre l'étape affichée (et ses POI) si il y en a une, sinon l'ensemble des étapes
+function fitToContent(animate: boolean) {
   if (!map) return
-  const coordinates = props.etapes.flatMap((e) => e.gpxTrack?.coordinates ?? [])
+  const focused = props.etapes.find((e) => e._id === props.focusedId)
+  const coordinates = focused
+    ? [
+        ...(focused.gpxTrack?.coordinates ?? []),
+        ...(props.pois ?? []).map((p) => p.location.coordinates),
+      ]
+    : props.etapes.flatMap((e) => e.gpxTrack?.coordinates ?? [])
   const [first] = coordinates
   if (!first) return
 
@@ -116,14 +154,14 @@ function fitToEtapes() {
     (b, coord) => b.extend(coord),
     new maplibregl.LngLatBounds(first, first),
   )
-  map.fitBounds(bounds, { padding: 48, duration: 0 })
+  map.fitBounds(bounds, { padding: 48, maxZoom: 14, duration: animate ? 800 : 0 })
 }
 
 function applyHighlight() {
   if (!map?.getLayer(LINE_LAYER_ID)) return
-  const id = props.highlightedId
+  // Le survol prime sur l'étape affichée ; sans l'un ni l'autre, tout est au même niveau
+  const id = props.highlightedId ?? props.focusedId
 
-  // Sans étape survolée, tous les tracés sont au même niveau ; sinon on estompe les autres
   map.setPaintProperty(
     LINE_LAYER_ID,
     'line-opacity',
@@ -140,8 +178,16 @@ function applyHighlight() {
     id ? ['case', ['==', ['get', 'id'], id], 1, 0.35] : 1,
   )
 
-  markers.forEach((marker, etapeId) => {
+  etapeMarkers.forEach((marker, etapeId) => {
     marker.getElement().classList.toggle('is-highlighted', etapeId === id)
+  })
+}
+
+function applyPoiHighlight() {
+  poiMarkers.forEach((marker, poiId) => {
+    const isHighlighted = poiId === props.highlightedPoiId
+    marker.getElement().classList.toggle('is-highlighted', isHighlighted)
+    if (isHighlighted !== marker.getPopup()?.isOpen()) marker.togglePopup()
   })
 }
 
@@ -172,7 +218,7 @@ onMounted(() => {
   // suit que le redimensionnement de la fenêtre, on le prévient donc explicitement.
   resizeObserver = new ResizeObserver(() => {
     map?.resize()
-    if (!userHasMoved) fitToEtapes()
+    if (!userHasMoved) fitToContent(false)
   })
   resizeObserver.observe(mapContainer.value)
 
@@ -197,7 +243,20 @@ watch(
   },
 )
 
+// Passage à une autre étape sans démonter la carte (étape précédente / suivante)
+watch(
+  () => [props.focusedId, props.pois],
+  () => {
+    if (!map?.isStyleLoaded()) return
+    renderPoiMarkers()
+    userHasMoved = false
+    fitToContent(true)
+    applyHighlight()
+  },
+)
+
 watch(() => props.highlightedId, applyHighlight)
+watch(() => props.highlightedPoiId, applyPoiHighlight)
 
 onUnmounted(() => {
   resizeObserver?.disconnect()
@@ -233,10 +292,41 @@ onUnmounted(() => {
   line-height: 1;
   cursor: pointer;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
-  transition: transform 0.15s ease;
+  z-index: 2;
+  /* maplibre positionne les marqueurs via transform : on anime la taille, pas un scale */
+  transition:
+    opacity 0.2s,
+    width 0.15s ease,
+    height 0.15s ease;
 }
-.etape-marker.is-highlighted {
-  transform: scale(1.25);
-  z-index: 1;
+.poi-marker {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 2px solid var(--color-bg);
+  border-radius: 50%;
+  background: #fff;
+  font-size: 0.8rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+  /* maplibre positionne les marqueurs via transform : on anime la taille, pas un scale */
+  transition:
+    opacity 0.2s,
+    width 0.15s ease,
+    height 0.15s ease;
+}
+.etape-marker.is-highlighted,
+.poi-marker.is-highlighted {
+  width: 32px;
+  height: 32px;
+  z-index: 3;
+}
+.maplibregl-popup-content {
+  color: #1a1a1a;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  padding: 0.35rem 0.6rem;
 }
 </style>
