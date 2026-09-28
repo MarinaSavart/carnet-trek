@@ -27,11 +27,17 @@ export const useTreksStore = defineStore('treks', () => {
     return trek
   }
 
+  async function updateTrek(id: string, formData: FormData): Promise<Trek> {
+    const trek = await api.updateTrek(id, formData)
+    treksById.value.set(trek._id, trek)
+    return trek
+  }
+
   async function deleteTrek(id: string): Promise<void> {
     await api.deleteTrek(id)
     treksById.value.delete(id)
     summaries.value = summaries.value.filter((t) => t._id !== id)
   }
 
-  return { summaries, loadSummaries, loadTrek, createTrek, deleteTrek }
+  return { summaries, loadSummaries, loadTrek, createTrek, updateTrek, deleteTrek }
 })

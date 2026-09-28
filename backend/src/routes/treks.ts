@@ -10,9 +10,10 @@ import {
   createTrek,
   deleteTrek,
   listTrekSummaries,
+  updateTrek,
   type EtapeFiles,
 } from '../services/trekService.js'
-import { trekInputSchema } from '../validation/trek.js'
+import { trekInputSchema, trekUpdateSchema } from '../validation/trek.js'
 
 const router = Router()
 
@@ -25,6 +26,8 @@ const FILE_FIELD = /^etapes\[(\d+)\]\[(gpx|photos)\]$/
 // Fichiers gardés en mémoire le temps de tout valider, puis écrits sur disque par le service
 const upload = multer({
   storage: multer.memoryStorage(),
+  // Noms de fichiers en UTF-8 (sinon « Étape » devient « Ãtape »)
+  defParamCharset: 'utf8',
   limits: { fileSize: config.maxFileSizeMb * 1024 * 1024, files: config.maxFilesPerRequest },
   fileFilter: (_req, file, callback) => {
     const kind = FILE_FIELD.exec(file.fieldname)?.[2]
@@ -78,6 +81,16 @@ router.post('/', requireAuth, upload.any(), async (req, res) => {
   const files = groupFilesByEtape((req.files as Express.Multer.File[]) ?? [], input.etapes.length)
   const trek = await createTrek(input, files, req.user!._id)
   res.status(201).json(trek)
+})
+
+// Modification : même format multipart que la création (voir validation/trek.ts)
+router.put('/:id', requireAuth, upload.any(), async (req, res) => {
+  const id = String(req.params.id)
+  if (!isValidObjectId(id)) throw new HttpError(404, 'Trek introuvable')
+  const input = trekUpdateSchema.parse(parseJsonField(req.body.data))
+  const files = groupFilesByEtape((req.files as Express.Multer.File[]) ?? [], input.etapes.length)
+  const trek = await updateTrek(id, input, files, req.user!._id)
+  res.json(trek)
 })
 
 router.delete('/:id', requireAuth, async (req, res) => {

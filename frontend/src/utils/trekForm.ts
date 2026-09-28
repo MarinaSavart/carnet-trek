@@ -1,4 +1,4 @@
-import type { Difficulty } from '../types/trek'
+import type { Difficulty, Trek } from '../types/trek'
 import type { ParsedGpx } from './gpx'
 
 export interface PhotoDraft {
@@ -8,8 +8,17 @@ export interface PhotoDraft {
   url: string
 }
 
+/** Photo déjà enregistrée sur le serveur (modification d'un trek) */
+export interface ExistingPhoto {
+  id: string
+  url: string
+  name: string
+}
+
 export interface EtapeDraft {
   key: string
+  /** Identifiant de l'étape en base ; null pour une nouvelle étape */
+  id: string | null
   name: string
   description: string
   difficulty: Difficulty
@@ -21,7 +30,14 @@ export interface EtapeDraft {
   elevationGain: number | null
   elevationLoss: number | null
   durationMin: number | null
+  /** Nouvelles photos, pas encore envoyées */
   photos: PhotoDraft[]
+  /** Modification : photos déjà en ligne, conservées tant qu'elles restent dans la liste */
+  existingPhotos: ExistingPhoto[]
+  /** Modification : l'étape avait une trace GPX au chargement du formulaire */
+  hadGpx: boolean
+  /** Modification : nom de la trace GPX actuelle, null si retirée (ou remplacée) */
+  existingGpxName: string | null
 }
 
 export interface TrekDraft {
@@ -42,6 +58,7 @@ export interface TrekDraftErrors {
 export function createEtapeDraft(): EtapeDraft {
   return {
     key: crypto.randomUUID(),
+    id: null,
     name: '',
     description: '',
     difficulty: 'moyen',
@@ -52,6 +69,38 @@ export function createEtapeDraft(): EtapeDraft {
     elevationLoss: null,
     durationMin: null,
     photos: [],
+    existingPhotos: [],
+    hadGpx: false,
+    existingGpxName: null,
+  }
+}
+
+/** Pré-remplit le formulaire avec un trek existant (modification) */
+export function trekToDraft(trek: Trek): TrekDraft {
+  return {
+    name: trek.name,
+    region: trek.region ?? '',
+    description: trek.description ?? '',
+    etapes: [...trek.etapes]
+      .sort((a, b) => a.order - b.order)
+      .map((etape) => ({
+        ...createEtapeDraft(),
+        id: etape._id,
+        name: etape.name,
+        description: etape.description ?? '',
+        difficulty: etape.difficulty,
+        distanceKm: etape.distanceKm,
+        elevationGain: etape.elevationGain,
+        elevationLoss: etape.elevationLoss,
+        durationMin: etape.durationMin,
+        existingPhotos: (etape.photos ?? []).map((photo) => ({
+          id: photo._id,
+          url: photo.url,
+          name: photo.originalName ?? 'Photo',
+        })),
+        hadGpx: Boolean(etape.gpxFile),
+        existingGpxName: etape.gpxFile?.originalName ?? null,
+      })),
   }
 }
 
@@ -86,7 +135,7 @@ export function hasErrors(errors: TrekDraftErrors): boolean {
 }
 
 /**
- * Corps multipart attendu par POST /api/treks :
+ * Corps multipart attendu par POST /api/treks (création) et PUT /api/treks/:id (modification) :
  *   data                → JSON du trek (les stats saisies priment sur celles du GPX)
  *   etapes[i][gpx]      → fichier GPX d'origine, analysé à nouveau par le serveur
  *   etapes[i][photos]   → photos de l'étape
@@ -98,6 +147,12 @@ export function draftToFormData(draft: TrekDraft): FormData {
     region: draft.region.trim(),
     description: draft.description.trim(),
     etapes: draft.etapes.map((etape) => ({
+      // Modification : étape existante, trace à retirer, photos à conserver
+      ...(etape.id && {
+        _id: etape.id,
+        removeGpx: etape.hadGpx && !etape.existingGpxName && !etape.gpxFile,
+        keepPhotoIds: etape.existingPhotos.map((photo) => photo.id),
+      }),
       name: etape.name.trim(),
       description: etape.description.trim(),
       difficulty: etape.difficulty,

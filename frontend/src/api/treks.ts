@@ -31,6 +31,13 @@ export async function createTrek(formData: FormData): Promise<Trek> {
   return withAbsoluteUrls(await request<Trek>('/treks', { method: 'POST', body: formData }))
 }
 
+/** Modification, même format que la création (voir utils/trekForm.ts) */
+export async function updateTrek(id: string, formData: FormData): Promise<Trek> {
+  return withAbsoluteUrls(
+    await request<Trek>(`/treks/${encodeURIComponent(id)}`, { method: 'PUT', body: formData }),
+  )
+}
+
 export async function deleteTrek(id: string): Promise<void> {
   await request<void>(`/treks/${encodeURIComponent(id)}`, { method: 'DELETE' })
 }

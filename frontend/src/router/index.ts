@@ -28,7 +28,13 @@ const router = createRouter({
     {
       path: '/treks/new',
       name: 'trek-create',
-      component: () => import('../views/TrekCreate.vue'),
+      component: () => import('../views/TrekForm.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/treks/:id/modifier',
+      name: 'trek-edit',
+      component: () => import('../views/TrekForm.vue'),
       meta: { requiresAuth: true },
     },
     { path: '/treks/:id', name: 'trek-detail', component: TrekDetail },

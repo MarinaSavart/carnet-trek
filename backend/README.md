@@ -57,17 +57,18 @@ Avec Docker Compose, `MONGO_URI` vaut `mongodb://mongo:27017/carnet-trek` (nom d
 
 ## Endpoints
 
-| Méthode     | Route                | Description                                                    | Réponse                       |
-| ----------- | -------------------- | -------------------------------------------------------------- | ----------------------------- |
-| `GET`       | `/api/treks`         | Liste allégée (totaux, photo de couverture)                    | `200`                         |
-| `GET`       | `/api/treks/:id`     | Trek complet : étapes, tracés, profils, POI, photos            | `200` / `404`                 |
-| `POST` 🔒   | `/api/treks`         | Création (multipart, voir ci-dessous)                          | `201` / `400` / `401` / `413` |
-| `DELETE` 🔒 | `/api/treks/:id`     | Suppression du trek **et de ses fichiers** (auteur uniquement) | `204` / `401` / `403` / `404` |
-| `GET`       | `/uploads/…`         | Fichiers envoyés (GPX, photos)                                 | `200` / `404`                 |
-| `GET`       | `/api/auth/me`       | Utilisateur connecté (`{ user: null }` sinon)                  | `200`                         |
-| `POST`      | `/api/auth/register` | Inscription `{ email, name, password }` + ouverture de session | `201` / `400` / `403` / `409` |
-| `POST`      | `/api/auth/login`    | Connexion `{ email, password }`                                | `200` / `401` / `429`         |
-| `POST`      | `/api/auth/logout`   | Déconnexion                                                    | `204`                         |
+| Méthode     | Route                | Description                                                    | Réponse                               |
+| ----------- | -------------------- | -------------------------------------------------------------- | ------------------------------------- |
+| `GET`       | `/api/treks`         | Liste allégée (totaux, photo de couverture)                    | `200`                                 |
+| `GET`       | `/api/treks/:id`     | Trek complet : étapes, tracés, profils, POI, photos            | `200` / `404`                         |
+| `POST` 🔒   | `/api/treks`         | Création (multipart, voir ci-dessous)                          | `201` / `400` / `401` / `413`         |
+| `PUT` 🔒    | `/api/treks/:id`     | Modification (multipart, auteur uniquement, voir ci-dessous)   | `200` / `400` / `401` / `403` / `404` |
+| `DELETE` 🔒 | `/api/treks/:id`     | Suppression du trek **et de ses fichiers** (auteur uniquement) | `204` / `401` / `403` / `404`         |
+| `GET`       | `/uploads/…`         | Fichiers envoyés (GPX, photos)                                 | `200` / `404`                         |
+| `GET`       | `/api/auth/me`       | Utilisateur connecté (`{ user: null }` sinon)                  | `200`                                 |
+| `POST`      | `/api/auth/register` | Inscription `{ email, name, password }` + ouverture de session | `201` / `400` / `403` / `409`         |
+| `POST`      | `/api/auth/login`    | Connexion `{ email, password }`                                | `200` / `401` / `429`                 |
+| `POST`      | `/api/auth/logout`   | Déconnexion                                                    | `204`                                 |
 
 🔒 : connexion requise. Les lectures sont publiques.
 
@@ -77,7 +78,7 @@ Les erreurs ont toujours la forme `{ "error": "message", "details"?: ["…"] }`.
 
 - **Session** : un jeton JWT signé (HS256) dans un cookie `ct_session` `httpOnly` (illisible par le JavaScript de la page), `SameSite=Lax`, `Secure` en production. Le front et l'API sont servis sur la même origine grâce au proxy de Vite, le cookie reste donc « first-party ».
 - **Mots de passe** : hachés avec scrypt (sel aléatoire, paramètres OWASP), 10 caractères minimum. Jamais renvoyés par l'API.
-- **Propriété** : chaque trek créé a un auteur (`owner`) ; lui seul peut le supprimer (et plus tard le modifier). Les treks sans auteur (créés avant l'authentification, ou par le seed) sont gérables par tout utilisateur connecté.
+- **Propriété** : chaque trek créé a un auteur (`owner`) ; lui seul peut le modifier ou le supprimer. Les treks sans auteur (créés avant l'authentification, ou par le seed) sont gérables par tout utilisateur connecté.
 - **Révocation** : chaque utilisateur a un `tokenVersion` ; l'incrémenter invalide toutes ses sessions.
 - **Anti-bruteforce** : 10 échecs de connexion par IP et par quart d'heure, 5 inscriptions par IP et par heure. Réponse identique (message et temps) que l'email existe ou non.
 
@@ -118,10 +119,24 @@ Quand une étape a un GPX, le serveur l'analyse : tracé, profil d'altitude et p
 
 Tout est validé avant la moindre écriture ; si l'enregistrement échoue, les fichiers déjà écrits sont supprimés.
 
+### Modification d'un trek
+
+`PUT /api/treks/:id`, même format que la création. Dans `data`, chaque étape peut en plus porter :
+
+| Champ                 | Effet                                                                             |
+| --------------------- | --------------------------------------------------------------------------------- |
+| `_id`                 | Étape existante à conserver (sinon : nouvelle étape)                              |
+| `removeGpx: true`     | Retire sa trace GPX (tracé, profil, points d'intérêt)                             |
+| `keepPhotoIds: [...]` | Photos existantes à garder ; les autres sont supprimées (absent : toutes gardées) |
+
+- L'ordre de la liste devient l'ordre des étapes ; une étape existante absente de la liste est supprimée avec ses fichiers.
+- Un fichier `etapes[i][gpx]` remplace la trace de l'étape `i` ; les `etapes[i][photos]` s'ajoutent à ses photos.
+- Tout est validé avant d'écrire ; les fichiers remplacés ou retirés ne sont effacés qu'une fois la base à jour. En cas d'erreur, le trek reste inchangé.
+
 ## Stockage des fichiers
 
 ```
-uploads/treks/<trekId>/<etapeId>/trace.gpx
+uploads/treks/<trekId>/<etapeId>/trace-<uuid>.gpx
 uploads/treks/<trekId>/<etapeId>/photos/<uuid>.<ext>
 ```
 

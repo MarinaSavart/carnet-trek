@@ -49,8 +49,10 @@ async function save(relativePath: string[], buffer: Buffer): Promise<string> {
   return [UPLOADS_URL_PREFIX, ...relativePath].join('/')
 }
 
+// Nom unique à chaque envoi : les fichiers sont servis avec un cache « immutable » ;
+// un GPX remplacé sous le même nom resterait servi dans son ancienne version.
 export async function saveGpx(trekId: string, etapeId: string, file: IncomingFile) {
-  const url = await save(['treks', trekId, etapeId, 'trace.gpx'], file.buffer)
+  const url = await save(['treks', trekId, etapeId, `trace-${randomUUID()}.gpx`], file.buffer)
   return { url, originalName: file.originalname }
 }
 
@@ -68,4 +70,20 @@ export async function savePhoto(trekId: string, etapeId: string, file: IncomingF
 
 export async function removeTrekFiles(trekId: string): Promise<void> {
   await rm(trekDir(trekId), { recursive: true, force: true })
+}
+
+export async function removeEtapeFiles(trekId: string, etapeId: string): Promise<void> {
+  await rm(path.join(trekDir(trekId), etapeId), { recursive: true, force: true })
+}
+
+/**
+ * Supprime un fichier à partir de son URL publique (/uploads/treks/…).
+ * Garde-fou : le chemin obtenu doit rester dans le dossier du trek concerné.
+ */
+export async function removeUpload(url: string, trekId: string): Promise<void> {
+  const prefix = `${UPLOADS_URL_PREFIX}/`
+  if (!url.startsWith(prefix)) return
+  const absolute = path.resolve(config.uploadDir, ...url.slice(prefix.length).split('/'))
+  if (!absolute.startsWith(trekDir(trekId) + path.sep)) return
+  await rm(absolute, { force: true })
 }
