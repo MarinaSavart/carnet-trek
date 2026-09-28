@@ -4,14 +4,16 @@ import { isValidObjectId } from 'mongoose'
 import { config } from '../config.js'
 import { HttpError } from '../lib/errors.js'
 import { PHOTO_EXTENSIONS } from '../lib/storage.js'
+import { requireAuth } from '../middleware/auth.js'
 import { Trek } from '../models/Trek.js'
 import {
   createTrek,
   deleteTrek,
   listTrekSummaries,
+  updateTrek,
   type EtapeFiles,
 } from '../services/trekService.js'
-import { trekInputSchema } from '../validation/trek.js'
+import { trekInputSchema, trekUpdateSchema } from '../validation/trek.js'
 
 const router = Router()
 
@@ -24,6 +26,8 @@ const FILE_FIELD = /^etapes\[(\d+)\]\[(gpx|photos)\]$/
 // Fichiers gardés en mémoire le temps de tout valider, puis écrits sur disque par le service
 const upload = multer({
   storage: multer.memoryStorage(),
+  // Noms de fichiers en UTF-8 (sinon « Étape » devient « Ãtape »)
+  defParamCharset: 'utf8',
   limits: { fileSize: config.maxFileSizeMb * 1024 * 1024, files: config.maxFilesPerRequest },
   fileFilter: (_req, file, callback) => {
     const kind = FILE_FIELD.exec(file.fieldname)?.[2]
@@ -71,16 +75,28 @@ router.get('/:id', async (req, res) => {
   res.json(trek)
 })
 
-router.post('/', upload.any(), async (req, res) => {
+// requireAuth avant multer : un visiteur non connecté ne peut pas faire charger de fichiers
+router.post('/', requireAuth, upload.any(), async (req, res) => {
   const input = trekInputSchema.parse(parseJsonField(req.body.data))
   const files = groupFilesByEtape((req.files as Express.Multer.File[]) ?? [], input.etapes.length)
-  const trek = await createTrek(input, files)
+  const trek = await createTrek(input, files, req.user!._id)
   res.status(201).json(trek)
 })
 
-router.delete('/:id', async (req, res) => {
-  const deleted = isValidObjectId(req.params.id) && (await deleteTrek(req.params.id))
-  if (!deleted) throw new HttpError(404, 'Trek introuvable')
+// Modification : même format multipart que la création (voir validation/trek.ts)
+router.put('/:id', requireAuth, upload.any(), async (req, res) => {
+  const id = String(req.params.id)
+  if (!isValidObjectId(id)) throw new HttpError(404, 'Trek introuvable')
+  const input = trekUpdateSchema.parse(parseJsonField(req.body.data))
+  const files = groupFilesByEtape((req.files as Express.Multer.File[]) ?? [], input.etapes.length)
+  const trek = await updateTrek(id, input, files, req.user!._id)
+  res.json(trek)
+})
+
+router.delete('/:id', requireAuth, async (req, res) => {
+  const id = String(req.params.id)
+  if (!isValidObjectId(id)) throw new HttpError(404, 'Trek introuvable')
+  await deleteTrek(id, req.user!._id)
   res.status(204).send()
 })
 

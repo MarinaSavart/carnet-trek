@@ -28,44 +28,62 @@ L'API écoute sur http://localhost:3000.
 
 ## Scripts
 
-| Commande                  | Description                                                 |
-| ------------------------- | ----------------------------------------------------------- |
-| `npm run dev`             | Lancement avec rechargement automatique (tsx watch)         |
-| `npm run build`           | Compilation TypeScript dans `dist/`                         |
-| `npm start`               | Lancement de la version compilée                            |
-| `npm run seed`            | Ajoute les treks d'exemple absents (repérés par leur nom)   |
-| `npm run seed -- --reset` | Supprime **tous** les treks et leurs fichiers, puis re-seed |
-| `npm run lint`            | ESLint                                                      |
-| `npm run type-check`      | Vérification des types                                      |
+| Commande                                 | Description                                                 |
+| ---------------------------------------- | ----------------------------------------------------------- |
+| `npm run dev`                            | Lancement avec rechargement automatique (tsx watch)         |
+| `npm run build`                          | Compilation TypeScript dans `dist/`                         |
+| `npm start`                              | Lancement de la version compilée                            |
+| `npm run seed`                           | Ajoute les treks d'exemple absents (repérés par leur nom)   |
+| `npm run seed -- --reset`                | Supprime **tous** les treks et leurs fichiers, puis re-seed |
+| `npm run create-user -- <email> "<nom>"` | Crée un compte (mot de passe demandé au clavier)            |
+| `npm run lint`                           | ESLint                                                      |
+| `npm run type-check`                     | Vérification des types                                      |
 
 ## Variables d'environnement
 
-| Variable                | Défaut                                        | Description                                                      |
-| ----------------------- | --------------------------------------------- | ---------------------------------------------------------------- |
-| `PORT`                  | `3000`                                        | Port du serveur                                                  |
-| `MONGO_URI`             | `mongodb://127.0.0.1:27017/carnet-trek`       | Connexion à MongoDB                                              |
-| `UPLOAD_DIR`            | `uploads`                                     | Dossier des fichiers envoyés (relatif à `backend/`)              |
-| `CORS_ORIGIN`           | `http://localhost:5173,http://127.0.0.1:5173` | Origines du front autorisées, séparées par des virgules          |
-| `MAX_FILE_SIZE_MB`      | `20`                                          | Taille maximale d'un fichier envoyé                              |
-| `MAX_FILES_PER_REQUEST` | `60`                                          | Nombre maximal de fichiers par envoi (borne la mémoire utilisée) |
+| Variable                | Défaut                                        | Description                                                         |
+| ----------------------- | --------------------------------------------- | ------------------------------------------------------------------- |
+| `PORT`                  | `3000`                                        | Port du serveur                                                     |
+| `MONGO_URI`             | `mongodb://127.0.0.1:27017/carnet-trek`       | Connexion à MongoDB                                                 |
+| `UPLOAD_DIR`            | `uploads`                                     | Dossier des fichiers envoyés (relatif à `backend/`)                 |
+| `CORS_ORIGIN`           | `http://localhost:5173,http://127.0.0.1:5173` | Origines du front autorisées, séparées par des virgules             |
+| `MAX_FILE_SIZE_MB`      | `20`                                          | Taille maximale d'un fichier envoyé                                 |
+| `MAX_FILES_PER_REQUEST` | `60`                                          | Nombre maximal de fichiers par envoi (borne la mémoire utilisée)    |
+| `JWT_SECRET`            | — (**obligatoire en production**)             | Secret de signature des sessions, 32 caractères minimum             |
+| `SESSION_DAYS`          | `7`                                           | Durée d'une session                                                 |
+| `ALLOW_REGISTRATION`    | `true`                                        | `false` : plus d'inscription libre, comptes créés via `create-user` |
 
 Avec Docker Compose, `MONGO_URI` vaut `mongodb://mongo:27017/carnet-trek` (nom du service Mongo).
 
 ## Endpoints
 
-| Méthode  | Route            | Description                                         | Réponse               |
-| -------- | ---------------- | --------------------------------------------------- | --------------------- |
-| `GET`    | `/api/treks`     | Liste allégée (totaux, photo de couverture)         | `200`                 |
-| `GET`    | `/api/treks/:id` | Trek complet : étapes, tracés, profils, POI, photos | `200` / `404`         |
-| `POST`   | `/api/treks`     | Création (multipart, voir ci-dessous)               | `201` / `400` / `413` |
-| `DELETE` | `/api/treks/:id` | Suppression du trek **et de ses fichiers**          | `204` / `404`         |
-| `GET`    | `/uploads/…`     | Fichiers envoyés (GPX, photos)                      | `200` / `404`         |
+| Méthode     | Route                | Description                                                    | Réponse                               |
+| ----------- | -------------------- | -------------------------------------------------------------- | ------------------------------------- |
+| `GET`       | `/api/treks`         | Liste allégée (totaux, photo de couverture)                    | `200`                                 |
+| `GET`       | `/api/treks/:id`     | Trek complet : étapes, tracés, profils, POI, photos            | `200` / `404`                         |
+| `POST` 🔒   | `/api/treks`         | Création (multipart, voir ci-dessous)                          | `201` / `400` / `401` / `413`         |
+| `PUT` 🔒    | `/api/treks/:id`     | Modification (multipart, auteur uniquement, voir ci-dessous)   | `200` / `400` / `401` / `403` / `404` |
+| `DELETE` 🔒 | `/api/treks/:id`     | Suppression du trek **et de ses fichiers** (auteur uniquement) | `204` / `401` / `403` / `404`         |
+| `GET`       | `/uploads/…`         | Fichiers envoyés (GPX, photos)                                 | `200` / `404`                         |
+| `GET`       | `/api/auth/me`       | Utilisateur connecté (`{ user: null }` sinon)                  | `200`                                 |
+| `POST`      | `/api/auth/register` | Inscription `{ email, name, password }` + ouverture de session | `201` / `400` / `403` / `409`         |
+| `POST`      | `/api/auth/login`    | Connexion `{ email, password }`                                | `200` / `401` / `429`                 |
+| `POST`      | `/api/auth/logout`   | Déconnexion                                                    | `204`                                 |
+
+🔒 : connexion requise. Les lectures sont publiques.
 
 Les erreurs ont toujours la forme `{ "error": "message", "details"?: ["…"] }`.
 
+## Authentification
+
+- **Session** : un jeton JWT signé (HS256) dans un cookie `ct_session` `httpOnly` (illisible par le JavaScript de la page), `SameSite=Lax`, `Secure` en production. Le front et l'API sont servis sur la même origine grâce au proxy de Vite, le cookie reste donc « first-party ».
+- **Mots de passe** : hachés avec scrypt (sel aléatoire, paramètres OWASP), 10 caractères minimum. Jamais renvoyés par l'API.
+- **Propriété** : chaque trek créé a un auteur (`owner`) ; lui seul peut le modifier ou le supprimer. Les treks sans auteur (créés avant l'authentification, ou par le seed) sont gérables par tout utilisateur connecté.
+- **Révocation** : chaque utilisateur a un `tokenVersion` ; l'incrémenter invalide toutes ses sessions.
+- **Anti-bruteforce** : 10 échecs de connexion par IP et par quart d'heure, 5 inscriptions par IP et par heure. Réponse identique (message et temps) que l'email existe ou non.
+
 ## Sécurité
 
-- **Pas d'authentification** pour l'instant : l'API est prévue pour un usage local. Ne pas l'exposer sur Internet en l'état.
 - **CORS** : seules les origines de `CORS_ORIGIN` (le front) peuvent appeler l'API depuis un navigateur.
 - **CSRF** : les requêtes qui modifient des données (`POST`, `DELETE`…) doivent envoyer l'en-tête `X-Requested-With: carnet-trek`, sinon `403`.
 - **Fichiers envoyés** : les photos sont vérifiées d'après leur contenu réel (signature), pas le type annoncé ; les GPX invalides (entités inconnues, XML mal formé) sont refusés. Tout ce qui est servi sous `/uploads` porte `Content-Security-Policy: sandbox` et `nosniff`, et les GPX sont servis en téléchargement : aucun contenu envoyé ne peut s'exécuter dans le navigateur.
@@ -82,7 +100,13 @@ Requête `multipart/form-data` :
 | `etapes[i][photos]` | Photos de l'étape `i` (facultatif, plusieurs ; jpg/png/webp/avif) |
 
 ```bash
-curl -X POST http://localhost:3000/api/treks \
+# 1. Connexion : le cookie de session est enregistré dans cookies.txt
+curl -c cookies.txt -X POST http://localhost:3000/api/auth/login \
+  -H 'X-Requested-With: carnet-trek' -H 'Content-Type: application/json' \
+  -d '{"email":"moi@exemple.fr","password":"mon-mot-de-passe"}'
+
+# 2. Création, avec ce cookie
+curl -b cookies.txt -X POST http://localhost:3000/api/treks \
   -H 'X-Requested-With: carnet-trek' \
   -F 'data={"name":"Laugavegur","region":"Islande","etapes":[
         {"name":"Landmannalaugar → Hrafntinnusker","difficulty":"difficile"},
@@ -95,10 +119,24 @@ Quand une étape a un GPX, le serveur l'analyse : tracé, profil d'altitude et p
 
 Tout est validé avant la moindre écriture ; si l'enregistrement échoue, les fichiers déjà écrits sont supprimés.
 
+### Modification d'un trek
+
+`PUT /api/treks/:id`, même format que la création. Dans `data`, chaque étape peut en plus porter :
+
+| Champ                 | Effet                                                                             |
+| --------------------- | --------------------------------------------------------------------------------- |
+| `_id`                 | Étape existante à conserver (sinon : nouvelle étape)                              |
+| `removeGpx: true`     | Retire sa trace GPX (tracé, profil, points d'intérêt)                             |
+| `keepPhotoIds: [...]` | Photos existantes à garder ; les autres sont supprimées (absent : toutes gardées) |
+
+- L'ordre de la liste devient l'ordre des étapes ; une étape existante absente de la liste est supprimée avec ses fichiers.
+- Un fichier `etapes[i][gpx]` remplace la trace de l'étape `i` ; les `etapes[i][photos]` s'ajoutent à ses photos.
+- Tout est validé avant d'écrire ; les fichiers remplacés ou retirés ne sont effacés qu'une fois la base à jour. En cas d'erreur, le trek reste inchangé.
+
 ## Stockage des fichiers
 
 ```
-uploads/treks/<trekId>/<etapeId>/trace.gpx
+uploads/treks/<trekId>/<etapeId>/trace-<uuid>.gpx
 uploads/treks/<trekId>/<etapeId>/photos/<uuid>.<ext>
 ```
 
@@ -123,9 +161,15 @@ src/
 ├── models/Trek.ts           # schémas Mongoose
 ├── validation/trek.ts       # schéma zod du JSON reçu
 ├── routes/treks.ts          # routes /api/treks (multer pour les fichiers)
+├── routes/auth.ts           # inscription, connexion, déconnexion, me
+├── middleware/auth.ts       # loadUser (lit la session) / requireAuth
+├── lib/password.ts          # hachage scrypt
+├── lib/session.ts           # cookie + JWT
+├── models/User.ts
 ├── services/trekService.ts  # création / suppression / liste
 ├── lib/gpx.ts               # analyse GPX (même logique que le front)
 ├── lib/storage.ts           # écriture / suppression des fichiers
 ├── middleware/errorHandler.ts
-└── scripts/seed.ts          # données d'exemple (seed/)
+├── scripts/seed.ts          # données d'exemple (seed/)
+└── scripts/createUser.ts    # création de compte en ligne de commande
 ```

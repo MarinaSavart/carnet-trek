@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, reactive, ref } from 'vue'
-import { onBeforeRouteLeave, useRouter } from 'vue-router'
+import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
+import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
 import { useTreksStore } from '../stores/treks'
+import { useAuthStore } from '../stores/auth'
 import EtapeFormCard from '../components/EtapeFormCard.vue'
 import { ApiError } from '../api/treks'
 import { formatDuration } from '../utils/format'
@@ -10,14 +11,53 @@ import {
   createTrekDraft,
   draftToFormData,
   hasErrors,
+  trekToDraft,
   validateTrekDraft,
   type TrekDraftErrors,
 } from '../utils/trekForm'
 
+// Même formulaire pour la création (/treks/new) et la modification (/treks/:id/modifier)
+const route = useRoute()
 const router = useRouter()
 const store = useTreksStore()
+const auth = useAuthStore()
+
+const trekId = typeof route.params.id === 'string' ? route.params.id : null
+const isEdit = trekId !== null
 
 const draft = reactive(createTrekDraft())
+// Modification : le trek est chargé avant d'afficher le formulaire
+const isLoading = ref(isEdit)
+const loadError = ref<string | null>(null)
+// Passe à true à la première modification du brouillon (après chargement)
+const isDirty = ref(false)
+
+function trackChanges() {
+  watch(draft, () => (isDirty.value = true), { deep: true, once: true })
+}
+
+onMounted(async () => {
+  if (!trekId) {
+    trackChanges()
+    return
+  }
+  try {
+    const trek = await store.loadTrek(trekId)
+    if (!auth.canEdit(trek)) {
+      loadError.value = "Seul l'auteur de ce trek peut le modifier."
+      return
+    }
+    Object.assign(draft, trekToDraft(trek))
+    await nextTick()
+    trackChanges()
+  } catch (e) {
+    loadError.value = e instanceof Error ? e.message : 'Chargement impossible'
+  } finally {
+    isLoading.value = false
+  }
+})
+
+const backTo = isEdit ? `/treks/${trekId}` : '/'
 // Les erreurs ne s'affichent qu'après une première tentative d'envoi, puis se mettent à jour
 const submitted = ref(false)
 const errors = computed<TrekDraftErrors>(() =>
@@ -47,8 +87,11 @@ function moveEtape(index: number, direction: -1 | 1) {
 function removeEtape(index: number) {
   const etape = draft.etapes[index]
   if (!etape) return
-  const hasContent = etape.name.trim() || etape.gpx || etape.photos.length
-  if (hasContent && !window.confirm(`Supprimer l'étape « ${etape.name || index + 1} » ?`)) return
+  const hasContent = etape.id || etape.name.trim() || etape.gpx || etape.photos.length
+  const message = etape.id
+    ? `Supprimer l'étape « ${etape.name || index + 1} » ? Sa trace et ses photos seront supprimées à l'enregistrement.`
+    : `Supprimer l'étape « ${etape.name || index + 1} » ?`
+  if (hasContent && !window.confirm(message)) return
   etape.photos.forEach((p) => URL.revokeObjectURL(p.url))
   draft.etapes.splice(index, 1)
 }
@@ -65,12 +108,22 @@ async function submit() {
   isSubmitting.value = true
   serverError.value = null
   try {
-    const trek = await store.createTrek(draftToFormData(draft))
+    const formData = draftToFormData(draft)
+    const trek = trekId
+      ? await store.updateTrek(trekId, formData)
+      : await store.createTrek(formData)
     saved = true
     router.push(`/treks/${trek._id}`)
   } catch (e) {
+    // Session expirée pendant la saisie : le brouillon reste là, il suffit de se reconnecter
+    // (dans un autre onglet, pour ne rien perdre)
+    const sessionExpired = e instanceof ApiError && e.status === 401
     serverError.value = {
-      message: e instanceof Error ? e.message : 'Enregistrement impossible',
+      message: sessionExpired
+        ? 'Ta session a expiré : reconnecte-toi dans un autre onglet, puis renvoie le formulaire.'
+        : e instanceof Error
+          ? e.message
+          : 'Enregistrement impossible',
       details: e instanceof ApiError ? e.details : [],
     }
     await nextTick()
@@ -80,15 +133,9 @@ async function submit() {
   }
 }
 
-const isDirty = computed(
-  () =>
-    Boolean(draft.name.trim() || draft.description.trim()) ||
-    draft.etapes.some((e) => e.name.trim() || e.gpx || e.photos.length),
-)
-
 onBeforeRouteLeave(() => {
   if (saved || !isDirty.value) return true
-  return window.confirm('Quitter sans enregistrer ? Les informations saisies seront perdues.')
+  return window.confirm('Quitter sans enregistrer ? Les modifications seront perdues.')
 })
 
 // Aperçus locaux : une fois le trek enregistré, les photos sont servies par le backend
@@ -98,9 +145,16 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <form class="page" novalidate @submit.prevent="submit">
-    <RouterLink to="/" class="back-link">← Treks</RouterLink>
-    <h1>Nouveau trek</h1>
+  <div v-if="isLoading || loadError" class="page page-status">
+    <RouterLink :to="backTo" class="back-link">← Retour</RouterLink>
+    <p :role="loadError ? 'alert' : 'status'">{{ loadError ?? 'Chargement…' }}</p>
+  </div>
+
+  <form v-else class="page" novalidate @submit.prevent="submit">
+    <RouterLink :to="backTo" class="back-link"
+      >← {{ isEdit ? 'Retour au trek' : 'Treks' }}</RouterLink
+    >
+    <h1>{{ isEdit ? 'Modifier le trek' : 'Nouveau trek' }}</h1>
 
     <section class="section" aria-labelledby="trek-section-title">
       <h2 id="trek-section-title" class="section-title">Le trek</h2>
@@ -179,9 +233,15 @@ onBeforeUnmount(() => {
         {{ totals.distanceKm.toFixed(1) }} km · {{ formatDuration(totals.durationMin) }}
       </p>
       <div class="footer-actions">
-        <RouterLink to="/" class="btn">Annuler</RouterLink>
+        <RouterLink :to="backTo" class="btn">Annuler</RouterLink>
         <button type="submit" class="btn btn-primary" :disabled="isSubmitting">
-          {{ isSubmitting ? 'Enregistrement…' : 'Créer le trek' }}
+          {{
+            isSubmitting
+              ? 'Enregistrement…'
+              : isEdit
+                ? 'Enregistrer les modifications'
+                : 'Créer le trek'
+          }}
         </button>
       </div>
     </footer>
@@ -189,6 +249,9 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
+.page-status {
+  color: var(--color-text-muted);
+}
 .page {
   max-width: 820px;
   margin: 0 auto;

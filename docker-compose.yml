@@ -6,6 +6,9 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
+    environment:
+      # Vite relaie /api et /uploads vers le backend (réseau interne Docker)
+      - API_PROXY_TARGET=http://backend:3000
     depends_on:
       - backend
 

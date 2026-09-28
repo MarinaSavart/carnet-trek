@@ -73,6 +73,9 @@ const trekSchema = new Schema(
     region: { type: String, default: '' },
     description: { type: String, default: '' },
     etapes: { type: [etapeSchema], default: [] },
+    // Auteur du trek : seul lui peut le modifier ou le supprimer.
+    // Absent sur les treks créés avant l'authentification (et ceux du seed).
+    owner: { type: Schema.Types.ObjectId, ref: 'User', index: true },
   },
   { timestamps: true, versionKey: false },
 )

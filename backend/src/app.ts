@@ -1,11 +1,19 @@
+import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import express from 'express'
 import helmet from 'helmet'
 import { config, UPLOADS_URL_PREFIX } from './config.js'
+import { loadUser } from './middleware/auth.js'
 import { errorHandler } from './middleware/errorHandler.js'
+import authRouter from './routes/auth.js'
 import treksRouter from './routes/treks.js'
 
 const app = express()
+
+// Derrière le proxy de Vite (ou un reverse proxy en production), l'IP réelle du client
+// est dans X-Forwarded-For : nécessaire pour que la limite de tentatives vise la bonne IP.
+// Seuls les proxys locaux / réseau privé (Docker) sont crus.
+app.set('trust proxy', 'loopback, uniquelocal')
 
 // En-têtes de sécurité standard (nosniff, anti-iframe, CSP…) et masque « X-Powered-By ».
 // crossOriginResourcePolicy : le front (autre origine) doit pouvoir afficher les photos.
@@ -13,8 +21,10 @@ app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }))
 
 // Sans authentification, n'importe quel site ouvert dans le navigateur pourrait sinon
 // appeler l'API (et supprimer des treks) : seules les origines du front sont autorisées.
-app.use(cors({ origin: config.corsOrigins }))
+// credentials : le cookie de session accompagne les requêtes du front.
+app.use(cors({ origin: config.corsOrigins, credentials: true }))
 app.use(express.json())
+app.use(cookieParser())
 
 // Fichiers envoyés (GPX, photos) : noms uniques et jamais réécrits, donc cache long.
 // Ce sont des contenus fournis par les utilisateurs : on interdit toute exécution
@@ -48,6 +58,8 @@ app.use('/api', (req, res, next) => {
   res.status(403).json({ error: `En-tête ${CSRF_HEADER} manquant` })
 })
 
+app.use('/api', loadUser)
+app.use('/api/auth', authRouter)
 app.use('/api/treks', treksRouter)
 
 app.use('/api', (_req, res) => {

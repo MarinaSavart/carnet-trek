@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useTreksStore } from '../stores/treks'
+import { useAuthStore } from '../stores/auth'
 import { useTrek } from '../composables/useTrek'
 import DifficultyBadge from '../components/DifficultyBadge.vue'
 import TrekOverviewMap from '../components/TrekOverviewMap.vue'
@@ -17,6 +18,7 @@ import { getEtapeColor } from '../utils/etapeColors'
 const route = useRoute()
 const router = useRouter()
 const store = useTreksStore()
+const auth = useAuthStore()
 
 const { trek, error } = useTrek(() => route.params.id as string)
 
@@ -99,9 +101,12 @@ function openEtape(etapeId: string) {
     <header class="header">
       <div class="header-top">
         <RouterLink to="/" class="back-link">← Treks</RouterLink>
-        <button type="button" class="btn" :disabled="isDeleting" @click="removeTrek">
-          {{ isDeleting ? 'Suppression…' : 'Supprimer' }}
-        </button>
+        <div v-if="auth.canEdit(trek)" class="owner-actions">
+          <RouterLink :to="`/treks/${trek._id}/modifier`" class="btn">Modifier</RouterLink>
+          <button type="button" class="btn" :disabled="isDeleting" @click="removeTrek">
+            {{ isDeleting ? 'Suppression…' : 'Supprimer' }}
+          </button>
+        </div>
       </div>
       <h1>{{ trek.name }}</h1>
       <p class="region">{{ trek.region }}</p>
@@ -209,6 +214,10 @@ function openEtape(etapeId: string) {
   align-items: center;
   justify-content: space-between;
   gap: var(--space-sm);
+}
+.owner-actions {
+  display: flex;
+  gap: var(--space-xs);
 }
 .page-status {
   max-width: 1200px;

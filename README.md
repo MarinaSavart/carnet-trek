@@ -28,10 +28,12 @@ Le code est monté en volume : les modifications dans `src/` sont rechargées au
 docker compose ps                         # état des conteneurs
 docker compose logs -f frontend           # logs d'un service (frontend, backend, mongo)
 docker compose restart frontend           # après une modif du .env ou de vite.config.ts
-docker compose up -d --build frontend     # après une modif de package.json
+docker compose up -d --build -V backend frontend  # après une modif de package.json ou de docker-compose.yml
 docker compose down                       # tout arrêter
 docker compose down -v                    # tout arrêter ET supprimer les données Mongo
 ```
+
+> `-V` recrée les volumes `node_modules` des conteneurs : sans lui, un conteneur garde ses anciennes dépendances même après `--build`. Une variable ajoutée dans `docker-compose.yml` n'est prise en compte qu'à la recréation du conteneur (`up -d`), pas avec `restart`.
 
 ## Variables d'environnement
 

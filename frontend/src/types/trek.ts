@@ -34,6 +34,8 @@ export interface Photo {
   _id: string
   url: string
   caption?: string
+  /** Nom du fichier envoyé */
+  originalName?: string
 }
 
 /** Photo enrichie d'un libellé de contexte (ex. le nom de l'étape sur la page trek) */
@@ -51,6 +53,8 @@ export interface Etape {
   elevationLoss: number
   durationMin: number
   difficulty: Difficulty
+  /** Trace GPX d'origine, telle qu'envoyée */
+  gpxFile?: { url: string; originalName: string }
   gpxTrack?: GeoJSONLineString
   elevationProfile?: ElevationPoint[]
   pois: POI[]
@@ -71,6 +75,8 @@ export interface TrekSummary {
 }
 
 export interface Trek {
+  /** Identifiant de l'auteur ; absent pour les treks antérieurs à l'authentification */
+  owner?: string | null
   _id: string
   name: string
   description: string

@@ -63,6 +63,8 @@ async function loadGpx(file: File | undefined) {
     Object.assign(etape.value, {
       gpxFile: file,
       gpx,
+      // Une nouvelle trace remplace l'éventuelle trace actuelle
+      existingGpxName: null,
       distanceKm: gpx.distanceKm,
       elevationGain: gpx.elevationGain,
       elevationLoss: gpx.elevationLoss,
@@ -76,7 +78,7 @@ async function loadGpx(file: File | undefined) {
 }
 
 function removeGpx() {
-  Object.assign(etape.value, { gpxFile: null, gpx: null })
+  Object.assign(etape.value, { gpxFile: null, gpx: null, existingGpxName: null })
 }
 
 function onGpxDrop(e: DragEvent) {
@@ -99,6 +101,11 @@ function removePhoto(id: string) {
   const photo = etape.value.photos.find((p) => p.id === id)
   if (photo) URL.revokeObjectURL(photo.url)
   etape.value.photos = etape.value.photos.filter((p) => p.id !== id)
+}
+
+// Modification : retire une photo déjà en ligne (supprimée à l'enregistrement)
+function removeExistingPhoto(id: string) {
+  etape.value.existingPhotos = etape.value.existingPhotos.filter((p) => p.id !== id)
 }
 
 function onPhotosDrop(e: DragEvent) {
@@ -192,6 +199,23 @@ function onPhotosDrop(e: DragEvent) {
           </span>
           <button type="button" class="btn" @click="removeGpx">Retirer</button>
         </div>
+        <!-- Modification : trace déjà enregistrée -->
+        <div v-else-if="etape.existingGpxName" class="gpx-loaded">
+          <span class="gpx-name">✓ {{ etape.existingGpxName }}</span>
+          <span class="field-hint">trace actuelle</span>
+          <div class="gpx-actions">
+            <label class="btn">
+              Remplacer
+              <input
+                type="file"
+                accept=".gpx,application/gpx+xml"
+                class="visually-hidden"
+                @change="loadGpx(($event.target as HTMLInputElement).files?.[0])"
+              />
+            </label>
+            <button type="button" class="btn" @click="removeGpx">Retirer</button>
+          </div>
+        </div>
         <label
           v-else
           class="dropzone"
@@ -282,8 +306,19 @@ function onPhotosDrop(e: DragEvent) {
       <!-- Photos -->
       <div class="field span-2">
         <span class="field-label"> Photos <span class="field-hint">(facultatif)</span> </span>
-        <ul v-if="etape.photos.length" class="photos">
-          <li v-for="photo in etape.photos" :key="photo.id" class="photo">
+        <ul v-if="etape.existingPhotos.length || etape.photos.length" class="photos">
+          <li v-for="photo in etape.existingPhotos" :key="photo.id" class="photo">
+            <img :src="photo.url" :alt="photo.name" class="photo-image" />
+            <button
+              type="button"
+              class="photo-remove"
+              :aria-label="`Retirer ${photo.name}`"
+              @click="removeExistingPhoto(photo.id)"
+            >
+              ✕
+            </button>
+          </li>
+          <li v-for="photo in etape.photos" :key="photo.id" class="photo is-new">
             <img :src="photo.url" :alt="photo.file.name" class="photo-image" />
             <button
               type="button"
@@ -392,8 +427,17 @@ function onPhotosDrop(e: DragEvent) {
   font-weight: 600;
   word-break: break-all;
 }
-.gpx-loaded .btn {
+.gpx-loaded > .btn,
+.gpx-actions {
   margin-left: auto;
+}
+.gpx-actions {
+  display: flex;
+  gap: var(--space-xs);
+}
+.gpx-actions label.btn:focus-within {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
 .photos {
   display: grid;
@@ -406,6 +450,19 @@ function onPhotosDrop(e: DragEvent) {
 .photo {
   position: relative;
   aspect-ratio: 4 / 3;
+}
+/* Photo ajoutée, pas encore envoyée : la distingue de celles déjà en ligne */
+.photo.is-new::after {
+  content: 'Nouvelle';
+  position: absolute;
+  left: 4px;
+  bottom: 4px;
+  padding: 0.05rem 0.4rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  font-size: 0.65rem;
+  font-weight: 700;
 }
 .photo-image {
   width: 100%;
