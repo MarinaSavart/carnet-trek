@@ -1,0 +1,2 @@
+# Force LF dans le dépôt et à l'extraction, quel que soit l'OS (cohérent avec Prettier)
+* text=auto eol=lf

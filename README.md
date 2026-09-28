@@ -44,6 +44,20 @@ cp frontend/.env.example frontend/.env
 
 Les fichiers `.env` ne sont pas versionnés.
 
+## Qualité du code
+
+ESLint (lint) et Prettier (formatage) sont configurés dans `frontend/` et `backend/`, avec une config Prettier commune à la racine (`.prettierrc.json`). À lancer dans chaque dossier :
+
+```bash
+npm run lint          # vérifie le code
+npm run lint:fix      # corrige automatiquement ce qui peut l'être
+npm run format        # formate tous les fichiers
+npm run format:check  # vérifie le formatage sans modifier
+npm run type-check    # vérifie les types TypeScript
+```
+
+Dans VS Code, installer les extensions recommandées (ESLint, Prettier) : le formatage et les corrections ESLint s'appliquent à l'enregistrement.
+
 ## Structure
 
 ```
