@@ -7,4 +7,5 @@ maplibregl.setWorkerUrl(workerUrl)
 
 export default maplibregl
 
-export const MAP_STYLE_URL = 'https://tiles.openfreemap.org/styles/positron'
+// Styles OpenFreeMap disponibles : liberty, bright (couleur), positron (gris), dark, fiord
+export const MAP_STYLE_URL = 'https://tiles.openfreemap.org/styles/liberty'
