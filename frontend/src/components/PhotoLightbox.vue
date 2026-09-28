@@ -80,7 +80,8 @@ function onBackdropClick(e: MouseEvent) {
   box-sizing: border-box;
 }
 .lightbox::backdrop {
-  background: rgba(10, 14, 12, 0.92);
+  background: rgba(20, 29, 25, 0.94);
+  backdrop-filter: blur(4px);
 }
 .lightbox[open] {
   display: flex;

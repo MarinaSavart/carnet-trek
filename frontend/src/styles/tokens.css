@@ -1,38 +1,76 @@
+/*
+ * Ambiance « forêt au crépuscule » : vert sapin profond, crème chaud, sauge et or doux.
+ * Formes arrondies et ombres diffuses plutôt que des contrastes durs.
+ */
 :root {
   /* Couleurs */
-  --color-bg: #161f1b;
-  --color-surface: #212c26;
-  --color-surface-raised: #283730;
-  --color-text: #e8e4d9;
-  --color-text-muted: rgba(232, 228, 217, 0.65);
-  --color-accent: #6fcfc0;
-  --color-accent-hover: #8ae0d2;
+  --color-bg: #22302a;
+  --color-bg-deep: #1c2823;
+  --color-surface: #2a3a32;
+  --color-surface-raised: #33463c;
+  --color-border: rgba(239, 232, 218, 0.12);
+  --color-border-strong: rgba(239, 232, 218, 0.22);
+  --color-text: #efe8da;
+  --color-text-muted: rgba(239, 232, 218, 0.68);
+  --color-text-faint: rgba(239, 232, 218, 0.42);
+  --color-accent: #9dbf8f;
+  --color-accent-hover: #b4d1a7;
+  --color-accent-soft: rgba(157, 191, 143, 0.14);
+  /* Texte posé sur un fond d'accent */
+  --color-on-accent: #1c2823;
+  --color-gold: #d9b26f;
+  --color-danger: #e39a86;
+  --color-danger-soft: rgba(227, 154, 134, 0.12);
 
-  /* Difficulté (convention balisage rando) */
-  --color-diff-facile: #4caf6d;
-  --color-diff-moyen: #4a90d9;
-  --color-diff-difficile: #d9534f;
-  --color-diff-tres-difficile: #1a1a1a;
+  /* Difficulté : couleurs du balisage (vert, bleu, rouge, noir), adoucies */
+  --color-diff-facile: #8cbf7a;
+  --color-diff-moyen: #7fb0d8;
+  --color-diff-difficile: #df8a74;
+  --color-diff-tres-difficile: #141b17;
 
   /* Typo */
   --font-display: 'Big Shoulders Display', sans-serif;
   --font-body: 'Public Sans', sans-serif;
 
-  /* Structure — volontairement peu arrondi, pas l'esthétique "SaaS card" */
-  --radius: 2px;
-  --border-hairline: 1px solid rgba(232, 228, 217, 0.12);
+  /* Formes */
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 18px;
+  --radius-pill: 999px;
+  --border-hairline: 1px solid var(--color-border);
+  --shadow-card: 0 2px 10px rgba(10, 16, 13, 0.18);
+  --shadow-soft: 0 10px 30px rgba(10, 16, 13, 0.28);
+
+  /* Espacements */
   --space-xs: 0.5rem;
   --space-sm: 1rem;
   --space-md: 1.5rem;
   --space-lg: 2.5rem;
+
+  color-scheme: dark;
 }
 
 body {
-  background: var(--color-bg);
+  margin: 0;
+  min-height: 100vh;
+  /* Halo sauge très léger en haut de page, comme une lumière filtrée par les arbres */
+  background:
+    radial-gradient(1200px 600px at 15% -10%, rgba(157, 191, 143, 0.1), transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, rgba(217, 178, 111, 0.06), transparent 55%),
+    var(--color-bg);
+  background-attachment: fixed;
   color: var(--color-text);
   font-family: var(--font-body);
   line-height: 1.6;
-  margin: 0;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+a {
+  color: var(--color-accent);
 }
 
 h1,
@@ -46,6 +84,12 @@ h3 {
 
 h1 {
   font-size: 3rem;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 480px) {
+  h1 {
+    font-size: 2.4rem;
+  }
 }
 h2 {
   font-size: 2rem;
@@ -59,4 +103,26 @@ h3 {
   font-size: 2.5rem;
   font-weight: 500;
   line-height: 1;
+}
+
+/* Lien de retour, commun à toutes les pages */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.back-link:hover {
+  color: var(--color-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
 }

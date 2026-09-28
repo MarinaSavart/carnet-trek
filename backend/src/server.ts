@@ -15,7 +15,7 @@ mongoose
     if (String(err).includes('ENOTFOUND mongo')) {
       console.error(
         "\n→ L'hôte « mongo » n'existe que dans le réseau Docker. En local (npm run dev)," +
-          '\n  utilise MONGO_URI=mongodb://localhost:27017/carnet-trek dans backend/.env.\n',
+          '\n  utilise MONGO_URI=mongodb://127.0.0.1:27017/carnet-trek dans backend/.env.\n',
       )
     }
     process.exit(1)

@@ -322,9 +322,9 @@ function onPhotosDrop(e: DragEvent) {
   margin: 0;
   padding: var(--space-md) var(--space-md) var(--space-md);
   border: var(--border-hairline);
-  border-left: 3px solid var(--etape-color);
-  border-radius: var(--radius);
-  background: rgba(33, 44, 38, 0.5);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
 }
 .etape-legend {
   display: flex;
@@ -425,13 +425,14 @@ function onPhotosDrop(e: DragEvent) {
   padding: 0;
   border: none;
   border-radius: 50%;
-  background: rgba(10, 14, 12, 0.75);
+  background: rgba(28, 40, 35, 0.8);
   color: #fff;
   font-size: 0.7rem;
   cursor: pointer;
 }
 .photo-remove:hover,
 .photo-remove:focus-visible {
-  background: #c0392b;
+  background: var(--color-danger);
+  color: var(--color-on-accent);
 }
 </style>

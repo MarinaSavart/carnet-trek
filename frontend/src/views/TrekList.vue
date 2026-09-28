@@ -97,23 +97,45 @@ onMounted(load)
   margin: 0;
 }
 .treks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
   list-style: none;
   padding: 0;
+  margin-top: var(--space-md);
 }
 .trek-item {
-  border-bottom: var(--border-hairline);
+  border: var(--border-hairline);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+  transition:
+    translate 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+.trek-item:hover,
+.trek-item:focus-within {
+  translate: 0 -2px;
+  border-color: color-mix(in srgb, var(--color-accent) 50%, transparent);
+  box-shadow: var(--shadow-soft);
 }
 .trek-link {
   display: flex;
   align-items: center;
   gap: var(--space-md);
-  padding: var(--space-md) 0;
+  padding: var(--space-sm);
+  border-radius: inherit;
   text-decoration: none;
   color: inherit;
 }
+.trek-link:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
 .cover {
   flex-shrink: 0;
-  width: 120px;
+  width: 140px;
   aspect-ratio: 4 / 3;
   border-radius: var(--radius);
   object-fit: cover;
@@ -121,16 +143,25 @@ onMounted(load)
 .cover-empty {
   display: grid;
   place-items: center;
-  background: var(--color-surface);
+  background: var(--color-bg-deep);
   color: var(--color-text-muted);
   font-size: 1.75rem;
 }
 .trek-info {
   min-width: 0;
 }
+.trek-info h2 {
+  font-size: 1.7rem;
+  line-height: 1.15;
+}
+.trek-info .stat-number {
+  margin: var(--space-xs) 0 0;
+  font-size: 2rem;
+}
 .region {
   color: var(--color-text-muted);
-  margin: 0.25rem 0;
+  margin: 0.2rem 0 0;
+  font-size: 0.9rem;
 }
 .stat-unit {
   font-family: var(--font-body);

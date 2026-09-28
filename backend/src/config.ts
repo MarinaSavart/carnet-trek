@@ -2,7 +2,7 @@ import path from 'node:path'
 
 export const config = {
   port: Number(process.env.PORT ?? 3000),
-  mongoUri: process.env.MONGO_URI ?? 'mongodb://localhost:27017/carnet-trek',
+  mongoUri: process.env.MONGO_URI ?? 'mongodb://127.0.0.1:27017/carnet-trek',
   /** Dossier où sont écrits les fichiers envoyés (GPX, photos) */
   uploadDir: path.resolve(process.env.UPLOAD_DIR ?? 'uploads'),
   /** Origines du front autorisées à appeler l'API (CORS_ORIGIN, séparées par des virgules) */

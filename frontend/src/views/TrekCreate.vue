@@ -194,11 +194,6 @@ onBeforeUnmount(() => {
   margin: 0 auto;
   padding: var(--space-lg) var(--space-md) 0;
 }
-.back-link {
-  color: var(--color-text-muted);
-  text-decoration: none;
-  font-size: 0.9rem;
-}
 h1 {
   margin: var(--space-xs) 0 var(--space-md);
 }
@@ -291,10 +286,10 @@ h1 {
 .server-error {
   margin-bottom: var(--space-md);
   padding: var(--space-sm);
-  border: 1px solid #f08c89;
+  border: 1px solid var(--color-danger);
   border-radius: var(--radius);
-  background: rgba(240, 140, 137, 0.08);
-  color: #f08c89;
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
 }
 .server-error ul {
   margin: var(--space-xs) 0 0;

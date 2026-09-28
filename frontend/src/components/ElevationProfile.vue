@@ -314,7 +314,7 @@ function formatKm(km: number): string {
   touch-action: pan-y;
 }
 .grid line {
-  stroke: rgba(232, 228, 217, 0.1);
+  stroke: var(--color-border);
   stroke-width: 1;
 }
 .grid text {

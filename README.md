@@ -18,7 +18,7 @@ docker compose up -d --build
 | -------- | ------------------------------- |
 | Frontend | http://127.0.0.1:5173           |
 | API      | http://localhost:3000/api/treks |
-| MongoDB  | mongodb://localhost:27017       |
+| MongoDB  | mongodb://127.0.0.1:27017       |
 
 Le code est monté en volume : les modifications dans `src/` sont rechargées automatiquement.
 

@@ -63,7 +63,7 @@ function openEtape(etapeId: string) {
       </RouterLink>
 
       <p class="eyebrow">
-        <span class="etape-order">#{{ etape.order }}</span>
+        <span class="etape-order" aria-hidden="true">{{ etape.order }}</span>
         Étape {{ index + 1 }} sur {{ etapes.length }}
       </p>
       <div class="title-row">
@@ -175,25 +175,27 @@ function openEtape(etapeId: string) {
   padding: var(--space-lg) var(--space-md);
   color: var(--color-text-muted);
 }
-.back-link {
-  color: var(--color-text-muted);
-  text-decoration: none;
-  font-size: 0.9rem;
-}
 .eyebrow {
-  margin: var(--space-sm) 0 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: var(--space-sm) 0 0.25rem;
   color: var(--color-text-muted);
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 .etape-order {
-  color: var(--etape-color);
-  filter: brightness(1.4);
-  font-family: var(--font-display);
-  font-size: 1rem;
-  font-weight: 700;
-  margin-right: 0.25rem;
+  display: inline-grid;
+  place-items: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  background: var(--etape-color);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0;
 }
 .title-row {
   display: flex;
@@ -215,8 +217,13 @@ function openEtape(etapeId: string) {
 .stats {
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-between;
   gap: var(--space-md) var(--space-lg);
   margin: var(--space-md) 0;
+  padding: var(--space-md);
+  border: var(--border-hairline);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
 }
 .stat dt {
   color: var(--color-text-muted);
@@ -237,6 +244,8 @@ function openEtape(etapeId: string) {
 /* Mobile : en-tête, carte, puis contenu */
 .page {
   display: grid;
+  /* minmax(0, 1fr) : la colonne ne s'élargit jamais au-delà de l'écran à cause d'un contenu */
+  grid-template-columns: minmax(0, 1fr);
   grid-template-areas: 'header' 'map' 'content';
   gap: var(--space-md);
 }
@@ -250,7 +259,8 @@ function openEtape(etapeId: string) {
   grid-area: map;
   height: 360px;
   border: var(--border-hairline);
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
   overflow: hidden;
 }
 
@@ -271,19 +281,37 @@ function openEtape(etapeId: string) {
 }
 
 .pois {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
   list-style: none;
   padding: 0;
-  margin: var(--space-xs) 0 0;
+  margin: var(--space-sm) 0 0;
 }
 .poi-item {
   display: flex;
+  align-items: flex-start;
   gap: var(--space-sm);
-  padding: var(--space-xs) var(--space-xs);
-  border-bottom: var(--border-hairline);
-  transition: background-color 0.15s ease;
+  padding: 0.65rem var(--space-sm);
+  border: var(--border-hairline);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
 }
 .poi-item.is-highlighted {
-  background: var(--color-surface);
+  border-color: var(--color-accent);
+  background: var(--color-surface-raised);
+}
+.poi-icon {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--color-bg-deep);
 }
 .poi-notes {
   color: var(--color-text-muted);
@@ -306,13 +334,17 @@ function openEtape(etapeId: string) {
   padding: var(--space-sm);
   border: var(--border-hairline);
   border-radius: var(--radius);
+  background: var(--color-surface);
   color: inherit;
   text-decoration: none;
   font-weight: 600;
-  transition: background-color 0.15s ease;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
 }
 .etape-nav-link:hover {
-  background: var(--color-surface);
+  border-color: var(--color-accent);
+  background: var(--color-surface-raised);
 }
 .etape-nav-link.is-next {
   grid-column: 2;

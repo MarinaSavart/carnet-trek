@@ -375,13 +375,13 @@ onUnmounted(() => {
   height: 14px;
   border: 3px solid #fff;
   border-radius: 50%;
-  background: #1a1a1a;
+  background: var(--color-bg-deep);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
   pointer-events: none;
   z-index: 4;
 }
 .maplibregl-popup-content {
-  color: #1a1a1a;
+  color: var(--color-bg-deep);
   font-family: var(--font-body);
   font-size: 0.85rem;
   padding: 0.35rem 0.6rem;

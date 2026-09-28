@@ -50,11 +50,11 @@ const openIndex = ref<number | null>(null)
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-auto-rows: 90px;
-  gap: 4px;
+  gap: 6px;
   list-style: none;
   padding: 0;
   margin: 0;
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
   overflow: hidden;
 }
 /* La première photo occupe un bloc 2×2, les suivantes remplissent autour */
@@ -99,7 +99,7 @@ const openIndex = ref<number | null>(null)
   inset: 0;
   display: grid;
   place-items: center;
-  background: rgba(10, 14, 12, 0.55);
+  background: rgba(28, 40, 35, 0.55);
   color: #fff;
   font-family: var(--font-display);
   font-size: 1.75rem;

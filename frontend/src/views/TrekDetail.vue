@@ -156,7 +156,8 @@ function openEtape(etapeId: string) {
           <RouterLink :to="`/treks/${trek._id}/etapes/${etape._id}`" class="etape-link">
             <div class="etape-heading">
               <h2 class="etape-title">
-                <span class="etape-order">#{{ etape.order }}</span>
+                <span class="etape-order" aria-hidden="true">{{ etape.order }}</span>
+                <span class="visually-hidden">Étape {{ etape.order }} :</span>
                 {{ etape.name }}
               </h2>
               <DifficultyBadge :difficulty="etape.difficulty" />
@@ -215,11 +216,6 @@ function openEtape(etapeId: string) {
   padding: var(--space-lg) var(--space-md);
   color: var(--color-text-muted);
 }
-.back-link {
-  color: var(--color-text-muted);
-  text-decoration: none;
-  font-size: 0.9rem;
-}
 .header h1 {
   margin-top: var(--space-xs);
 }
@@ -232,10 +228,14 @@ function openEtape(etapeId: string) {
   max-width: 65ch;
 }
 .totals {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-md) var(--space-lg);
-  margin: var(--space-md) 0 var(--space-lg);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(84px, 1fr));
+  gap: var(--space-md);
+  margin: var(--space-md) 0 var(--space-md);
+  padding: var(--space-md);
+  border: var(--border-hairline);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
 }
 .total dt {
   color: var(--color-text-muted);
@@ -245,6 +245,8 @@ function openEtape(etapeId: string) {
 }
 .total dd {
   margin: 0.25rem 0 0;
+  font-size: 2.1rem;
+  white-space: nowrap;
 }
 .stat-unit {
   font-family: var(--font-body);
@@ -256,6 +258,8 @@ function openEtape(etapeId: string) {
 /* Mobile : en-tête, carte, puis liste des étapes */
 .page {
   display: grid;
+  /* minmax(0, 1fr) : la colonne ne s'élargit jamais au-delà de l'écran à cause d'un contenu */
+  grid-template-columns: minmax(0, 1fr);
   grid-template-areas: 'header' 'map' 'etapes';
   gap: var(--space-md);
 }
@@ -269,7 +273,8 @@ function openEtape(etapeId: string) {
   grid-area: map;
   height: 360px;
   border: var(--border-hairline);
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
   overflow: hidden;
 }
 
@@ -290,21 +295,30 @@ function openEtape(etapeId: string) {
 }
 
 .etapes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
   list-style: none;
   padding: 0;
   margin: 0;
 }
 .etape-item {
-  border-bottom: var(--border-hairline);
-  border-left: 3px solid var(--etape-color);
-  transition: background-color 0.15s ease;
+  border: var(--border-hairline);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    translate 0.2s ease;
 }
 .etape-item.is-highlighted {
-  background: var(--color-surface);
+  border-color: color-mix(in srgb, var(--etape-color) 60%, transparent);
+  background: var(--color-surface-raised);
+  translate: 3px 0;
 }
 .etape-link {
   display: block;
-  padding: var(--space-sm) var(--space-sm);
+  padding: var(--space-sm);
   text-decoration: none;
   color: inherit;
 }
@@ -315,24 +329,38 @@ function openEtape(etapeId: string) {
   gap: var(--space-sm);
 }
 .etape-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
   font-size: 1.4rem;
   line-height: 1.2;
 }
+/* Pastille numérotée, identique aux marqueurs de la carte */
 .etape-order {
-  color: var(--etape-color);
-  filter: brightness(1.4);
-  margin-right: 0.25rem;
+  display: inline-grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background: var(--etape-color);
+  box-shadow: 0 0 0 2px var(--color-surface);
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
 }
 .etape-meta {
   display: flex;
   flex-wrap: wrap;
   gap: 0.25rem var(--space-sm);
   margin: var(--space-xs) 0 0;
+  padding-left: 2.35rem;
   font-size: 0.9rem;
 }
 .etape-pois {
   display: flex;
   gap: var(--space-sm);
+  padding-left: 2.35rem;
   color: var(--color-text-muted);
   font-size: 0.85rem;
   margin: 0.25rem 0 0;

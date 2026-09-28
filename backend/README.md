@@ -43,7 +43,7 @@ L'API écoute sur http://localhost:3000.
 | Variable                | Défaut                                        | Description                                                      |
 | ----------------------- | --------------------------------------------- | ---------------------------------------------------------------- |
 | `PORT`                  | `3000`                                        | Port du serveur                                                  |
-| `MONGO_URI`             | `mongodb://localhost:27017/carnet-trek`       | Connexion à MongoDB                                              |
+| `MONGO_URI`             | `mongodb://127.0.0.1:27017/carnet-trek`       | Connexion à MongoDB                                              |
 | `UPLOAD_DIR`            | `uploads`                                     | Dossier des fichiers envoyés (relatif à `backend/`)              |
 | `CORS_ORIGIN`           | `http://localhost:5173,http://127.0.0.1:5173` | Origines du front autorisées, séparées par des virgules          |
 | `MAX_FILE_SIZE_MB`      | `20`                                          | Taille maximale d'un fichier envoyé                              |
