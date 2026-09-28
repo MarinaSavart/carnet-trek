@@ -2,8 +2,15 @@
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useTreksStore } from '../stores/treks'
+import { useTrek } from '../composables/useTrek'
 import DifficultyBadge from '../components/DifficultyBadge.vue'
 import TrekOverviewMap from '../components/TrekOverviewMap.vue'
+import PhotoGallery from '../components/PhotoGallery.vue'
+import ElevationProfile, {
+  type ProfileHover,
+  type ProfileSegment,
+} from '../components/ElevationProfile.vue'
+import type { GalleryPhoto } from '../types/trek'
 import { formatDuration } from '../utils/format'
 import { getEtapeColor } from '../utils/etapeColors'
 
@@ -11,7 +18,7 @@ const route = useRoute()
 const router = useRouter()
 const store = useTreksStore()
 
-const trek = computed(() => store.getTrekById(route.params.id as string))
+const { trek, error } = useTrek(() => route.params.id as string)
 
 const etapes = computed(() => [...(trek.value?.etapes ?? [])].sort((a, b) => a.order - b.order))
 
@@ -27,21 +34,80 @@ const totals = computed(() =>
   ),
 )
 
-// Étape survolée, dans la liste ou sur la carte : mise en avant des deux côtés
+// Toutes les photos du trek, dans l'ordre des étapes, avec le nom de l'étape en légende
+const photos = computed<GalleryPhoto[]>(() =>
+  etapes.value.flatMap((etape) =>
+    (etape.photos ?? []).map((photo) => ({ ...photo, label: etape.name })),
+  ),
+)
+
+// Profil d'altitude du trek : les étapes à la suite, chacune dans sa couleur
+const profileSegments = computed<ProfileSegment[]>(() =>
+  etapes.value.flatMap((etape, index) =>
+    etape.elevationProfile?.length
+      ? [
+          {
+            id: etape._id,
+            label: `Étape ${etape.order}`,
+            color: getEtapeColor(index),
+            points: etape.elevationProfile,
+          },
+        ]
+      : [],
+  ),
+)
+
+// Étape survolée, dans la liste, sur la carte ou sur le profil : mise en avant partout
 const highlightedId = ref<string | null>(null)
+// Position commune au profil et à la carte, quel que soit celui qu'on survole
+const mapCursor = ref<[number, number] | null>(null)
+const profileCursor = ref<ProfileHover | null>(null)
+
+function onProfileHover(value: ProfileHover | null) {
+  highlightedId.value = value?.segmentId ?? null
+  mapCursor.value = value?.coordinates ?? null
+}
+
+function onTrackHover(value: ProfileHover | null) {
+  profileCursor.value = value
+  mapCursor.value = value?.coordinates ?? null
+}
+
+const isDeleting = ref(false)
+
+async function removeTrek() {
+  if (!trek.value) return
+  const message = `Supprimer « ${trek.value.name} », ses étapes, traces et photos ? C'est définitif.`
+  if (!window.confirm(message)) return
+  isDeleting.value = true
+  try {
+    await store.deleteTrek(trek.value._id)
+    router.push('/')
+  } catch (e) {
+    window.alert(e instanceof Error ? e.message : 'Suppression impossible')
+    isDeleting.value = false
+  }
+}
 
 function openEtape(etapeId: string) {
-  router.push(`/etapes/${etapeId}`)
+  router.push(`/treks/${trek.value?._id}/etapes/${etapeId}`)
 }
 </script>
 
 <template>
   <div v-if="trek" class="page">
     <header class="header">
-      <RouterLink to="/" class="back-link">← Treks</RouterLink>
+      <div class="header-top">
+        <RouterLink to="/" class="back-link">← Treks</RouterLink>
+        <button type="button" class="btn" :disabled="isDeleting" @click="removeTrek">
+          {{ isDeleting ? 'Suppression…' : 'Supprimer' }}
+        </button>
+      </div>
       <h1>{{ trek.name }}</h1>
       <p class="region">{{ trek.region }}</p>
       <p class="description">{{ trek.description }}</p>
+
+      <PhotoGallery :photos="photos" />
 
       <dl class="totals">
         <div class="total">
@@ -67,6 +133,13 @@ function openEtape(etapeId: string) {
           <dd class="stat-number">{{ etapes.length }}</dd>
         </div>
       </dl>
+
+      <ElevationProfile
+        :segments="profileSegments"
+        :highlighted-id="highlightedId"
+        :cursor="profileCursor"
+        @hover="onProfileHover"
+      />
     </header>
 
     <section class="etapes-column" aria-label="Étapes">
@@ -80,7 +153,7 @@ function openEtape(etapeId: string) {
           @mouseenter="highlightedId = etape._id"
           @mouseleave="highlightedId = null"
         >
-          <RouterLink :to="`/etapes/${etape._id}`" class="etape-link">
+          <RouterLink :to="`/treks/${trek._id}/etapes/${etape._id}`" class="etape-link">
             <div class="etape-heading">
               <h2 class="etape-title">
                 <span class="etape-order">#{{ etape.order }}</span>
@@ -94,8 +167,13 @@ function openEtape(etapeId: string) {
               <span title="Dénivelé positif">↗ {{ etape.elevationGain }} m</span>
               <span title="Dénivelé négatif">↘ {{ etape.elevationLoss }} m</span>
             </p>
-            <p v-if="etape.pois.length" class="etape-pois">
-              {{ etape.pois.length }} point{{ etape.pois.length > 1 ? 's' : '' }} d'intérêt
+            <p v-if="etape.pois.length || etape.photos?.length" class="etape-pois">
+              <span v-if="etape.pois.length">
+                {{ etape.pois.length }} point{{ etape.pois.length > 1 ? 's' : '' }} d'intérêt
+              </span>
+              <span v-if="etape.photos?.length">
+                {{ etape.photos.length }} photo{{ etape.photos.length > 1 ? 's' : '' }}
+              </span>
             </p>
           </RouterLink>
         </li>
@@ -106,12 +184,17 @@ function openEtape(etapeId: string) {
       <TrekOverviewMap
         :etapes="etapes"
         :highlighted-id="highlightedId"
+        :cursor="mapCursor"
         @hover="highlightedId = $event"
+        @track-hover="onTrackHover"
         @select="openEtape"
       />
     </aside>
   </div>
-  <p v-else>Trek introuvable</p>
+  <div v-else class="page-status">
+    <RouterLink to="/" class="back-link">← Treks</RouterLink>
+    <p :role="error ? 'alert' : 'status'">{{ error ?? 'Chargement…' }}</p>
+  </div>
 </template>
 
 <style scoped>
@@ -119,6 +202,18 @@ function openEtape(etapeId: string) {
   max-width: 1200px;
   margin: 0 auto;
   padding: var(--space-lg) var(--space-md);
+}
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+.page-status {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-lg) var(--space-md);
+  color: var(--color-text-muted);
 }
 .back-link {
   color: var(--color-text-muted);
@@ -236,6 +331,8 @@ function openEtape(etapeId: string) {
   font-size: 0.9rem;
 }
 .etape-pois {
+  display: flex;
+  gap: var(--space-sm);
   color: var(--color-text-muted);
   font-size: 0.85rem;
   margin: 0.25rem 0 0;

@@ -1,35 +1,37 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
-import type { Trek, Etape } from '../types/trek'
-import { mockTreks } from '../data/mockTreks'
+import { ref } from 'vue'
+import * as api from '../api/treks'
+import type { Trek, TrekSummary } from '../types/trek'
 
 export const useTreksStore = defineStore('treks', () => {
-  const treks = ref<Trek[]>(mockTreks)
+  const summaries = ref<TrekSummary[]>([])
+  // Treks complets déjà chargés : revenir sur un trek ou passer d'une étape à l'autre
+  // ne refait pas l'appel (le détail pèse ~200 Ko avec les tracés)
+  const treksById = ref(new Map<string, Trek>())
 
-  function getTrekById(id: string): Trek | undefined {
-    return treks.value.find((t) => t._id === id)
+  async function loadSummaries(): Promise<void> {
+    summaries.value = await api.fetchTrekSummaries()
   }
 
-  function getEtapeById(etapeId: string): Etape | undefined {
-    for (const trek of treks.value) {
-      const etape = trek.etapes.find((e) => e._id === etapeId)
-      if (etape) return etape
-    }
-    return undefined
+  async function loadTrek(id: string): Promise<Trek> {
+    const cached = treksById.value.get(id)
+    if (cached) return cached
+    const trek = await api.fetchTrek(id)
+    treksById.value.set(id, trek)
+    return trek
   }
 
-  function getTrekByEtapeId(etapeId: string): Trek | undefined {
-    return treks.value.find((t) => t.etapes.some((e) => e._id === etapeId))
+  async function createTrek(formData: FormData): Promise<Trek> {
+    const trek = await api.createTrek(formData)
+    treksById.value.set(trek._id, trek)
+    return trek
   }
 
-  const totalDistanceByTrek = computed(() => {
-    const totals = new Map<string, number>()
-    treks.value.forEach((trek) => {
-      const total = trek.etapes.reduce((sum, e) => sum + e.distanceKm, 0)
-      totals.set(trek._id, total)
-    })
-    return totals
-  })
+  async function deleteTrek(id: string): Promise<void> {
+    await api.deleteTrek(id)
+    treksById.value.delete(id)
+    summaries.value = summaries.value.filter((t) => t._id !== id)
+  }
 
-  return { treks, getTrekById, getEtapeById, getTrekByEtapeId, totalDistanceByTrek }
+  return { summaries, loadSummaries, loadTrek, createTrek, deleteTrek }
 })

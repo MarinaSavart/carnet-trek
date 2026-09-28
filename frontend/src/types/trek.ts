@@ -15,6 +15,13 @@ export interface GeoJSONLineString {
   coordinates: [number, number][]
 }
 
+/** Un point du profil d'altitude, rattaché à sa position sur le tracé */
+export interface ElevationPoint {
+  distanceKm: number
+  elevation: number
+  coordinates: [number, number]
+}
+
 export interface POI {
   _id: string
   type: POIType
@@ -23,17 +30,44 @@ export interface POI {
   location: GeoJSONPoint
 }
 
+export interface Photo {
+  _id: string
+  url: string
+  caption?: string
+}
+
+/** Photo enrichie d'un libellé de contexte (ex. le nom de l'étape sur la page trek) */
+export interface GalleryPhoto extends Photo {
+  label?: string
+}
+
 export interface Etape {
   _id: string
   order: number
   name: string
+  description?: string
   distanceKm: number
   elevationGain: number
   elevationLoss: number
   durationMin: number
   difficulty: Difficulty
   gpxTrack?: GeoJSONLineString
+  elevationProfile?: ElevationPoint[]
   pois: POI[]
+  photos?: Photo[]
+}
+
+/** Version allégée renvoyée par la liste (GET /api/treks) : ni tracés ni profils */
+export interface TrekSummary {
+  _id: string
+  name: string
+  region: string
+  description: string
+  etapeCount: number
+  distanceKm: number
+  durationMin: number
+  elevationGain: number
+  coverPhotoUrl: string | null
 }
 
 export interface Trek {
