@@ -24,7 +24,7 @@ async function logout() {
 <template>
   <header class="app-header">
     <RouterLink to="/" class="brand">
-      <span class="brand-mark" aria-hidden="true">⛰</span>
+      <img src="/carnet-trek-logo.png" class="brand-mark" alt="Carnet Trek" />
       Carnet Trek
     </RouterLink>
 
