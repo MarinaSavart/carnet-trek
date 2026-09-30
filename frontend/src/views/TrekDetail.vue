@@ -106,17 +106,19 @@ function openEtape(etapeId: string) {
 <template>
   <div v-if="trek" class="page">
     <header class="header">
-      <div class="header-top">
-        <RouterLink to="/" class="back-link">← Treks</RouterLink>
-        <div v-if="auth.canEdit(trek)" class="owner-actions">
-          <RouterLink :to="`/treks/${trek._id}/modifier`" class="btn">Modifier</RouterLink>
-          <button type="button" class="btn" :disabled="isDeleting" @click="removeTrek">
-            {{ isDeleting ? 'Suppression…' : 'Supprimer' }}
-          </button>
+      <div class="title-bar">
+        <div class="header-top">
+          <RouterLink to="/" class="back-link">← Treks</RouterLink>
+          <div v-if="auth.canEdit(trek)" class="owner-actions">
+            <RouterLink :to="`/treks/${trek._id}/modifier`" class="btn">Modifier</RouterLink>
+            <button type="button" class="btn" :disabled="isDeleting" @click="removeTrek">
+              {{ isDeleting ? 'Suppression…' : 'Supprimer' }}
+            </button>
+          </div>
         </div>
+        <h1>{{ trek.name }}</h1>
+        <p class="region">{{ trek.region }}</p>
       </div>
-      <h1>{{ trek.name }}</h1>
-      <p class="region">{{ trek.region }}</p>
       <p class="description">{{ trek.description }}</p>
       <NavigateToStart v-if="start" :start="start" class="navigate" />
 
@@ -216,6 +218,8 @@ function openEtape(etapeId: string) {
   max-width: 1200px;
   margin: 0 auto;
   padding: var(--space-lg) var(--space-md);
+  /* Largeur de la carte sur desktop : proche de ce que donnait l'ancienne grille (1fr / 1.1fr) */
+  --map-width: clamp(420px, 40vw, 583px);
 }
 .header-top {
   display: flex;
@@ -298,19 +302,36 @@ function openEtape(etapeId: string) {
   overflow: hidden;
 }
 
-/* Desktop : en-tête et étapes à gauche, carte fixe à droite sur toute la hauteur */
+/* Desktop : en-tête et étapes à gauche (largeur réduite pour laisser la place à la carte) ;
+   la carte est en position fixed, ancrée à l'écran — elle ne défile jamais, contrairement à
+   un position: sticky qui se décroche dès que la colonne de gauche devient plus courte qu'elle */
 @media (min-width: 960px) {
   .page {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
-    grid-template-rows: auto 1fr;
-    grid-template-areas: 'header map' 'etapes map';
-    gap: 0 var(--space-lg);
+    display: block;
+  }
+  .header,
+  .etapes-column {
+    margin-right: calc(var(--map-width) + var(--space-lg));
+  }
+  /* Bandeau titre collé sous la navbar, pendant que la description/photos/étapes défilent */
+  .title-bar {
+    position: sticky;
+    top: var(--navbar-height);
+    z-index: 10;
+    /* Même dégradé que le fond de page, figé par rapport à l'écran : se fond avec le contenu
+       qui défile dessous au lieu de trancher par une couleur plate */
+    background: var(--page-gradient), var(--color-bg);
+    background-attachment: fixed;
+    padding: var(--space-sm) 0;
+    margin: calc(-1 * var(--space-sm)) 0 0;
   }
   .map-column {
-    align-self: start;
-    position: sticky;
-    top: var(--space-md);
-    height: calc(100vh - 2 * var(--space-md));
+    position: fixed;
+    top: calc(var(--navbar-height) + var(--space-md));
+    /* Aligne le bord droit de la carte sur celui du conteneur centré (max-width: 1200px) */
+    right: max(var(--space-md), calc((100vw - 1200px) / 2 + var(--space-md)));
+    width: var(--map-width);
+    height: calc(100vh - var(--navbar-height) - 2 * var(--space-md));
   }
 }
 

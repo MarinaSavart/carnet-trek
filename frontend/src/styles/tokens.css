@@ -22,6 +22,13 @@
   --color-danger: #e39a86;
   --color-danger-soft: rgba(227, 154, 134, 0.12);
 
+  /* Halo sauge/or très léger en haut de page, réutilisé partout où un fond opaque est
+     nécessaire (navbar, bandeaux collants…) pour qu'il se fonde avec le fond de la page
+     plutôt que de trancher par une couleur plate */
+  --page-gradient:
+    radial-gradient(1200px 600px at 15% -10%, rgba(157, 191, 143, 0.1), transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, rgba(217, 178, 111, 0.06), transparent 55%);
+
   /* Difficulté : couleurs du balisage (vert, bleu, rouge, noir), adoucies */
   --color-diff-facile: #8cbf7a;
   --color-diff-moyen: #7fb0d8;
@@ -47,17 +54,17 @@
   --space-md: 1.5rem;
   --space-lg: 2.5rem;
 
+  /* Hauteur de la barre de navigation, fixe en haut de page : sert de repère aux éléments
+     qui doivent se placer juste en dessous (bandeau de titre, carte fixe…) */
+  --navbar-height: 4rem;
+
   color-scheme: dark;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
-  /* Halo sauge très léger en haut de page, comme une lumière filtrée par les arbres */
-  background:
-    radial-gradient(1200px 600px at 15% -10%, rgba(157, 191, 143, 0.1), transparent 60%),
-    radial-gradient(900px 500px at 100% 0%, rgba(217, 178, 111, 0.06), transparent 55%),
-    var(--color-bg);
+  background: var(--page-gradient), var(--color-bg);
   background-attachment: fixed;
   color: var(--color-text);
   font-family: var(--font-body);

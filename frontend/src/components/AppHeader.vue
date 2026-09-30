@@ -23,31 +23,33 @@ async function logout() {
 
 <template>
   <header class="app-header">
-    <RouterLink to="/" class="brand">
-      <img src="/carnet-trek-logo.png" class="brand-mark" alt="Carnet Trek" />
-      Carnet Trek
-    </RouterLink>
-
-    <nav class="account" aria-label="Compte">
-      <template v-if="auth.user">
-        <span class="user" :title="auth.user.email">
-          <span class="avatar" aria-hidden="true">{{
-            auth.user.name.charAt(0).toUpperCase()
-          }}</span>
-          <span class="user-name">{{ auth.user.name }}</span>
-        </span>
-        <button type="button" class="btn" :disabled="isLoggingOut" @click="logout">
-          Déconnexion
-        </button>
-      </template>
-      <RouterLink
-        v-else-if="route.name !== 'login'"
-        :to="{ name: 'login', query: { redirect: route.fullPath } }"
-        class="btn"
-      >
-        Connexion
+    <div class="app-header-inner">
+      <RouterLink to="/" class="brand">
+        <img src="/carnet-trek-logo.png" class="brand-mark" alt="Carnet Trek" />
+        Carnet Trek
       </RouterLink>
-    </nav>
+
+      <nav class="account" aria-label="Compte">
+        <template v-if="auth.user">
+          <span class="user" :title="auth.user.email">
+            <span class="avatar" aria-hidden="true">{{
+              auth.user.name.charAt(0).toUpperCase()
+            }}</span>
+            <span class="user-name">{{ auth.user.name }}</span>
+          </span>
+          <button type="button" class="btn" :disabled="isLoggingOut" @click="logout">
+            Déconnexion
+          </button>
+        </template>
+        <RouterLink
+          v-else-if="route.name !== 'login'"
+          :to="{ name: 'login', query: { redirect: route.fullPath } }"
+          class="btn"
+        >
+          Connexion
+        </RouterLink>
+      </nav>
+    </div>
   </header>
 </template>
 
@@ -55,11 +57,26 @@ async function logout() {
 .app-header {
   display: flex;
   align-items: center;
+  min-height: var(--navbar-height);
+  box-sizing: border-box;
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  /* Même dégradé que le fond de page, figé par rapport à l'écran : se fond avec le contenu
+     qui défile dessous au lieu de trancher par une couleur plate */
+  background: var(--page-gradient), var(--color-bg);
+  background-attachment: fixed;
+}
+.app-header-inner {
+  display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: var(--space-sm);
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: var(--space-sm) var(--space-md) 0;
+  padding: 0 var(--space-md);
+  border-bottom: var(--border-hairline);
 }
 .brand {
   display: inline-flex;
