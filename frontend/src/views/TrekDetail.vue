@@ -58,6 +58,7 @@ const profileSegments = computed<ProfileSegment[]>(() =>
           {
             id: etape._id,
             label: `Étape ${etape.order}`,
+            title: etape.name,
             color: getEtapeColor(index),
             points: etape.elevationProfile,
           },
