@@ -10,6 +10,7 @@ import {
   savePhoto,
   type IncomingFile,
 } from '../lib/storage.js'
+import { simplifyLine } from '../lib/simplify.js'
 import { Trek } from '../models/Trek.js'
 import type { EtapeInput, TrekInput, TrekUpdateInput } from '../validation/trek.js'
 
@@ -265,11 +266,18 @@ export async function updateTrek(
   return trek
 }
 
-/** Liste allégée : ni tracés ni profils, seulement de quoi afficher une carte de trek */
+// Tolérance de simplification des tracés de la carte d'accueil (~30 m) : invisible à
+// l'échelle d'une région, et divise le poids des tracés par ~20
+const MAP_TRACK_TOLERANCE_DEG = 0.0003
+
+/**
+ * Liste allégée : pas de profils ni de POI, seulement de quoi afficher une carte de trek
+ * et son tracé simplifié (une ligne par étape) sur la carte d'accueil
+ */
 export async function listTrekSummaries() {
   const treks = await Trek.find()
     .select(
-      'name region description createdAt etapes.distanceKm etapes.durationMin etapes.elevationGain etapes.photos',
+      'name region description createdAt etapes.distanceKm etapes.durationMin etapes.elevationGain etapes.photos etapes.gpxTrack',
     )
     .sort({ createdAt: -1 })
     .lean()
@@ -277,6 +285,17 @@ export async function listTrekSummaries() {
   return treks.map((trek) => {
     // Des documents créés avec l'ancien modèle (sans étapes) peuvent encore exister
     const etapes = trek.etapes ?? []
+    const lines = etapes.flatMap((e) =>
+      e.gpxTrack?.coordinates.length
+        ? // Mongoose type mal les tableaux imbriqués ([[Number]]) : ce sont bien des [lon, lat]
+          [
+            simplifyLine(
+              e.gpxTrack.coordinates as unknown as [number, number][],
+              MAP_TRACK_TOLERANCE_DEG,
+            ),
+          ]
+        : [],
+    )
     return {
       _id: trek._id.toString(),
       name: trek.name,
@@ -288,6 +307,7 @@ export async function listTrekSummaries() {
       durationMin: etapes.reduce((sum, e) => sum + e.durationMin, 0),
       elevationGain: etapes.reduce((sum, e) => sum + (e.elevationGain ?? 0), 0),
       coverPhotoUrl: etapes.flatMap((e) => e.photos ?? [])[0]?.url ?? null,
+      track: lines.length ? { type: 'MultiLineString' as const, coordinates: lines } : null,
     }
   })
 }

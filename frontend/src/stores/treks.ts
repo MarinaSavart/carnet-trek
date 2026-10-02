@@ -3,11 +3,18 @@ import { ref } from 'vue'
 import * as api from '../api/treks'
 import type { Trek, TrekSummary } from '../types/trek'
 
+export interface MapView {
+  center: [number, number]
+  zoom: number
+}
+
 export const useTreksStore = defineStore('treks', () => {
   const summaries = ref<TrekSummary[]>([])
   // Treks complets déjà chargés : revenir sur un trek ou passer d'une étape à l'autre
   // ne refait pas l'appel (le détail pèse ~200 Ko avec les tracés)
   const treksById = ref(new Map<string, Trek>())
+  // Dernière vue de la carte d'accueil : on la retrouve en revenant d'une page trek
+  const homeMapView = ref<MapView | null>(null)
 
   async function loadSummaries(): Promise<void> {
     summaries.value = await api.fetchTrekSummaries()
@@ -39,5 +46,5 @@ export const useTreksStore = defineStore('treks', () => {
     summaries.value = summaries.value.filter((t) => t._id !== id)
   }
 
-  return { summaries, loadSummaries, loadTrek, createTrek, updateTrek, deleteTrek }
+  return { summaries, homeMapView, loadSummaries, loadTrek, createTrek, updateTrek, deleteTrek }
 })

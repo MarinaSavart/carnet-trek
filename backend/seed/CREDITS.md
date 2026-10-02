@@ -1,0 +1,91 @@
+# Crédits photos
+
+Photos du seed issues de [Wikimedia Commons](https://commons.wikimedia.org), sous licence libre (auteur et licence ci-dessous).
+Tracé du GR10 : © contributeurs [OpenStreetMap](https://www.openstreetmap.org/copyright) (ODbL) ; altitudes : EU-DEM via OpenTopoData.
+
+| Fichier | Source | Auteur | Licence |
+|---|---|---|---|
+| gr10/02-olhette-ainhoa/photos/1.jpg | [File:Vue de la Rhune Hendaye.jpg](https://commons.wikimedia.org/wiki/File:Vue_de_la_Rhune_Hendaye.jpg) | Marianne Casamance | CC BY-SA 4.0 |
+| gr10/03-ainhoa-bidarray/photos/1.jpg | [File:Vue générale Bidarray.jpg](https://commons.wikimedia.org/wiki/File:Vue_g%C3%A9n%C3%A9rale_Bidarray.jpg) | Kvardek du | CC BY-SA 3.0 |
+| gr10/04-bidarray-saint-etienne-de-baigorry/photos/1.jpg | [File:Paysage aux couleurs ocres, dans le col d'Ispéguy - panoramio.jpg](https://commons.wikimedia.org/wiki/File:Paysage_aux_couleurs_ocres,_dans_le_col_d%27Isp%C3%A9guy_-_panoramio.jpg) | Gilles Guillamot | CC BY-SA 3.0 |
+| gr10/05-saint-etienne-de-baigorry-saint-jean-pied-de-port/photos/1.jpg | [File:GR10 near Lasse.jpg](https://commons.wikimedia.org/wiki/File:GR10_near_Lasse.jpg) | MartinD | CC BY-SA 4.0 |
+| gr10/07-esterencuby-chalets-d-iraty/photos/1.jpg | [File:En remontant vers le plateau d'Iraty - panoramio.jpg](https://commons.wikimedia.org/wiki/File:En_remontant_vers_le_plateau_d%27Iraty_-_panoramio.jpg) | Gilles Guillamot | CC BY-SA 3.0 |
+| gr10/08-chalets-d-iraty-logibar/photos/1.jpg | [File:Forêt d'Iraty-Col d'Orgambidesca-1964.jpg](https://commons.wikimedia.org/wiki/File:For%C3%AAt_d%27Iraty-Col_d%27Orgambidesca-1964.jpg) | Daniel VILLAFRUELA. | CC BY-SA 4.0 |
+| gr10/10-sainte-engrace-arette-la-pierre-saint-martin/photos/1.jpg | [File:Pinus uncinata - forest - Flickr - S. Rae.jpg](https://commons.wikimedia.org/wiki/File:Pinus_uncinata_-_forest_-_Flickr_-_S._Rae.jpg) | S. Rae from Scotland, UK | CC BY 2.0 |
+| gr10/11-arette-la-pierre-saint-martin-lescun/photos/1.jpg | [File:Cirque de Lescun.jpg](https://commons.wikimedia.org/wiki/File:Cirque_de_Lescun.jpg) | Benh LIEU SONG (Flickr) | CC BY-SA 4.0 |
+| gr10/13-etsaut-refuge-d-ayous/photos/1.jpg | [File:Pic du Midi d'Ossau (7).jpg](https://commons.wikimedia.org/wiki/File:Pic_du_Midi_d%27Ossau_(7).jpg) | Tournasol7 | CC BY 4.0 |
+| gr10/14-refuge-d-ayous-gabas/photos/1.jpg | [File:Lac Roumassot (5).jpg](https://commons.wikimedia.org/wiki/File:Lac_Roumassot_(5).jpg) | Tournasol7 | CC BY 4.0 |
+| gr10/15-gabas-gourette/photos/1.jpg | [File:Lac d'Anglas (57631).jpg](https://commons.wikimedia.org/wiki/File:Lac_d%27Anglas_(57631).jpg) | Alainmi11 | CC BY-SA 4.0 |
+| gr10/16-gourette-arrens-marsous/photos/1.jpg | [File:Route Soulor-Aubisque vue 14.JPG](https://commons.wikimedia.org/wiki/File:Route_Soulor-Aubisque_vue_14.JPG) | France64160 | CC0 |
+| gr10/17-arrens-marsous-cauterets/photos/1.jpg | [File:Lac Bleu d'Ilhéou (42643788650).jpg](https://commons.wikimedia.org/wiki/File:Lac_Bleu_d%27Ilh%C3%A9ou_(42643788650).jpg) | Amanda Hinault from Lannion, France | CC BY-SA 2.0 |
+| gr10/18-cauterets-refuge-des-oulettes-de-gaube/photos/1.jpg | [File:Panorama desde Pico de Viñamala con su glaciar.jpg](https://commons.wikimedia.org/wiki/File:Panorama_desde_Pico_de_Vi%C3%B1amala_con_su_glaciar.jpg) | Pablosievert | CC BY-SA 4.0 |
+| gr10/19-refuge-des-oulettes-de-gaube-gavarnie/photos/1.jpg | [File:Col des Mulets avec vue sur le Pic d'Arraillé.jpg](https://commons.wikimedia.org/wiki/File:Col_des_Mulets_avec_vue_sur_le_Pic_d%27Arraill%C3%A9.jpg) | Kitty Terwolbeck | CC BY 2.0 |
+| gr10/22-bareges-chalet-hotel-de-l-oule/photos/1.jpg | [File:Pic du Neouvielle (12).jpg](https://commons.wikimedia.org/wiki/File:Pic_du_Neouvielle_(12).jpg) | Tournasol7 | CC BY 4.0 |
+| gr10/23-chalet-hotel-de-l-oule-vielle-aure/photos/1.jpg | [File:GR10 at Lac de l'Oule.jpg](https://commons.wikimedia.org/wiki/File:GR10_at_Lac_de_l%27Oule.jpg) | MartinD | CC BY-SA 4.0 |
+| gr10/25-germ-granges-d-astau/photos/1.jpg | [File:Vallee d'Astau (12).jpg](https://commons.wikimedia.org/wiki/File:Vallee_d%27Astau_(12).jpg) | Tournasol7 | CC BY 4.0 |
+| gr10/26-granges-d-astau-bagneres-de-luchon/photos/1.jpg | [File:MHNT PHa 138 b87 B 071.jpg](https://commons.wikimedia.org/wiki/File:MHNT_PHa_138_b87_B_071.jpg) | Eugène Trutat | Public domain |
+| gr10/27-bagneres-de-luchon-fos/photos/1.jpg | [File:Massif de la Maladeta depuis le pic de Burat.jpg](https://commons.wikimedia.org/wiki/File:Massif_de_la_Maladeta_depuis_le_pic_de_Burat.jpg) | François GILLAIZEAU de www.concept-sejours.com | CC BY-SA 2.0 |
+| gr10/28-fos-refuge-de-l-etang-d-araing/photos/1.jpg | [File:Estany de Liat 2017 (2).jpg](https://commons.wikimedia.org/wiki/File:Estany_de_Liat_2017_(2).jpg) | Aimaras | CC BY-SA 4.0 |
+| gr10/29-refuge-de-l-etang-d-araing-eylie/photos/1.jpg | [File:Baraquements Bentaillou depuis pic de l'Har.jpg](https://commons.wikimedia.org/wiki/File:Baraquements_Bentaillou_depuis_pic_de_l%27Har.jpg) | Géodigital | CC BY-SA 4.0 |
+| gr10/30-eylie-cabane-des-espugues/photos/1.jpg | [File:Cirque de Campuls 01.jpg](https://commons.wikimedia.org/wiki/File:Cirque_de_Campuls_01.jpg) | Tylwyth Eldar | CC BY-SA 4.0 |
+| gr10/31-cabane-des-espugues-esbintz/photos/1.jpg | [File:Cirque de Campuls 05.jpg](https://commons.wikimedia.org/wiki/File:Cirque_de_Campuls_05.jpg) | Tylwyth Eldar | CC BY-SA 4.0 |
+| gr10/32-esbintz-rouze-d-ustou/photos/1.jpg | [File:Le mont Valier et le Petit Valier (Ariège).jpg](https://commons.wikimedia.org/wiki/File:Le_mont_Valier_et_le_Petit_Valier_(Ari%C3%A8ge).jpg) | PierreG_09 | CC BY-SA 2.0 |
+| gr10/33-rouze-d-ustou-aulus-les-bains/photos/1.jpg | [File:Depuis Guzet-Neige (Ariège) vue sur le port de Marterat.jpg](https://commons.wikimedia.org/wiki/File:Depuis_Guzet-Neige_(Ari%C3%A8ge)_vue_sur_le_port_de_Marterat.jpg) | PierreG_09 | CC BY-SA 2.0 |
+| gr10/34-aulus-les-bains-marc/photos/1.jpg | [File:Massif de Lherz from Port de Bassies 03.jpg](https://commons.wikimedia.org/wiki/File:Massif_de_Lherz_from_Port_de_Bassies_03.jpg) | Krzysztof Golik | CC BY-SA 4.0 |
+| gr10/37-siguer-cabane-des-ludines/photos/1.jpg | [File:Stèle dédiée aux passeurs, Roc de Miglos.jpg](https://commons.wikimedia.org/wiki/File:St%C3%A8le_d%C3%A9di%C3%A9e_aux_passeurs,_Roc_de_Miglos.jpg) | Rulhe | CC BY-SA 4.0 |
+| gr10/38-cabane-des-ludines-refuge-du-rulhe/photos/1.jpg | [File:Vallée de l'Aston @ Refuge du Rulhe 01.jpg](https://commons.wikimedia.org/wiki/File:Vall%C3%A9e_de_l%27Aston_@_Refuge_du_Rulhe_01.jpg) | Rémih | CC BY-SA 4.0 |
+| gr10/39-refuge-du-rulhe-merens-les-vals/photos/1.jpg | [File:Tose de Pédourrés @ Étang de Couart.jpg](https://commons.wikimedia.org/wiki/File:Tose_de_P%C3%A9dourr%C3%A9s_@_%C3%89tang_de_Couart.jpg) | Rémih | CC BY-SA 4.0 |
+| gr10/42-refuge-des-bouillouses-planes/photos/1.jpg | [File:Lac d'Aude.jpg](https://commons.wikimedia.org/wiki/File:Lac_d%27Aude.jpg) | Alan Mattingly | CC BY-SA 4.0 |
+| gr10/43-planes-mantet/photos/1.jpg | [File:Coll Mitjà - Pic Gallinàs.jpg](https://commons.wikimedia.org/wiki/File:Coll_Mitj%C3%A0_-_Pic_Gallin%C3%A0s.jpg) | Alan Mattingly | CC BY-SA 4.0 |
+| gr10/45-refuge-de-mariailles-refuge-des-cortalets/photos/1.jpg | [File:Pyrenees Canigou Summit.jpg](https://commons.wikimedia.org/wiki/File:Pyrenees_Canigou_Summit.jpg) | Steve &amp; Jem Copley from Kuwait, Kuwait | CC BY-SA 2.0 |
+| gr10/46-refuge-des-cortalets-batere/photos/1.jpg | [File:Cirque glaciaire sous Pic du Canigou.jpg](https://commons.wikimedia.org/wiki/File:Cirque_glaciaire_sous_Pic_du_Canigou.jpg) | Alan Mattingly | CC0 |
+| gr10/47-batere-moulin-de-la-palette/photos/1.jpg | [File:Eglise Sainte-Marie de Montalba-d'Amélie - Vue 2.jpg](https://commons.wikimedia.org/wiki/File:Eglise_Sainte-Marie_de_Montalba-d%27Am%C3%A9lie_-_Vue_2.jpg) | Fabricio Cardenas | CC BY-SA 4.0 |
+| gr10/48-moulin-de-la-palette-las-illas/photos/1.jpg | [File:VG nº 303076001 ICGC El Moixer.jpg](https://commons.wikimedia.org/wiki/File:VG_n%C2%BA_303076001_ICGC_El_Moixer.jpg) | Caçavertex | CC0 |
+| gr10/49-las-illas-le-perthus/photos/1.jpg | [File:V.G.nº 305075001 ICGC puig de Calmelles.jpg](https://commons.wikimedia.org/wiki/File:V.G.n%C2%BA_305075001_ICGC_puig_de_Calmelles.jpg) | Caçavertex | CC0 |
+| gr10/50-le-perthus-col-de-l-ouillat/photos/1.jpg | [File:Puig Neulós 2011 07 19 04.jpg](https://commons.wikimedia.org/wiki/File:Puig_Neul%C3%B3s_2011_07_19_04.jpg) | Bertrand GRONDIN → (Talk) | CC BY-SA 3.0 |
+| gr10/51-col-de-l-ouillat-banyuls-sur-mer/photos/1.jpg | [File:Versant sud dans la forêt de la Massane.jpg](https://commons.wikimedia.org/wiki/File:Versant_sud_dans_la_for%C3%AAt_de_la_Massane.jpg) | Pmau | CC BY-SA 3.0 |
+| tour-du-mont-blanc/1-les-houches-contamines/photos/1.jpg | [File:À bord du Tramway du Mont-Blanc @ Saint-Gervais (50711360362).jpg](https://commons.wikimedia.org/wiki/File:%C3%80_bord_du_Tramway_du_Mont-Blanc_@_Saint-Gervais_(50711360362).jpg) | Guilhem Vellut from Annecy, France | CC BY 2.0 |
+| tour-du-mont-blanc/1-les-houches-contamines/photos/2.jpg | [File:Vue depuis les contamines montjoie - panoramio.jpg](https://commons.wikimedia.org/wiki/File:Vue_depuis_les_contamines_montjoie_-_panoramio.jpg) | chisloup | CC BY 3.0 |
+| tour-du-mont-blanc/2-contamines-chapieux/photos/1.jpg | [File:Alpes 2017-07-28 (37209127820).jpg](https://commons.wikimedia.org/wiki/File:Alpes_2017-07-28_(37209127820).jpg) | Guillaume Baviere from Uppsala, Sweden | CC BY-SA 2.0 |
+| tour-du-mont-blanc/2-contamines-chapieux/photos/2.jpg | [File:Col de la Seigne Col de Mya.jpg](https://commons.wikimedia.org/wiki/File:Col_de_la_Seigne_Col_de_Mya.jpg) | Rémih | CC BY-SA 4.0 |
+| tour-du-mont-blanc/3-chapieux-elisabetta/photos/1.jpg | [File:Alpes 2017-07-27 (36775465753).jpg](https://commons.wikimedia.org/wiki/File:Alpes_2017-07-27_(36775465753).jpg) | Guillaume Baviere from Uppsala, Sweden | CC BY-SA 2.0 |
+| tour-du-mont-blanc/3-chapieux-elisabetta/photos/2.jpg | [File:Col de Chavannes Vallon de la Lex Blanche.jpg](https://commons.wikimedia.org/wiki/File:Col_de_Chavannes_Vallon_de_la_Lex_Blanche.jpg) | Rémih | CC BY-SA 4.0 |
+| tour-du-mont-blanc/4-elisabetta-courmayeur/photos/1.jpg | [File:Refuge de Combal @ Route du val Veny.jpg](https://commons.wikimedia.org/wiki/File:Refuge_de_Combal_@_Route_du_val_Veny.jpg) | Rémih | CC BY-SA 4.0 |
+| tour-du-mont-blanc/4-elisabetta-courmayeur/photos/2.jpg | [File:Italy 2017-07-26 (36631657383).jpg](https://commons.wikimedia.org/wiki/File:Italy_2017-07-26_(36631657383).jpg) | Guillaume Baviere from Uppsala, Sweden | CC BY-SA 2.0 |
+| gr20-nord/1-calenzana-ortu/photos/1.jpg | [File:GR 20 Balagne Golfe de Calvi.jpg](https://commons.wikimedia.org/wiki/File:GR_20_Balagne_Golfe_de_Calvi.jpg) | Rémih | CC BY-SA 4.0 |
+| gr20-nord/1-calenzana-ortu/photos/2.jpg | [File:Refuge de l'Ortu di u Piobbu maison du gardien.jpg](https://commons.wikimedia.org/wiki/File:Refuge_de_l%27Ortu_di_u_Piobbu_maison_du_gardien.jpg) | Rémih | CC BY-SA 4.0 |
+| gr20-nord/2-ortu-carrozzu/photos/1.jpg | [File:Refuge de l'Ortu di u Piobbu bivouac.jpg](https://commons.wikimedia.org/wiki/File:Refuge_de_l%27Ortu_di_u_Piobbu_bivouac.jpg) | Rémih | CC BY-SA 4.0 |
+| gr20-nord/2-ortu-carrozzu/photos/2.jpg | [File:Monte Cinto Altocumulus lenticularis.jpg](https://commons.wikimedia.org/wiki/File:Monte_Cinto_Altocumulus_lenticularis.jpg) | Rémih | CC BY-SA 4.0 |
+| alta-via-1/1-braies-pederu/photos/1.jpg | [File:Lago di Dobbiaco in estate.jpg](https://commons.wikimedia.org/wiki/File:Lago_di_Dobbiaco_in_estate.jpg) | Samuel Boatto | CC BY-SA 4.0 |
+| alta-via-1/1-braies-pederu/photos/2.jpg | [File:If silence could speak... (51405489432).jpg](https://commons.wikimedia.org/wiki/File:If_silence_could_speak..._(51405489432).jpg) | Zoltán Vörös from Germany | CC BY 2.0 |
+| alta-via-1/2-pederu-lagazuoi/photos/1.jpg | [File:Panorama delle Dolomiti da Lagazuoi - panoramio.jpg](https://commons.wikimedia.org/wiki/File:Panorama_delle_Dolomiti_da_Lagazuoi_-_panoramio.jpg) | ilDeppo | CC BY 3.0 |
+| alta-via-1/2-pederu-lagazuoi/photos/2.jpg | [File:Rifugio Lagazuoi ( Lagazoi) 2752m - View from Falzarego, Civetta, Pelmo.... - panoramio.jpg](https://commons.wikimedia.org/wiki/File:Rifugio_Lagazuoi_(_Lagazoi)_2752m_-_View_from_Falzarego,_Civetta,_Pelmo...._-_panoramio.jpg) | Zoran Kurelić Rabko | CC BY-SA 3.0 |
+| alta-via-1/3-lagazuoi-nuvolau/photos/1.jpg | [File:Dolomiti 07-2010 - panoramio (1).jpg](https://commons.wikimedia.org/wiki/File:Dolomiti_07-2010_-_panoramio_(1).jpg) | adirricor | CC BY 3.0 |
+| alta-via-1/3-lagazuoi-nuvolau/photos/2.jpg | [File:SW Monte Nuvolau.jpg](https://commons.wikimedia.org/wiki/File:SW_Monte_Nuvolau.jpg) | kallerna | CC BY-SA 4.0 |
+| chemin-de-stevenson/1-le-puy-monastier/photos/1.jpg | [File:Abbey of Le Monastier-sur-Gazeille panorama.jpg](https://commons.wikimedia.org/wiki/File:Abbey_of_Le_Monastier-sur-Gazeille_panorama.jpg) | MartinD | CC BY-SA 4.0 |
+| chemin-de-stevenson/1-le-puy-monastier/photos/2.jpg | [File:GR70 west of Le Monastier-sur-Gazeille.jpg](https://commons.wikimedia.org/wiki/File:GR70_west_of_Le_Monastier-sur-Gazeille.jpg) | MartinD | CC BY-SA 4.0 |
+| calanques/1-callelongue-morgiou/photos/1.jpg | [File:Panorama de Marseille depuis le col des Chèvres.jpg](https://commons.wikimedia.org/wiki/File:Panorama_de_Marseille_depuis_le_col_des_Ch%C3%A8vres.jpg) | Hilader | CC BY-SA 4.0 |
+| calanques/1-callelongue-morgiou/photos/2.jpg | [File:Les Falaises du Devension-Calanques de Cassis.jpg](https://commons.wikimedia.org/wiki/File:Les_Falaises_du_Devension-Calanques_de_Cassis.jpg) | Tobi 87 | CC BY-SA 3.0 |
+| calanques/2-morgiou-cassis/photos/1.jpg | [File:Calanque d'En-Vau, falaise trouée.jpg](https://commons.wikimedia.org/wiki/File:Calanque_d%27En-Vau,_falaise_trou%C3%A9e.jpg) | Tom Chirossel | CC BY-SA 4.0 |
+| calanques/2-morgiou-cassis/photos/2.jpg | [File:Cassis, Provence-Alpes-Côte1.jpg](https://commons.wikimedia.org/wiki/File:Cassis,_Provence-Alpes-C%C3%B4te1.jpg) | Patrick S. | CC BY 2.0 |
+| gr34-granit-rose/1-perros-tregastel/photos/1.jpg | [File:Plage de Trestraou - Perros-Guirec, France - August 16, 2018 01.jpg](https://commons.wikimedia.org/wiki/File:Plage_de_Trestraou_-_Perros-Guirec,_France_-_August_16,_2018_01.jpg) | Giorgio Galeotti | CC BY 4.0 |
+| gr34-granit-rose/1-perros-tregastel/photos/2.jpg | [File:Trégastel plage.jpg](https://commons.wikimedia.org/wiki/File:Tr%C3%A9gastel_plage.jpg) | Syced | CC0 |
+| gr34-granit-rose/2-tregastel-trebeurden/photos/1.jpg | [File:Trébeurden et le Castel (Côtes d'Armor).jpg](https://commons.wikimedia.org/wiki/File:Tr%C3%A9beurden_et_le_Castel_(C%C3%B4tes_d%27Armor).jpg) | PIERRE ANDRE LECLERCQ | CC BY-SA 4.0 |
+| gr34-granit-rose/2-tregastel-trebeurden/photos/2.jpg | [File:Plage de Tresmeur - Trébeurden (30106912723).jpg](https://commons.wikimedia.org/wiki/File:Plage_de_Tresmeur_-_Tr%C3%A9beurden_(30106912723).jpg) | missbutterflies | CC BY-SA 2.0 |
+| gr10/09-logibar-sainte-engrace/photos/1.jpg | [File:Mouguerre-Pic d'Anie-20201017.jpg](https://commons.wikimedia.org/wiki/File:Mouguerre-Pic_d%27Anie-20201017.jpg) | Daniel VILLAFRUELA. | CC BY-SA 4.0 |
+| gr10/35-marc-goulier/photos/1.jpg | [File:Étang de Gnioure (Ariège).jpg](https://commons.wikimedia.org/wiki/File:%C3%89tang_de_Gnioure_(Ari%C3%A8ge).jpg) | PierreG_09 | CC BY-SA 2.0 |
+| gr10/40-merens-les-vals-refuge-des-besines/photos/1.jpg | [File:Étang-de-Lanoux.jpg](https://commons.wikimedia.org/wiki/File:%C3%89tang-de-Lanoux.jpg) | Alan Mattingly | CC0 |
+| gr10/41-refuge-des-besines-refuge-des-bouillouses/photos/1.jpg | [File:Vallée-des-Bésines.jpg](https://commons.wikimedia.org/wiki/File:Vall%C3%A9e-des-B%C3%A9sines.jpg) | Alan Mattingly | CC0 |
+| gr10/44-mantet-refuge-de-mariailles/photos/1.jpg | [File:Canigou depuis Col-Mantet.jpg](https://commons.wikimedia.org/wiki/File:Canigou_depuis_Col-Mantet.jpg) | Alan Mattingly | CC0 |
+| gr10/06-saint-jean-pied-de-port-esterencuby/photos/1.jpg | [File:Dolmen-Armiaga-pic-Behorlegi.jpg](https://commons.wikimedia.org/wiki/File:Dolmen-Armiaga-pic-Behorlegi.jpg) | Nenex Argazkia | CC BY-SA 4.0 |
+| gr10/36-goulier-siguer/photos/1.jpg | [File:A view from Orus.jpg](https://commons.wikimedia.org/wiki/File:A_view_from_Orus.jpg) | Xorven | CC BY-SA 4.0 |
+| gr10/20-gavarnie-luz-saint-sauveur/photos/1.jpg | [File:Cirque de Gavarnie - panoramio.jpg](https://commons.wikimedia.org/wiki/File:Cirque_de_Gavarnie_-_panoramio.jpg) | lombiedezombie@hotma… | CC BY 3.0 |
+| gr10/21-luz-saint-sauveur-bareges/photos/1.jpg | [File:Barèges 64 Vue GR10 Tourmalet 2011.jpg](https://commons.wikimedia.org/wiki/File:Bar%C3%A8ges_64_Vue_GR10_Tourmalet_2011.jpg) | JLPC | CC BY-SA 3.0 |
+| gr10/24-vielle-aure-germ/photos/1.jpg | [File:Au col d'Azet, vue sur la petite de ski de Val Louron - panoramio.jpg](https://commons.wikimedia.org/wiki/File:Au_col_d%27Azet,_vue_sur_la_petite_de_ski_de_Val_Louron_-_panoramio.jpg) | Gilles Guillamot | CC BY-SA 3.0 |
+| gr10/01-hendaye-olhette/photos/1.jpg | [File:Vue panoramique du Col d'Ibardin.JPG](https://commons.wikimedia.org/wiki/File:Vue_panoramique_du_Col_d%27Ibardin.JPG) | Myck | CC BY-SA 3.0 |
+| gr20-nord/3-carrozzu-ascu/photos/1.jpg | [File:Panoramic view in mountains of Corsica.jpg](https://commons.wikimedia.org/wiki/File:Panoramic_view_in_mountains_of_Corsica.jpg) | User:Amada44 | CC BY 3.0 |
+| gr20-nord/3-carrozzu-ascu/photos/2.jpg | [File:Paysage Sentier GR20 vers Monte Cinto - Asco (FR2B) - 2021-09-09 - 17.jpg](https://commons.wikimedia.org/wiki/File:Paysage_Sentier_GR20_vers_Monte_Cinto_-_Asco_(FR2B)_-_2021-09-09_-_17.jpg) | Chabe01 | CC BY-SA 4.0 |
+| chemin-de-stevenson/2-monastier-bouchet/photos/1.jpg | [File:View of Saint-Haon.jpg](https://commons.wikimedia.org/wiki/File:View_of_Saint-Haon.jpg) | Krzysztof Golik | CC BY-SA 4.0 |
+| chemin-de-stevenson/2-monastier-bouchet/photos/2.jpg | [File:Lac du Bouchet (24426648723).jpg](https://commons.wikimedia.org/wiki/File:Lac_du_Bouchet_(24426648723).jpg) | Jérôme Pellé | CC BY 2.0 |
+| chemin-de-stevenson/3-bouchet-pradelles/photos/1.jpg | [File:View of Barges.jpg](https://commons.wikimedia.org/wiki/File:View_of_Barges.jpg) | MartinD | CC BY-SA 4.0 |
+| gr10/12-lescun-etsaut/photos/1.jpg | [File:Marmotes al Parc'Ours 20180730 101429.jpg](https://commons.wikimedia.org/wiki/File:Marmotes_al_Parc%27Ours_20180730_101429.jpg) | pere prlpz | CC BY-SA 3.0 |

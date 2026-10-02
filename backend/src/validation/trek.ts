@@ -19,7 +19,7 @@ export const trekInputSchema = z.object({
   name: z.string().trim().min(1, 'Le nom du trek est obligatoire').max(200),
   region: z.string().trim().max(200).default(''),
   description: z.string().trim().max(10_000).default(''),
-  etapes: z.array(etapeInputSchema).min(1, 'Ajoute au moins une étape').max(50),
+  etapes: z.array(etapeInputSchema).min(1, 'Ajoute au moins une étape').max(60),
 })
 
 const objectId = z.string().regex(/^[0-9a-f]{24}$/i, 'Identifiant invalide')
@@ -36,7 +36,7 @@ export const etapeUpdateSchema = etapeInputSchema.extend({
 })
 
 export const trekUpdateSchema = trekInputSchema.extend({
-  etapes: z.array(etapeUpdateSchema).min(1, 'Ajoute au moins une étape').max(50),
+  etapes: z.array(etapeUpdateSchema).min(1, 'Ajoute au moins une étape').max(60),
 })
 
 export type EtapeInput = z.infer<typeof etapeInputSchema>

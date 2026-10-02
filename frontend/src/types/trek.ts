@@ -15,6 +15,11 @@ export interface GeoJSONLineString {
   coordinates: [number, number][]
 }
 
+export interface GeoJSONMultiLineString {
+  type: 'MultiLineString'
+  coordinates: [number, number][][]
+}
+
 /** Un point du profil d'altitude, rattaché à sa position sur le tracé */
 export interface ElevationPoint {
   distanceKm: number
@@ -61,7 +66,7 @@ export interface Etape {
   photos?: Photo[]
 }
 
-/** Version allégée renvoyée par la liste (GET /api/treks) : ni tracés ni profils */
+/** Version allégée renvoyée par la liste (GET /api/treks) : ni profils ni POI */
 export interface TrekSummary {
   _id: string
   name: string
@@ -72,6 +77,8 @@ export interface TrekSummary {
   durationMin: number
   elevationGain: number
   coverPhotoUrl: string | null
+  /** Tracé simplifié (une ligne par étape), pour la carte d'accueil ; null sans GPX */
+  track: GeoJSONMultiLineString | null
 }
 
 export interface Trek {

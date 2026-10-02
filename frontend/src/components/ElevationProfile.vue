@@ -5,6 +5,8 @@ import type { ElevationPoint } from '../types/trek'
 export interface ProfileSegment {
   id: string
   label: string
+  /** Nom complet (ex. « Gavarnie → Luz »), affiché dans l'infobulle */
+  title?: string
   color: string
   points: ElevationPoint[]
 }
@@ -27,6 +29,9 @@ const emit = defineEmits<{
 }>()
 
 const HEIGHT = 160
+// Au-delà, une couleur par étape devient illisible (légende interminable, profil bariolé) :
+// profil d'une seule couleur, étapes séparées par un trait, celle survolée mise en couleur
+const COMPACT_FROM = 9
 const MARGIN = { top: 12, right: 12, bottom: 24, left: 48 }
 
 const container = ref<HTMLDivElement | null>(null)
@@ -103,6 +108,8 @@ function yPos(elevation: number): number {
   return bottom - ((elevation - low) / (high - low)) * (bottom - top)
 }
 
+const isCompact = computed(() => props.segments.length >= COMPACT_FROM)
+
 const paths = computed(() => {
   let offset = 0
   return props.segments.map((segment) => {
@@ -118,6 +125,7 @@ const paths = computed(() => {
     return {
       id: segment.id,
       color: segment.color,
+      x0: Number(x0),
       line: `M${coords.join('L')}`,
       area: `M${x0},${plot.value.bottom}L${coords.join('L')}L${x1},${plot.value.bottom}Z`,
     }
@@ -153,6 +161,9 @@ const hovered = computed(() => {
   const index = hoveredIndex.value ?? cursorIndex.value
   return index === null ? undefined : flatPoints.value[index]
 })
+
+// Étape mise en couleur en mode compact : survolée ici, sur la carte ou dans la liste
+const activeId = computed(() => props.highlightedId ?? hovered.value?.segment.id ?? null)
 
 function nearestIndex(km: number): number {
   const points = flatPoints.value
@@ -246,11 +257,27 @@ function formatKm(km: number): string {
           </text>
         </g>
 
+        <g v-if="isCompact" class="boundaries">
+          <line
+            v-for="path in paths.slice(1)"
+            :key="`b${path.id}`"
+            :x1="path.x0"
+            :x2="path.x0"
+            :y1="plot.top"
+            :y2="plot.bottom"
+          />
+        </g>
+
         <g
           v-for="path in paths"
           :key="path.id"
           class="series"
-          :class="{ 'is-dimmed': highlightedId && highlightedId !== path.id }"
+          :class="
+            isCompact
+              ? { 'is-compact': true, 'is-active': activeId === path.id }
+              : { 'is-dimmed': highlightedId && highlightedId !== path.id }
+          "
+          :style="{ '--series-color': path.color }"
         >
           <path :d="path.area" :fill="path.color" class="area" />
           <path :d="path.line" :stroke="path.color" class="line" />
@@ -278,11 +305,15 @@ function formatKm(km: number): string {
           {{ formatKm(hovered.x)
           }}<template v-if="segments.length > 1"> · {{ hovered.segment.label }}</template>
         </span>
+        <span v-if="hovered.segment.title" class="tooltip-title">{{ hovered.segment.title }}</span>
       </div>
     </div>
 
     <figcaption class="caption">
-      <ul v-if="segments.length > 1" class="legend">
+      <span v-if="isCompact">
+        {{ segments.length }} étapes · survole le profil pour le détail de chaque étape
+      </span>
+      <ul v-else-if="segments.length > 1" class="legend">
         <li v-for="segment in segments" :key="segment.id">
           <span class="key" :style="{ background: segment.color }" />{{ segment.label }}
         </li>
@@ -336,6 +367,28 @@ function formatKm(km: number): string {
 .series.is-dimmed {
   opacity: 0.3;
 }
+/* Mode compact : une seule couleur (le CSS l'emporte sur les attributs fill/stroke) */
+.series.is-compact .line {
+  stroke: var(--color-accent);
+  stroke-width: 1.5;
+}
+.series.is-compact .area {
+  fill: var(--color-accent);
+  fill-opacity: 0.08;
+}
+.series.is-compact.is-active .line {
+  stroke: var(--series-color);
+  stroke-width: 2.5;
+}
+.series.is-compact.is-active .area {
+  fill: var(--series-color);
+  fill-opacity: 0.3;
+}
+.boundaries line {
+  stroke: var(--color-border);
+  stroke-width: 1;
+  stroke-dasharray: 2 3;
+}
 .area {
   fill-opacity: 0.12;
 }
@@ -367,6 +420,9 @@ function formatKm(km: number): string {
   font-size: 0.8rem;
   white-space: nowrap;
   pointer-events: none;
+}
+.tooltip-title {
+  color: var(--color-text);
 }
 .tooltip strong {
   color: var(--color-text);
