@@ -1,0 +1,2317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="carnet-trek seed (OpenStreetMap, EU-DEM)" xmlns="http://www.topografix.com/GPX/1/1">
+  <metadata>
+    <name>GR10 – Ainhoa → Bidarray</name>
+    <copyright author="OpenStreetMap contributors"><license>https://opendatacommons.org/licenses/odbl/</license></copyright>
+  </metadata>
+  <wpt lat="43.304987" lon="-1.499030">
+    <name>Ainhoa</name>
+    <sym>Convenience Store</sym>
+  </wpt>
+  <wpt lat="43.272970" lon="-1.414799">
+    <name>Point culminant (722 m)</name>
+    <sym>Summit</sym>
+  </wpt>
+  <wpt lat="43.265233" lon="-1.350885">
+    <name>Bidarray</name>
+    <sym>Convenience Store</sym>
+  </wpt>
+  <trk>
+    <name>GR10 – Ainhoa → Bidarray</name>
+    <type>hike</type>
+    <trkseg>
+      <trkpt lat="43.304987" lon="-1.499030">
+        <ele>118.9</ele>
+        <time>2025-06-17T07:30:00.000Z</time>
+      </trkpt>
+      <trkpt lat="43.305192" lon="-1.499027">
+        <ele>120.4</ele>
+        <time>2025-06-17T07:30:38.664Z</time>
+      </trkpt>
+      <trkpt lat="43.305429" lon="-1.499021">
+        <ele>122.0</ele>
+        <time>2025-06-17T07:31:18.190Z</time>
+      </trkpt>
+      <trkpt lat="43.305686" lon="-1.498955">
+        <ele>123.3</ele>
+        <time>2025-06-17T07:31:55.823Z</time>
+      </trkpt>
+      <trkpt lat="43.305997" lon="-1.498874">
+        <ele>124.8</ele>
+        <time>2025-06-17T07:32:41.409Z</time>
+      </trkpt>
+      <trkpt lat="43.306591" lon="-1.498746">
+        <ele>120.7</ele>
+        <time>2025-06-17T07:34:03.128Z</time>
+      </trkpt>
+      <trkpt lat="43.306833" lon="-1.498240">
+        <ele>119.3</ele>
+        <time>2025-06-17T07:35:07.958Z</time>
+      </trkpt>
+      <trkpt lat="43.306866" lon="-1.497926">
+        <ele>119.2</ele>
+        <time>2025-06-17T07:35:30.427Z</time>
+      </trkpt>
+      <trkpt lat="43.306872" lon="-1.497611">
+        <ele>119.2</ele>
+        <time>2025-06-17T07:35:52.707Z</time>
+      </trkpt>
+      <trkpt lat="43.306864" lon="-1.497218">
+        <ele>119.1</ele>
+        <time>2025-06-17T07:36:20.547Z</time>
+      </trkpt>
+      <trkpt lat="43.306602" lon="-1.497099">
+        <ele>119.1</ele>
+        <time>2025-06-17T07:36:49.691Z</time>
+      </trkpt>
+      <trkpt lat="43.306848" lon="-1.496831">
+        <ele>119.4</ele>
+        <time>2025-06-17T07:37:22.534Z</time>
+      </trkpt>
+      <trkpt lat="43.306869" lon="-1.495793">
+        <ele>126.7</ele>
+        <time>2025-06-17T07:39:50.433Z</time>
+      </trkpt>
+      <trkpt lat="43.306781" lon="-1.495097">
+        <ele>131.5</ele>
+        <time>2025-06-17T07:41:28.945Z</time>
+      </trkpt>
+      <trkpt lat="43.306602" lon="-1.494394">
+        <ele>136.5</ele>
+        <time>2025-06-17T07:43:11.291Z</time>
+      </trkpt>
+      <trkpt lat="43.306509" lon="-1.493994">
+        <ele>139.4</ele>
+        <time>2025-06-17T07:44:10.214Z</time>
+      </trkpt>
+      <trkpt lat="43.306314" lon="-1.493374">
+        <ele>144.0</ele>
+        <time>2025-06-17T07:45:45.196Z</time>
+      </trkpt>
+      <trkpt lat="43.306214" lon="-1.493013">
+        <ele>147.7</ele>
+        <time>2025-06-17T07:46:49.255Z</time>
+      </trkpt>
+      <trkpt lat="43.306160" lon="-1.492510">
+        <ele>152.4</ele>
+        <time>2025-06-17T07:48:13.522Z</time>
+      </trkpt>
+      <trkpt lat="43.306058" lon="-1.492204">
+        <ele>155.5</ele>
+        <time>2025-06-17T07:49:11.597Z</time>
+      </trkpt>
+      <trkpt lat="43.305633" lon="-1.492260">
+        <ele>160.4</ele>
+        <time>2025-06-17T07:50:42.583Z</time>
+      </trkpt>
+      <trkpt lat="43.305247" lon="-1.492422">
+        <ele>163.9</ele>
+        <time>2025-06-17T07:51:56.986Z</time>
+      </trkpt>
+      <trkpt lat="43.305006" lon="-1.492260">
+        <ele>169.8</ele>
+        <time>2025-06-17T07:53:23.573Z</time>
+      </trkpt>
+      <trkpt lat="43.304763" lon="-1.492030">
+        <ele>177.2</ele>
+        <time>2025-06-17T07:55:07.891Z</time>
+      </trkpt>
+      <trkpt lat="43.304503" lon="-1.491957">
+        <ele>179.2</ele>
+        <time>2025-06-17T07:55:53.751Z</time>
+      </trkpt>
+      <trkpt lat="43.304140" lon="-1.491920">
+        <ele>182.0</ele>
+        <time>2025-06-17T07:56:56.787Z</time>
+      </trkpt>
+      <trkpt lat="43.303922" lon="-1.491839">
+        <ele>185.4</ele>
+        <time>2025-06-17T07:57:53.768Z</time>
+      </trkpt>
+      <trkpt lat="43.304136" lon="-1.491635">
+        <ele>189.5</ele>
+        <time>2025-06-17T07:59:03.855Z</time>
+      </trkpt>
+      <trkpt lat="43.304397" lon="-1.491343">
+        <ele>193.7</ele>
+        <time>2025-06-17T08:00:19.288Z</time>
+      </trkpt>
+      <trkpt lat="43.304556" lon="-1.490914">
+        <ele>198.1</ele>
+        <time>2025-06-17T08:01:37.275Z</time>
+      </trkpt>
+      <trkpt lat="43.304325" lon="-1.490874">
+        <ele>201.5</ele>
+        <time>2025-06-17T08:02:39.048Z</time>
+      </trkpt>
+      <trkpt lat="43.303981" lon="-1.490862">
+        <ele>207.0</ele>
+        <time>2025-06-17T08:04:08.878Z</time>
+      </trkpt>
+      <trkpt lat="43.303804" lon="-1.490691">
+        <ele>212.4</ele>
+        <time>2025-06-17T08:05:28.975Z</time>
+      </trkpt>
+      <trkpt lat="43.303982" lon="-1.490485">
+        <ele>215.6</ele>
+        <time>2025-06-17T08:06:24.104Z</time>
+      </trkpt>
+      <trkpt lat="43.304355" lon="-1.489952">
+        <ele>221.6</ele>
+        <time>2025-06-17T08:08:17.480Z</time>
+      </trkpt>
+      <trkpt lat="43.304538" lon="-1.489673">
+        <ele>224.2</ele>
+        <time>2025-06-17T08:09:09.484Z</time>
+      </trkpt>
+      <trkpt lat="43.304737" lon="-1.489286">
+        <ele>227.4</ele>
+        <time>2025-06-17T08:10:15.278Z</time>
+      </trkpt>
+      <trkpt lat="43.304803" lon="-1.488983">
+        <ele>234.1</ele>
+        <time>2025-06-17T08:11:46.768Z</time>
+      </trkpt>
+      <trkpt lat="43.304774" lon="-1.488634">
+        <ele>241.7</ele>
+        <time>2025-06-17T08:13:29.797Z</time>
+      </trkpt>
+      <trkpt lat="43.304536" lon="-1.488401">
+        <ele>250.5</ele>
+        <time>2025-06-17T08:15:28.271Z</time>
+      </trkpt>
+      <trkpt lat="43.304265" lon="-1.488266">
+        <ele>259.1</ele>
+        <time>2025-06-17T08:17:23.581Z</time>
+      </trkpt>
+      <trkpt lat="43.303851" lon="-1.488028">
+        <ele>266.6</ele>
+        <time>2025-06-17T08:19:23.535Z</time>
+      </trkpt>
+      <trkpt lat="43.303546" lon="-1.487945">
+        <ele>270.7</ele>
+        <time>2025-06-17T08:20:35.806Z</time>
+      </trkpt>
+      <trkpt lat="43.303303" lon="-1.487768">
+        <ele>273.7</ele>
+        <time>2025-06-17T08:21:33.702Z</time>
+      </trkpt>
+      <trkpt lat="43.303142" lon="-1.487485">
+        <ele>279.3</ele>
+        <time>2025-06-17T08:22:56.630Z</time>
+      </trkpt>
+      <trkpt lat="43.303261" lon="-1.487202">
+        <ele>284.4</ele>
+        <time>2025-06-17T08:24:12.313Z</time>
+      </trkpt>
+      <trkpt lat="43.303478" lon="-1.487017">
+        <ele>287.3</ele>
+        <time>2025-06-17T08:25:05.936Z</time>
+      </trkpt>
+      <trkpt lat="43.303681" lon="-1.486746">
+        <ele>291.0</ele>
+        <time>2025-06-17T08:26:11.623Z</time>
+      </trkpt>
+      <trkpt lat="43.303755" lon="-1.486432">
+        <ele>295.8</ele>
+        <time>2025-06-17T08:27:22.951Z</time>
+      </trkpt>
+      <trkpt lat="43.303869" lon="-1.486066">
+        <ele>301.4</ele>
+        <time>2025-06-17T08:28:48.937Z</time>
+      </trkpt>
+      <trkpt lat="43.303916" lon="-1.485752">
+        <ele>307.1</ele>
+        <time>2025-06-17T08:30:09.170Z</time>
+      </trkpt>
+      <trkpt lat="43.303807" lon="-1.485242">
+        <ele>316.4</ele>
+        <time>2025-06-17T08:32:22.019Z</time>
+      </trkpt>
+      <trkpt lat="43.303803" lon="-1.484782">
+        <ele>324.8</ele>
+        <time>2025-06-17T08:34:20.404Z</time>
+      </trkpt>
+      <trkpt lat="43.304218" lon="-1.483707">
+        <ele>346.0</ele>
+        <time>2025-06-17T08:39:23.022Z</time>
+      </trkpt>
+      <trkpt lat="43.304509" lon="-1.483779">
+        <ele>347.1</ele>
+        <time>2025-06-17T08:40:09.324Z</time>
+      </trkpt>
+      <trkpt lat="43.304790" lon="-1.483971">
+        <ele>348.0</ele>
+        <time>2025-06-17T08:40:48.921Z</time>
+      </trkpt>
+      <trkpt lat="43.304995" lon="-1.483946">
+        <ele>350.8</ele>
+        <time>2025-06-17T08:41:40.338Z</time>
+      </trkpt>
+      <trkpt lat="43.304905" lon="-1.483538">
+        <ele>354.5</ele>
+        <time>2025-06-17T08:42:49.500Z</time>
+      </trkpt>
+      <trkpt lat="43.304691" lon="-1.483081">
+        <ele>359.0</ele>
+        <time>2025-06-17T08:44:13.224Z</time>
+      </trkpt>
+      <trkpt lat="43.304498" lon="-1.482814">
+        <ele>362.0</ele>
+        <time>2025-06-17T08:45:10.716Z</time>
+      </trkpt>
+      <trkpt lat="43.304224" lon="-1.482720">
+        <ele>365.0</ele>
+        <time>2025-06-17T08:46:08.910Z</time>
+      </trkpt>
+      <trkpt lat="43.303896" lon="-1.482697">
+        <ele>368.3</ele>
+        <time>2025-06-17T08:47:13.825Z</time>
+      </trkpt>
+      <trkpt lat="43.303650" lon="-1.482587">
+        <ele>370.8</ele>
+        <time>2025-06-17T08:48:05.039Z</time>
+      </trkpt>
+      <trkpt lat="43.303516" lon="-1.482288">
+        <ele>376.4</ele>
+        <time>2025-06-17T08:49:26.749Z</time>
+      </trkpt>
+      <trkpt lat="43.303978" lon="-1.481642">
+        <ele>383.9</ele>
+        <time>2025-06-17T08:51:49.495Z</time>
+      </trkpt>
+      <trkpt lat="43.304282" lon="-1.481360">
+        <ele>385.4</ele>
+        <time>2025-06-17T08:52:39.708Z</time>
+      </trkpt>
+      <trkpt lat="43.304697" lon="-1.480909">
+        <ele>386.8</ele>
+        <time>2025-06-17T08:53:44.252Z</time>
+      </trkpt>
+      <trkpt lat="43.304914" lon="-1.480640">
+        <ele>387.4</ele>
+        <time>2025-06-17T08:54:18.196Z</time>
+      </trkpt>
+      <trkpt lat="43.305243" lon="-1.480231">
+        <ele>387.6</ele>
+        <time>2025-06-17T08:55:02.426Z</time>
+      </trkpt>
+      <trkpt lat="43.305404" lon="-1.479933">
+        <ele>388.9</ele>
+        <time>2025-06-17T08:55:42.090Z</time>
+      </trkpt>
+      <trkpt lat="43.305548" lon="-1.479598">
+        <ele>391.7</ele>
+        <time>2025-06-17T08:56:38.314Z</time>
+      </trkpt>
+      <trkpt lat="43.305667" lon="-1.479268">
+        <ele>394.4</ele>
+        <time>2025-06-17T08:57:31.439Z</time>
+      </trkpt>
+      <trkpt lat="43.305952" lon="-1.478566">
+        <ele>406.3</ele>
+        <time>2025-06-17T09:00:28.862Z</time>
+      </trkpt>
+      <trkpt lat="43.306089" lon="-1.478236">
+        <ele>415.0</ele>
+        <time>2025-06-17T09:02:25.521Z</time>
+      </trkpt>
+      <trkpt lat="43.306236" lon="-1.477978">
+        <ele>422.6</ele>
+        <time>2025-06-17T09:04:06.410Z</time>
+      </trkpt>
+      <trkpt lat="43.306601" lon="-1.478086">
+        <ele>414.8</ele>
+        <time>2025-06-17T09:05:32.503Z</time>
+      </trkpt>
+      <trkpt lat="43.306961" lon="-1.478236">
+        <ele>409.4</ele>
+        <time>2025-06-17T09:06:40.674Z</time>
+      </trkpt>
+      <trkpt lat="43.307235" lon="-1.478360">
+        <ele>405.6</ele>
+        <time>2025-06-17T09:07:31.408Z</time>
+      </trkpt>
+      <trkpt lat="43.307640" lon="-1.478536">
+        <ele>402.3</ele>
+        <time>2025-06-17T09:08:31.678Z</time>
+      </trkpt>
+      <trkpt lat="43.307888" lon="-1.478577">
+        <ele>402.3</ele>
+        <time>2025-06-17T09:08:56.604Z</time>
+      </trkpt>
+      <trkpt lat="43.308199" lon="-1.478572">
+        <ele>404.2</ele>
+        <time>2025-06-17T09:09:45.455Z</time>
+      </trkpt>
+      <trkpt lat="43.308512" lon="-1.478550">
+        <ele>406.4</ele>
+        <time>2025-06-17T09:10:37.932Z</time>
+      </trkpt>
+      <trkpt lat="43.309034" lon="-1.478456">
+        <ele>409.7</ele>
+        <time>2025-06-17T09:12:02.452Z</time>
+      </trkpt>
+      <trkpt lat="43.309365" lon="-1.478308">
+        <ele>410.4</ele>
+        <time>2025-06-17T09:12:42.840Z</time>
+      </trkpt>
+      <trkpt lat="43.309628" lon="-1.478222">
+        <ele>410.0</ele>
+        <time>2025-06-17T09:13:11.034Z</time>
+      </trkpt>
+      <trkpt lat="43.309997" lon="-1.478208">
+        <ele>404.1</ele>
+        <time>2025-06-17T09:14:21.609Z</time>
+      </trkpt>
+      <trkpt lat="43.310233" lon="-1.478132">
+        <ele>405.5</ele>
+        <time>2025-06-17T09:14:58.297Z</time>
+      </trkpt>
+      <trkpt lat="43.310102" lon="-1.477746">
+        <ele>413.6</ele>
+        <time>2025-06-17T09:16:51.767Z</time>
+      </trkpt>
+      <trkpt lat="43.310007" lon="-1.477455">
+        <ele>418.3</ele>
+        <time>2025-06-17T09:18:04.475Z</time>
+      </trkpt>
+      <trkpt lat="43.310115" lon="-1.477145">
+        <ele>422.5</ele>
+        <time>2025-06-17T09:19:11.892Z</time>
+      </trkpt>
+      <trkpt lat="43.310156" lon="-1.476808">
+        <ele>424.5</ele>
+        <time>2025-06-17T09:19:55.791Z</time>
+      </trkpt>
+      <trkpt lat="43.310247" lon="-1.476421">
+        <ele>424.7</ele>
+        <time>2025-06-17T09:20:26.964Z</time>
+      </trkpt>
+      <trkpt lat="43.310265" lon="-1.476052">
+        <ele>423.5</ele>
+        <time>2025-06-17T09:21:00.091Z</time>
+      </trkpt>
+      <trkpt lat="43.310252" lon="-1.475660">
+        <ele>421.7</ele>
+        <time>2025-06-17T09:21:38.836Z</time>
+      </trkpt>
+      <trkpt lat="43.310166" lon="-1.475373">
+        <ele>423.7</ele>
+        <time>2025-06-17T09:22:21.035Z</time>
+      </trkpt>
+      <trkpt lat="43.309876" lon="-1.474866">
+        <ele>428.0</ele>
+        <time>2025-06-17T09:23:50.838Z</time>
+      </trkpt>
+      <trkpt lat="43.309759" lon="-1.474523">
+        <ele>432.7</ele>
+        <time>2025-06-17T09:25:06.199Z</time>
+      </trkpt>
+      <trkpt lat="43.309590" lon="-1.474206">
+        <ele>437.6</ele>
+        <time>2025-06-17T09:26:23.483Z</time>
+      </trkpt>
+      <trkpt lat="43.309552" lon="-1.473869">
+        <ele>433.3</ele>
+        <time>2025-06-17T09:27:15.338Z</time>
+      </trkpt>
+      <trkpt lat="43.309495" lon="-1.473462">
+        <ele>428.0</ele>
+        <time>2025-06-17T09:28:16.874Z</time>
+      </trkpt>
+      <trkpt lat="43.309413" lon="-1.473101">
+        <ele>422.6</ele>
+        <time>2025-06-17T09:29:16.149Z</time>
+      </trkpt>
+      <trkpt lat="43.309282" lon="-1.472781">
+        <ele>397.5</ele>
+        <time>2025-06-17T09:32:12.743Z</time>
+      </trkpt>
+      <trkpt lat="43.309063" lon="-1.472373">
+        <ele>339.0</ele>
+        <time>2025-06-17T09:38:39.674Z</time>
+      </trkpt>
+      <trkpt lat="43.308847" lon="-1.472074">
+        <ele>224.0</ele>
+        <time>2025-06-17T09:50:38.911Z</time>
+      </trkpt>
+      <trkpt lat="43.308613" lon="-1.471916">
+        <ele>176.3</ele>
+        <time>2025-06-17T09:55:50.081Z</time>
+      </trkpt>
+      <trkpt lat="43.308444" lon="-1.471696">
+        <ele>232.8</ele>
+        <time>2025-06-17T10:05:54.747Z</time>
+      </trkpt>
+      <trkpt lat="43.308541" lon="-1.471385">
+        <ele>306.3</ele>
+        <time>2025-06-17T10:18:55.137Z</time>
+      </trkpt>
+      <trkpt lat="43.308473" lon="-1.471060">
+        <ele>400.2</ele>
+        <time>2025-06-17T10:35:25.017Z</time>
+      </trkpt>
+      <trkpt lat="43.308192" lon="-1.470980">
+        <ele>468.6</ele>
+        <time>2025-06-17T10:47:41.128Z</time>
+      </trkpt>
+      <trkpt lat="43.307964" lon="-1.471143">
+        <ele>466.1</ele>
+        <time>2025-06-17T10:48:20.804Z</time>
+      </trkpt>
+      <trkpt lat="43.307964" lon="-1.470889">
+        <ele>470.2</ele>
+        <time>2025-06-17T10:49:27.526Z</time>
+      </trkpt>
+      <trkpt lat="43.308060" lon="-1.470482">
+        <ele>477.3</ele>
+        <time>2025-06-17T10:51:10.070Z</time>
+      </trkpt>
+      <trkpt lat="43.308027" lon="-1.470139">
+        <ele>478.7</ele>
+        <time>2025-06-17T10:51:49.245Z</time>
+      </trkpt>
+      <trkpt lat="43.307883" lon="-1.469820">
+        <ele>480.3</ele>
+        <time>2025-06-17T10:52:31.812Z</time>
+      </trkpt>
+      <trkpt lat="43.307585" lon="-1.469592">
+        <ele>479.2</ele>
+        <time>2025-06-17T10:53:11.344Z</time>
+      </trkpt>
+      <trkpt lat="43.307294" lon="-1.469513">
+        <ele>479.1</ele>
+        <time>2025-06-17T10:53:40.315Z</time>
+      </trkpt>
+      <trkpt lat="43.307016" lon="-1.469514">
+        <ele>480.1</ele>
+        <time>2025-06-17T10:54:16.935Z</time>
+      </trkpt>
+      <trkpt lat="43.306726" lon="-1.469569">
+        <ele>481.8</ele>
+        <time>2025-06-17T10:55:03.035Z</time>
+      </trkpt>
+      <trkpt lat="43.306446" lon="-1.469615">
+        <ele>483.7</ele>
+        <time>2025-06-17T10:55:49.444Z</time>
+      </trkpt>
+      <trkpt lat="43.306031" lon="-1.469608">
+        <ele>485.2</ele>
+        <time>2025-06-17T10:56:44.554Z</time>
+      </trkpt>
+      <trkpt lat="43.305801" lon="-1.469590">
+        <ele>486.5</ele>
+        <time>2025-06-17T10:57:19.898Z</time>
+      </trkpt>
+      <trkpt lat="43.305416" lon="-1.469491">
+        <ele>490.2</ele>
+        <time>2025-06-17T10:58:34.969Z</time>
+      </trkpt>
+      <trkpt lat="43.305022" lon="-1.469027">
+        <ele>486.4</ele>
+        <time>2025-06-17T10:59:47.665Z</time>
+      </trkpt>
+      <trkpt lat="43.304768" lon="-1.468767">
+        <ele>490.1</ele>
+        <time>2025-06-17T11:00:56.217Z</time>
+      </trkpt>
+      <trkpt lat="43.304491" lon="-1.468558">
+        <ele>493.8</ele>
+        <time>2025-06-17T11:02:04.489Z</time>
+      </trkpt>
+      <trkpt lat="43.304281" lon="-1.468349">
+        <ele>496.8</ele>
+        <time>2025-06-17T11:02:59.775Z</time>
+      </trkpt>
+      <trkpt lat="43.304073" lon="-1.468220">
+        <ele>499.4</ele>
+        <time>2025-06-17T11:03:48.647Z</time>
+      </trkpt>
+      <trkpt lat="43.303854" lon="-1.468027">
+        <ele>503.5</ele>
+        <time>2025-06-17T11:04:55.402Z</time>
+      </trkpt>
+      <trkpt lat="43.303597" lon="-1.467944">
+        <ele>506.2</ele>
+        <time>2025-06-17T11:05:48.307Z</time>
+      </trkpt>
+      <trkpt lat="43.303491" lon="-1.467565">
+        <ele>504.6</ele>
+        <time>2025-06-17T11:06:27.768Z</time>
+      </trkpt>
+      <trkpt lat="43.303384" lon="-1.467045">
+        <ele>503.0</ele>
+        <time>2025-06-17T11:07:15.057Z</time>
+      </trkpt>
+      <trkpt lat="43.303254" lon="-1.466427">
+        <ele>502.9</ele>
+        <time>2025-06-17T11:08:00.410Z</time>
+      </trkpt>
+      <trkpt lat="43.303152" lon="-1.466141">
+        <ele>503.7</ele>
+        <time>2025-06-17T11:08:31.016Z</time>
+      </trkpt>
+      <trkpt lat="43.302971" lon="-1.465853">
+        <ele>505.4</ele>
+        <time>2025-06-17T11:09:15.718Z</time>
+      </trkpt>
+      <trkpt lat="43.302763" lon="-1.465653">
+        <ele>506.5</ele>
+        <time>2025-06-17T11:09:51.122Z</time>
+      </trkpt>
+      <trkpt lat="43.302471" lon="-1.465444">
+        <ele>507.2</ele>
+        <time>2025-06-17T11:10:29.988Z</time>
+      </trkpt>
+      <trkpt lat="43.302332" lon="-1.465142">
+        <ele>508.6</ele>
+        <time>2025-06-17T11:11:09.234Z</time>
+      </trkpt>
+      <trkpt lat="43.302242" lon="-1.464660">
+        <ele>510.5</ele>
+        <time>2025-06-17T11:12:03.880Z</time>
+      </trkpt>
+      <trkpt lat="43.302218" lon="-1.464151">
+        <ele>512.6</ele>
+        <time>2025-06-17T11:13:00.129Z</time>
+      </trkpt>
+      <trkpt lat="43.302139" lon="-1.463828">
+        <ele>514.1</ele>
+        <time>2025-06-17T11:13:39.660Z</time>
+      </trkpt>
+      <trkpt lat="43.301969" lon="-1.463585">
+        <ele>515.7</ele>
+        <time>2025-06-17T11:14:19.633Z</time>
+      </trkpt>
+      <trkpt lat="43.301773" lon="-1.463376">
+        <ele>517.7</ele>
+        <time>2025-06-17T11:15:03.592Z</time>
+      </trkpt>
+      <trkpt lat="43.301552" lon="-1.463091">
+        <ele>520.4</ele>
+        <time>2025-06-17T11:16:01.228Z</time>
+      </trkpt>
+      <trkpt lat="43.301406" lon="-1.462759">
+        <ele>523.0</ele>
+        <time>2025-06-17T11:16:54.686Z</time>
+      </trkpt>
+      <trkpt lat="43.301145" lon="-1.462250">
+        <ele>527.1</ele>
+        <time>2025-06-17T11:18:20.259Z</time>
+      </trkpt>
+      <trkpt lat="43.300969" lon="-1.461927">
+        <ele>528.6</ele>
+        <time>2025-06-17T11:19:03.404Z</time>
+      </trkpt>
+      <trkpt lat="43.300626" lon="-1.461536">
+        <ele>531.0</ele>
+        <time>2025-06-17T11:20:10.754Z</time>
+      </trkpt>
+      <trkpt lat="43.300423" lon="-1.461353">
+        <ele>532.4</ele>
+        <time>2025-06-17T11:20:48.379Z</time>
+      </trkpt>
+      <trkpt lat="43.300193" lon="-1.461136">
+        <ele>534.7</ele>
+        <time>2025-06-17T11:21:38.763Z</time>
+      </trkpt>
+      <trkpt lat="43.299956" lon="-1.460919">
+        <ele>537.1</ele>
+        <time>2025-06-17T11:22:30.253Z</time>
+      </trkpt>
+      <trkpt lat="43.299469" lon="-1.460677">
+        <ele>532.5</ele>
+        <time>2025-06-17T11:23:47.110Z</time>
+      </trkpt>
+      <trkpt lat="43.299244" lon="-1.460522">
+        <ele>531.9</ele>
+        <time>2025-06-17T11:24:15.007Z</time>
+      </trkpt>
+      <trkpt lat="43.299015" lon="-1.460214">
+        <ele>531.1</ele>
+        <time>2025-06-17T11:24:50.527Z</time>
+      </trkpt>
+      <trkpt lat="43.298887" lon="-1.459867">
+        <ele>531.5</ele>
+        <time>2025-06-17T11:25:22.635Z</time>
+      </trkpt>
+      <trkpt lat="43.298878" lon="-1.459469">
+        <ele>533.4</ele>
+        <time>2025-06-17T11:26:09.948Z</time>
+      </trkpt>
+      <trkpt lat="43.299021" lon="-1.459086">
+        <ele>537.1</ele>
+        <time>2025-06-17T11:27:17.677Z</time>
+      </trkpt>
+      <trkpt lat="43.299151" lon="-1.458695">
+        <ele>540.7</ele>
+        <time>2025-06-17T11:28:25.161Z</time>
+      </trkpt>
+      <trkpt lat="43.299177" lon="-1.458387">
+        <ele>540.1</ele>
+        <time>2025-06-17T11:28:50.583Z</time>
+      </trkpt>
+      <trkpt lat="43.299187" lon="-1.457868">
+        <ele>539.1</ele>
+        <time>2025-06-17T11:29:32.825Z</time>
+      </trkpt>
+      <trkpt lat="43.299112" lon="-1.457408">
+        <ele>532.4</ele>
+        <time>2025-06-17T11:30:45.404Z</time>
+      </trkpt>
+      <trkpt lat="43.299128" lon="-1.457085">
+        <ele>530.0</ele>
+        <time>2025-06-17T11:31:22.731Z</time>
+      </trkpt>
+      <trkpt lat="43.299258" lon="-1.456757">
+        <ele>532.6</ele>
+        <time>2025-06-17T11:32:14.993Z</time>
+      </trkpt>
+      <trkpt lat="43.299365" lon="-1.456437">
+        <ele>534.0</ele>
+        <time>2025-06-17T11:32:54.271Z</time>
+      </trkpt>
+      <trkpt lat="43.299415" lon="-1.456107">
+        <ele>533.6</ele>
+        <time>2025-06-17T11:33:19.892Z</time>
+      </trkpt>
+      <trkpt lat="43.299473" lon="-1.455800">
+        <ele>531.9</ele>
+        <time>2025-06-17T11:33:52.378Z</time>
+      </trkpt>
+      <trkpt lat="43.299410" lon="-1.455481">
+        <ele>525.7</ele>
+        <time>2025-06-17T11:34:52.622Z</time>
+      </trkpt>
+      <trkpt lat="43.299174" lon="-1.455123">
+        <ele>518.4</ele>
+        <time>2025-06-17T11:36:10.123Z</time>
+      </trkpt>
+      <trkpt lat="43.299155" lon="-1.454625">
+        <ele>512.6</ele>
+        <time>2025-06-17T11:37:19.759Z</time>
+      </trkpt>
+      <trkpt lat="43.299224" lon="-1.454209">
+        <ele>512.3</ele>
+        <time>2025-06-17T11:37:51.254Z</time>
+      </trkpt>
+      <trkpt lat="43.299349" lon="-1.453733">
+        <ele>510.6</ele>
+        <time>2025-06-17T11:38:36.493Z</time>
+      </trkpt>
+      <trkpt lat="43.299460" lon="-1.453446">
+        <ele>508.7</ele>
+        <time>2025-06-17T11:39:10.456Z</time>
+      </trkpt>
+      <trkpt lat="43.299667" lon="-1.453043">
+        <ele>504.4</ele>
+        <time>2025-06-17T11:40:10.886Z</time>
+      </trkpt>
+      <trkpt lat="43.299802" lon="-1.452751">
+        <ele>500.6</ele>
+        <time>2025-06-17T11:40:57.290Z</time>
+      </trkpt>
+      <trkpt lat="43.299884" lon="-1.452451">
+        <ele>494.1</ele>
+        <time>2025-06-17T11:41:58.592Z</time>
+      </trkpt>
+      <trkpt lat="43.299916" lon="-1.452094">
+        <ele>486.9</ele>
+        <time>2025-06-17T11:43:07.087Z</time>
+      </trkpt>
+      <trkpt lat="43.299859" lon="-1.451628">
+        <ele>479.5</ele>
+        <time>2025-06-17T11:44:24.211Z</time>
+      </trkpt>
+      <trkpt lat="43.299639" lon="-1.451232">
+        <ele>470.9</ele>
+        <time>2025-06-17T11:45:50.944Z</time>
+      </trkpt>
+      <trkpt lat="43.299380" lon="-1.450883">
+        <ele>461.9</ele>
+        <time>2025-06-17T11:47:19.163Z</time>
+      </trkpt>
+      <trkpt lat="43.299108" lon="-1.450708">
+        <ele>456.3</ele>
+        <time>2025-06-17T11:48:21.680Z</time>
+      </trkpt>
+      <trkpt lat="43.299086" lon="-1.450380">
+        <ele>453.1</ele>
+        <time>2025-06-17T11:49:07.104Z</time>
+      </trkpt>
+      <trkpt lat="43.299285" lon="-1.449715">
+        <ele>453.6</ele>
+        <time>2025-06-17T11:50:02.897Z</time>
+      </trkpt>
+      <trkpt lat="43.299355" lon="-1.449307">
+        <ele>448.0</ele>
+        <time>2025-06-17T11:51:05.541Z</time>
+      </trkpt>
+      <trkpt lat="43.299359" lon="-1.448766">
+        <ele>438.6</ele>
+        <time>2025-06-17T11:52:39.424Z</time>
+      </trkpt>
+      <trkpt lat="43.299343" lon="-1.448331">
+        <ele>430.0</ele>
+        <time>2025-06-17T11:54:01.651Z</time>
+      </trkpt>
+      <trkpt lat="43.299268" lon="-1.448024">
+        <ele>427.0</ele>
+        <time>2025-06-17T11:54:41.934Z</time>
+      </trkpt>
+      <trkpt lat="43.299093" lon="-1.447806">
+        <ele>423.5</ele>
+        <time>2025-06-17T11:55:29.500Z</time>
+      </trkpt>
+      <trkpt lat="43.298903" lon="-1.447599">
+        <ele>422.6</ele>
+        <time>2025-06-17T11:55:58.922Z</time>
+      </trkpt>
+      <trkpt lat="43.298459" lon="-1.447092">
+        <ele>420.4</ele>
+        <time>2025-06-17T11:57:06.852Z</time>
+      </trkpt>
+      <trkpt lat="43.298275" lon="-1.446806">
+        <ele>422.6</ele>
+        <time>2025-06-17T11:57:55.665Z</time>
+      </trkpt>
+      <trkpt lat="43.298115" lon="-1.446489">
+        <ele>424.8</ele>
+        <time>2025-06-17T11:58:45.061Z</time>
+      </trkpt>
+      <trkpt lat="43.297752" lon="-1.446223">
+        <ele>427.3</ele>
+        <time>2025-06-17T11:59:50.180Z</time>
+      </trkpt>
+      <trkpt lat="43.297552" lon="-1.446049">
+        <ele>429.1</ele>
+        <time>2025-06-17T12:00:31.193Z</time>
+      </trkpt>
+      <trkpt lat="43.297355" lon="-1.445684">
+        <ele>432.4</ele>
+        <time>2025-06-17T12:01:36.910Z</time>
+      </trkpt>
+      <trkpt lat="43.297210" lon="-1.445377">
+        <ele>435.1</ele>
+        <time>2025-06-17T12:02:29.714Z</time>
+      </trkpt>
+      <trkpt lat="43.297057" lon="-1.445053">
+        <ele>435.1</ele>
+        <time>2025-06-17T12:02:57.023Z</time>
+      </trkpt>
+      <trkpt lat="43.296998" lon="-1.444711">
+        <ele>435.2</ele>
+        <time>2025-06-17T12:03:22.050Z</time>
+      </trkpt>
+      <trkpt lat="43.296943" lon="-1.444373">
+        <ele>434.9</ele>
+        <time>2025-06-17T12:03:47.661Z</time>
+      </trkpt>
+      <trkpt lat="43.296824" lon="-1.444099">
+        <ele>434.7</ele>
+        <time>2025-06-17T12:04:11.348Z</time>
+      </trkpt>
+      <trkpt lat="43.296617" lon="-1.443900">
+        <ele>435.7</ele>
+        <time>2025-06-17T12:04:46.411Z</time>
+      </trkpt>
+      <trkpt lat="43.296389" lon="-1.443620">
+        <ele>437.0</ele>
+        <time>2025-06-17T12:05:28.916Z</time>
+      </trkpt>
+      <trkpt lat="43.296139" lon="-1.443373">
+        <ele>439.5</ele>
+        <time>2025-06-17T12:06:23.574Z</time>
+      </trkpt>
+      <trkpt lat="43.295911" lon="-1.443181">
+        <ele>441.6</ele>
+        <time>2025-06-17T12:07:11.143Z</time>
+      </trkpt>
+      <trkpt lat="43.295308" lon="-1.442453">
+        <ele>456.0</ele>
+        <time>2025-06-17T12:10:55.615Z</time>
+      </trkpt>
+      <trkpt lat="43.295132" lon="-1.442231">
+        <ele>458.8</ele>
+        <time>2025-06-17T12:11:46.723Z</time>
+      </trkpt>
+      <trkpt lat="43.294952" lon="-1.441956">
+        <ele>461.9</ele>
+        <time>2025-06-17T12:12:44.266Z</time>
+      </trkpt>
+      <trkpt lat="43.294779" lon="-1.441609">
+        <ele>465.8</ele>
+        <time>2025-06-17T12:13:53.308Z</time>
+      </trkpt>
+      <trkpt lat="43.294565" lon="-1.441326">
+        <ele>466.2</ele>
+        <time>2025-06-17T12:14:25.967Z</time>
+      </trkpt>
+      <trkpt lat="43.294307" lon="-1.441151">
+        <ele>463.5</ele>
+        <time>2025-06-17T12:15:10.509Z</time>
+      </trkpt>
+      <trkpt lat="43.294035" lon="-1.441103">
+        <ele>461.0</ele>
+        <time>2025-06-17T12:15:51.629Z</time>
+      </trkpt>
+      <trkpt lat="43.293773" lon="-1.440811">
+        <ele>463.9</ele>
+        <time>2025-06-17T12:16:53.965Z</time>
+      </trkpt>
+      <trkpt lat="43.293549" lon="-1.440365">
+        <ele>470.5</ele>
+        <time>2025-06-17T12:18:39.890Z</time>
+      </trkpt>
+      <trkpt lat="43.293378" lon="-1.440005">
+        <ele>477.8</ele>
+        <time>2025-06-17T12:20:24.844Z</time>
+      </trkpt>
+      <trkpt lat="43.293315" lon="-1.439709">
+        <ele>480.2</ele>
+        <time>2025-06-17T12:21:11.258Z</time>
+      </trkpt>
+      <trkpt lat="43.292980" lon="-1.439622">
+        <ele>483.9</ele>
+        <time>2025-06-17T12:22:21.839Z</time>
+      </trkpt>
+      <trkpt lat="43.292699" lon="-1.439619">
+        <ele>483.4</ele>
+        <time>2025-06-17T12:22:51.634Z</time>
+      </trkpt>
+      <trkpt lat="43.292329" lon="-1.439397">
+        <ele>482.7</ele>
+        <time>2025-06-17T12:23:34.852Z</time>
+      </trkpt>
+      <trkpt lat="43.292173" lon="-1.439118">
+        <ele>489.3</ele>
+        <time>2025-06-17T12:25:07.688Z</time>
+      </trkpt>
+      <trkpt lat="43.292070" lon="-1.438789">
+        <ele>496.1</ele>
+        <time>2025-06-17T12:26:42.011Z</time>
+      </trkpt>
+      <trkpt lat="43.292011" lon="-1.438465">
+        <ele>500.4</ele>
+        <time>2025-06-17T12:27:50.249Z</time>
+      </trkpt>
+      <trkpt lat="43.291743" lon="-1.438265">
+        <ele>506.1</ele>
+        <time>2025-06-17T12:29:17.792Z</time>
+      </trkpt>
+      <trkpt lat="43.291548" lon="-1.438038">
+        <ele>508.4</ele>
+        <time>2025-06-17T12:30:06.021Z</time>
+      </trkpt>
+      <trkpt lat="43.291390" lon="-1.437764">
+        <ele>511.8</ele>
+        <time>2025-06-17T12:31:05.591Z</time>
+      </trkpt>
+      <trkpt lat="43.291095" lon="-1.437874">
+        <ele>525.3</ele>
+        <time>2025-06-17T12:33:58.876Z</time>
+      </trkpt>
+      <trkpt lat="43.290843" lon="-1.438127">
+        <ele>531.1</ele>
+        <time>2025-06-17T12:35:28.601Z</time>
+      </trkpt>
+      <trkpt lat="43.290602" lon="-1.438332">
+        <ele>532.3</ele>
+        <time>2025-06-17T12:36:08.087Z</time>
+      </trkpt>
+      <trkpt lat="43.290395" lon="-1.438537">
+        <ele>536.3</ele>
+        <time>2025-06-17T12:37:13.406Z</time>
+      </trkpt>
+      <trkpt lat="43.289975" lon="-1.438522">
+        <ele>542.9</ele>
+        <time>2025-06-17T12:39:02.207Z</time>
+      </trkpt>
+      <trkpt lat="43.289704" lon="-1.438511">
+        <ele>546.9</ele>
+        <time>2025-06-17T12:40:08.894Z</time>
+      </trkpt>
+      <trkpt lat="43.289459" lon="-1.438439">
+        <ele>550.6</ele>
+        <time>2025-06-17T12:41:10.915Z</time>
+      </trkpt>
+      <trkpt lat="43.289204" lon="-1.438289">
+        <ele>554.0</ele>
+        <time>2025-06-17T12:42:12.966Z</time>
+      </trkpt>
+      <trkpt lat="43.288964" lon="-1.438216">
+        <ele>557.5</ele>
+        <time>2025-06-17T12:43:12.408Z</time>
+      </trkpt>
+      <trkpt lat="43.288663" lon="-1.438144">
+        <ele>563.4</ele>
+        <time>2025-06-17T12:44:42.278Z</time>
+      </trkpt>
+      <trkpt lat="43.288396" lon="-1.438134">
+        <ele>568.1</ele>
+        <time>2025-06-17T12:45:55.809Z</time>
+      </trkpt>
+      <trkpt lat="43.288125" lon="-1.437983">
+        <ele>573.1</ele>
+        <time>2025-06-17T12:47:16.128Z</time>
+      </trkpt>
+      <trkpt lat="43.287876" lon="-1.437851">
+        <ele>576.8</ele>
+        <time>2025-06-17T12:48:20.228Z</time>
+      </trkpt>
+      <trkpt lat="43.287660" lon="-1.437944">
+        <ele>580.0</ele>
+        <time>2025-06-17T12:49:14.965Z</time>
+      </trkpt>
+      <trkpt lat="43.287406" lon="-1.438033">
+        <ele>584.8</ele>
+        <time>2025-06-17T12:50:28.910Z</time>
+      </trkpt>
+      <trkpt lat="43.287113" lon="-1.438002">
+        <ele>590.2</ele>
+        <time>2025-06-17T12:51:52.465Z</time>
+      </trkpt>
+      <trkpt lat="43.286830" lon="-1.437949">
+        <ele>594.1</ele>
+        <time>2025-06-17T12:53:00.538Z</time>
+      </trkpt>
+      <trkpt lat="43.286555" lon="-1.437963">
+        <ele>598.0</ele>
+        <time>2025-06-17T12:54:07.444Z</time>
+      </trkpt>
+      <trkpt lat="43.286169" lon="-1.437885">
+        <ele>604.0</ele>
+        <time>2025-06-17T12:55:45.964Z</time>
+      </trkpt>
+      <trkpt lat="43.285977" lon="-1.437725">
+        <ele>600.2</ele>
+        <time>2025-06-17T12:56:29.838Z</time>
+      </trkpt>
+      <trkpt lat="43.285762" lon="-1.437381">
+        <ele>594.6</ele>
+        <time>2025-06-17T12:57:36.272Z</time>
+      </trkpt>
+      <trkpt lat="43.285518" lon="-1.437323">
+        <ele>598.3</ele>
+        <time>2025-06-17T12:58:38.155Z</time>
+      </trkpt>
+      <trkpt lat="43.285263" lon="-1.437405">
+        <ele>602.1</ele>
+        <time>2025-06-17T12:59:42.683Z</time>
+      </trkpt>
+      <trkpt lat="43.284973" lon="-1.437469">
+        <ele>602.6</ele>
+        <time>2025-06-17T13:00:16.549Z</time>
+      </trkpt>
+      <trkpt lat="43.284695" lon="-1.437371">
+        <ele>603.1</ele>
+        <time>2025-06-17T13:00:49.046Z</time>
+      </trkpt>
+      <trkpt lat="43.284475" lon="-1.437191">
+        <ele>601.1</ele>
+        <time>2025-06-17T13:01:25.403Z</time>
+      </trkpt>
+      <trkpt lat="43.284234" lon="-1.437171">
+        <ele>599.3</ele>
+        <time>2025-06-17T13:01:59.611Z</time>
+      </trkpt>
+      <trkpt lat="43.283847" lon="-1.437330">
+        <ele>600.7</ele>
+        <time>2025-06-17T13:02:52.731Z</time>
+      </trkpt>
+      <trkpt lat="43.283539" lon="-1.437798">
+        <ele>611.2</ele>
+        <time>2025-06-17T13:05:27.953Z</time>
+      </trkpt>
+      <trkpt lat="43.283405" lon="-1.438023">
+        <ele>614.1</ele>
+        <time>2025-06-17T13:06:19.311Z</time>
+      </trkpt>
+      <trkpt lat="43.283147" lon="-1.437963">
+        <ele>613.1</ele>
+        <time>2025-06-17T13:06:50.713Z</time>
+      </trkpt>
+      <trkpt lat="43.282873" lon="-1.438035">
+        <ele>613.7</ele>
+        <time>2025-06-17T13:07:22.998Z</time>
+      </trkpt>
+      <trkpt lat="43.282630" lon="-1.438186">
+        <ele>616.5</ele>
+        <time>2025-06-17T13:08:17.454Z</time>
+      </trkpt>
+      <trkpt lat="43.282371" lon="-1.438135">
+        <ele>615.7</ele>
+        <time>2025-06-17T13:08:47.455Z</time>
+      </trkpt>
+      <trkpt lat="43.282090" lon="-1.438041">
+        <ele>612.4</ele>
+        <time>2025-06-17T13:09:35.152Z</time>
+      </trkpt>
+      <trkpt lat="43.281823" lon="-1.437990">
+        <ele>612.2</ele>
+        <time>2025-06-17T13:10:02.514Z</time>
+      </trkpt>
+      <trkpt lat="43.281483" lon="-1.437995">
+        <ele>611.8</ele>
+        <time>2025-06-17T13:10:36.875Z</time>
+      </trkpt>
+      <trkpt lat="43.281119" lon="-1.438183">
+        <ele>614.8</ele>
+        <time>2025-06-17T13:11:46.650Z</time>
+      </trkpt>
+      <trkpt lat="43.280859" lon="-1.438405">
+        <ele>617.1</ele>
+        <time>2025-06-17T13:12:39.485Z</time>
+      </trkpt>
+      <trkpt lat="43.280624" lon="-1.438677">
+        <ele>618.2</ele>
+        <time>2025-06-17T13:13:19.732Z</time>
+      </trkpt>
+      <trkpt lat="43.280350" lon="-1.438877">
+        <ele>619.3</ele>
+        <time>2025-06-17T13:14:00.391Z</time>
+      </trkpt>
+      <trkpt lat="43.280040" lon="-1.439154">
+        <ele>620.3</ele>
+        <time>2025-06-17T13:14:45.775Z</time>
+      </trkpt>
+      <trkpt lat="43.279726" lon="-1.439461">
+        <ele>622.7</ele>
+        <time>2025-06-17T13:15:48.136Z</time>
+      </trkpt>
+      <trkpt lat="43.279403" lon="-1.439751">
+        <ele>626.3</ele>
+        <time>2025-06-17T13:17:01.225Z</time>
+      </trkpt>
+      <trkpt lat="43.278989" lon="-1.439967">
+        <ele>629.3</ele>
+        <time>2025-06-17T13:18:14.831Z</time>
+      </trkpt>
+      <trkpt lat="43.278658" lon="-1.440069">
+        <ele>631.6</ele>
+        <time>2025-06-17T13:19:10.853Z</time>
+      </trkpt>
+      <trkpt lat="43.278443" lon="-1.439677">
+        <ele>621.6</ele>
+        <time>2025-06-17T13:20:47.640Z</time>
+      </trkpt>
+      <trkpt lat="43.278069" lon="-1.439435">
+        <ele>616.5</ele>
+        <time>2025-06-17T13:21:58.039Z</time>
+      </trkpt>
+      <trkpt lat="43.277749" lon="-1.439483">
+        <ele>615.1</ele>
+        <time>2025-06-17T13:22:36.986Z</time>
+      </trkpt>
+      <trkpt lat="43.277465" lon="-1.439740">
+        <ele>618.1</ele>
+        <time>2025-06-17T13:23:39.716Z</time>
+      </trkpt>
+      <trkpt lat="43.277142" lon="-1.440151">
+        <ele>621.9</ele>
+        <time>2025-06-17T13:25:00.815Z</time>
+      </trkpt>
+      <trkpt lat="43.276803" lon="-1.440602">
+        <ele>626.9</ele>
+        <time>2025-06-17T13:26:37.352Z</time>
+      </trkpt>
+      <trkpt lat="43.276376" lon="-1.440730">
+        <ele>623.4</ele>
+        <time>2025-06-17T13:27:40.355Z</time>
+      </trkpt>
+      <trkpt lat="43.276114" lon="-1.440606">
+        <ele>621.1</ele>
+        <time>2025-06-17T13:28:20.099Z</time>
+      </trkpt>
+      <trkpt lat="43.275749" lon="-1.440632">
+        <ele>622.2</ele>
+        <time>2025-06-17T13:29:07.390Z</time>
+      </trkpt>
+      <trkpt lat="43.275158" lon="-1.441064">
+        <ele>624.5</ele>
+        <time>2025-06-17T13:30:35.481Z</time>
+      </trkpt>
+      <trkpt lat="43.274774" lon="-1.441428">
+        <ele>626.5</ele>
+        <time>2025-06-17T13:31:40.567Z</time>
+      </trkpt>
+      <trkpt lat="43.274438" lon="-1.441883">
+        <ele>631.3</ele>
+        <time>2025-06-17T13:33:14.565Z</time>
+      </trkpt>
+      <trkpt lat="43.274138" lon="-1.442137">
+        <ele>631.5</ele>
+        <time>2025-06-17T13:33:50.253Z</time>
+      </trkpt>
+      <trkpt lat="43.273847" lon="-1.442261">
+        <ele>631.6</ele>
+        <time>2025-06-17T13:34:20.910Z</time>
+      </trkpt>
+      <trkpt lat="43.273635" lon="-1.442468">
+        <ele>630.8</ele>
+        <time>2025-06-17T13:34:50.555Z</time>
+      </trkpt>
+      <trkpt lat="43.273434" lon="-1.442348">
+        <ele>630.1</ele>
+        <time>2025-06-17T13:35:18.775Z</time>
+      </trkpt>
+      <trkpt lat="43.273037" lon="-1.442236">
+        <ele>626.4</ele>
+        <time>2025-06-17T13:36:20.199Z</time>
+      </trkpt>
+      <trkpt lat="43.272806" lon="-1.442072">
+        <ele>622.3</ele>
+        <time>2025-06-17T13:37:09.736Z</time>
+      </trkpt>
+      <trkpt lat="43.272716" lon="-1.441781">
+        <ele>616.5</ele>
+        <time>2025-06-17T13:38:06.887Z</time>
+      </trkpt>
+      <trkpt lat="43.272542" lon="-1.441534">
+        <ele>612.2</ele>
+        <time>2025-06-17T13:38:57.592Z</time>
+      </trkpt>
+      <trkpt lat="43.272287" lon="-1.441421">
+        <ele>610.1</ele>
+        <time>2025-06-17T13:39:36.176Z</time>
+      </trkpt>
+      <trkpt lat="43.272004" lon="-1.441148">
+        <ele>605.5</ele>
+        <time>2025-06-17T13:40:36.813Z</time>
+      </trkpt>
+      <trkpt lat="43.271754" lon="-1.441080">
+        <ele>601.1</ele>
+        <time>2025-06-17T13:41:27.520Z</time>
+      </trkpt>
+      <trkpt lat="43.271479" lon="-1.441174">
+        <ele>600.7</ele>
+        <time>2025-06-17T13:41:58.250Z</time>
+      </trkpt>
+      <trkpt lat="43.271397" lon="-1.441479">
+        <ele>600.3</ele>
+        <time>2025-06-17T13:42:23.217Z</time>
+      </trkpt>
+      <trkpt lat="43.271299" lon="-1.441759">
+        <ele>605.4</ele>
+        <time>2025-06-17T13:43:37.349Z</time>
+      </trkpt>
+      <trkpt lat="43.271188" lon="-1.442054">
+        <ele>610.9</ele>
+        <time>2025-06-17T13:44:56.552Z</time>
+      </trkpt>
+      <trkpt lat="43.271122" lon="-1.442402">
+        <ele>613.2</ele>
+        <time>2025-06-17T13:45:45.469Z</time>
+      </trkpt>
+      <trkpt lat="43.270907" lon="-1.442432">
+        <ele>615.7</ele>
+        <time>2025-06-17T13:46:39.183Z</time>
+      </trkpt>
+      <trkpt lat="43.270679" lon="-1.442135">
+        <ele>608.7</ele>
+        <time>2025-06-17T13:47:51.149Z</time>
+      </trkpt>
+      <trkpt lat="43.270410" lon="-1.441738">
+        <ele>597.7</ele>
+        <time>2025-06-17T13:49:34.907Z</time>
+      </trkpt>
+      <trkpt lat="43.270255" lon="-1.441510">
+        <ele>590.2</ele>
+        <time>2025-06-17T13:50:41.538Z</time>
+      </trkpt>
+      <trkpt lat="43.269869" lon="-1.441217">
+        <ele>583.1</ele>
+        <time>2025-06-17T13:52:08.537Z</time>
+      </trkpt>
+      <trkpt lat="43.269455" lon="-1.441144">
+        <ele>580.7</ele>
+        <time>2025-06-17T13:53:03.299Z</time>
+      </trkpt>
+      <trkpt lat="43.269078" lon="-1.441208">
+        <ele>578.6</ele>
+        <time>2025-06-17T13:53:52.097Z</time>
+      </trkpt>
+      <trkpt lat="43.268663" lon="-1.441322">
+        <ele>575.6</ele>
+        <time>2025-06-17T13:54:50.907Z</time>
+      </trkpt>
+      <trkpt lat="43.268341" lon="-1.441534">
+        <ele>572.5</ele>
+        <time>2025-06-17T13:55:43.590Z</time>
+      </trkpt>
+      <trkpt lat="43.268129" lon="-1.441700">
+        <ele>570.4</ele>
+        <time>2025-06-17T13:56:19.545Z</time>
+      </trkpt>
+      <trkpt lat="43.267885" lon="-1.441846">
+        <ele>568.5</ele>
+        <time>2025-06-17T13:56:56.134Z</time>
+      </trkpt>
+      <trkpt lat="43.267701" lon="-1.441832">
+        <ele>565.2</ele>
+        <time>2025-06-17T13:57:46.189Z</time>
+      </trkpt>
+      <trkpt lat="43.267698" lon="-1.441501">
+        <ele>561.5</ele>
+        <time>2025-06-17T13:58:31.383Z</time>
+      </trkpt>
+      <trkpt lat="43.267597" lon="-1.441211">
+        <ele>558.3</ele>
+        <time>2025-06-17T13:59:12.952Z</time>
+      </trkpt>
+      <trkpt lat="43.267406" lon="-1.440623">
+        <ele>552.7</ele>
+        <time>2025-06-17T14:00:31.399Z</time>
+      </trkpt>
+      <trkpt lat="43.267273" lon="-1.440307">
+        <ele>552.0</ele>
+        <time>2025-06-17T14:01:00.815Z</time>
+      </trkpt>
+      <trkpt lat="43.267134" lon="-1.439981">
+        <ele>551.3</ele>
+        <time>2025-06-17T14:01:31.150Z</time>
+      </trkpt>
+      <trkpt lat="43.266972" lon="-1.439493">
+        <ele>551.5</ele>
+        <time>2025-06-17T14:02:10.133Z</time>
+      </trkpt>
+      <trkpt lat="43.266846" lon="-1.439093">
+        <ele>553.1</ele>
+        <time>2025-06-17T14:02:57.542Z</time>
+      </trkpt>
+      <trkpt lat="43.266707" lon="-1.438848">
+        <ele>555.0</ele>
+        <time>2025-06-17T14:03:38.646Z</time>
+      </trkpt>
+      <trkpt lat="43.266582" lon="-1.438498">
+        <ele>558.2</ele>
+        <time>2025-06-17T14:04:38.805Z</time>
+      </trkpt>
+      <trkpt lat="43.266612" lon="-1.437960">
+        <ele>563.1</ele>
+        <time>2025-06-17T14:06:06.395Z</time>
+      </trkpt>
+      <trkpt lat="43.266655" lon="-1.437480">
+        <ele>563.3</ele>
+        <time>2025-06-17T14:06:41.602Z</time>
+      </trkpt>
+      <trkpt lat="43.266768" lon="-1.436462">
+        <ele>563.6</ele>
+        <time>2025-06-17T14:07:56.592Z</time>
+      </trkpt>
+      <trkpt lat="43.266935" lon="-1.436058">
+        <ele>561.7</ele>
+        <time>2025-06-17T14:08:51.364Z</time>
+      </trkpt>
+      <trkpt lat="43.266919" lon="-1.435718">
+        <ele>560.6</ele>
+        <time>2025-06-17T14:09:21.731Z</time>
+      </trkpt>
+      <trkpt lat="43.267011" lon="-1.435136">
+        <ele>558.7</ele>
+        <time>2025-06-17T14:10:14.881Z</time>
+      </trkpt>
+      <trkpt lat="43.267024" lon="-1.434585">
+        <ele>553.2</ele>
+        <time>2025-06-17T14:11:25.945Z</time>
+      </trkpt>
+      <trkpt lat="43.267070" lon="-1.434247">
+        <ele>550.6</ele>
+        <time>2025-06-17T14:12:05.553Z</time>
+      </trkpt>
+      <trkpt lat="43.267236" lon="-1.433821">
+        <ele>548.1</ele>
+        <time>2025-06-17T14:12:54.068Z</time>
+      </trkpt>
+      <trkpt lat="43.267302" lon="-1.433248">
+        <ele>541.3</ele>
+        <time>2025-06-17T14:14:15.217Z</time>
+      </trkpt>
+      <trkpt lat="43.267432" lon="-1.432786">
+        <ele>537.8</ele>
+        <time>2025-06-17T14:15:11.589Z</time>
+      </trkpt>
+      <trkpt lat="43.267550" lon="-1.432477">
+        <ele>535.7</ele>
+        <time>2025-06-17T14:15:48.325Z</time>
+      </trkpt>
+      <trkpt lat="43.267594" lon="-1.431728">
+        <ele>535.1</ele>
+        <time>2025-06-17T14:16:43.777Z</time>
+      </trkpt>
+      <trkpt lat="43.267501" lon="-1.431376">
+        <ele>538.8</ele>
+        <time>2025-06-17T14:17:47.862Z</time>
+      </trkpt>
+      <trkpt lat="43.267322" lon="-1.430948">
+        <ele>543.7</ele>
+        <time>2025-06-17T14:19:12.011Z</time>
+      </trkpt>
+      <trkpt lat="43.267363" lon="-1.430664">
+        <ele>542.8</ele>
+        <time>2025-06-17T14:19:43.406Z</time>
+      </trkpt>
+      <trkpt lat="43.267992" lon="-1.430400">
+        <ele>540.6</ele>
+        <time>2025-06-17T14:20:59.235Z</time>
+      </trkpt>
+      <trkpt lat="43.268099" lon="-1.430144">
+        <ele>544.4</ele>
+        <time>2025-06-17T14:22:01.805Z</time>
+      </trkpt>
+      <trkpt lat="43.267824" lon="-1.429650">
+        <ele>554.2</ele>
+        <time>2025-06-17T14:24:30.492Z</time>
+      </trkpt>
+      <trkpt lat="43.267803" lon="-1.429276">
+        <ele>558.4</ele>
+        <time>2025-06-17T14:25:43.511Z</time>
+      </trkpt>
+      <trkpt lat="43.268529" lon="-1.428974">
+        <ele>554.4</ele>
+        <time>2025-06-17T14:27:19.827Z</time>
+      </trkpt>
+      <trkpt lat="43.268427" lon="-1.427898">
+        <ele>574.4</ele>
+        <time>2025-06-17T14:32:01.146Z</time>
+      </trkpt>
+      <trkpt lat="43.267986" lon="-1.427063">
+        <ele>587.5</ele>
+        <time>2025-06-17T14:35:27.840Z</time>
+      </trkpt>
+      <trkpt lat="43.268084" lon="-1.426785">
+        <ele>591.6</ele>
+        <time>2025-06-17T14:36:31.598Z</time>
+      </trkpt>
+      <trkpt lat="43.268379" lon="-1.426518">
+        <ele>598.1</ele>
+        <time>2025-06-17T14:38:12.141Z</time>
+      </trkpt>
+      <trkpt lat="43.268845" lon="-1.426097">
+        <ele>616.6</ele>
+        <time>2025-06-17T14:42:16.213Z</time>
+      </trkpt>
+      <trkpt lat="43.269156" lon="-1.426066">
+        <ele>623.2</ele>
+        <time>2025-06-17T14:43:53.417Z</time>
+      </trkpt>
+      <trkpt lat="43.269565" lon="-1.425932">
+        <ele>632.1</ele>
+        <time>2025-06-17T14:46:05.410Z</time>
+      </trkpt>
+      <trkpt lat="43.269843" lon="-1.425928">
+        <ele>637.9</ele>
+        <time>2025-06-17T14:47:31.814Z</time>
+      </trkpt>
+      <trkpt lat="43.270082" lon="-1.425837">
+        <ele>643.4</ele>
+        <time>2025-06-17T14:48:53.352Z</time>
+      </trkpt>
+      <trkpt lat="43.270299" lon="-1.425755">
+        <ele>647.0</ele>
+        <time>2025-06-17T14:49:52.224Z</time>
+      </trkpt>
+      <trkpt lat="43.270494" lon="-1.425553">
+        <ele>651.0</ele>
+        <time>2025-06-17T14:50:56.132Z</time>
+      </trkpt>
+      <trkpt lat="43.270719" lon="-1.425247">
+        <ele>655.0</ele>
+        <time>2025-06-17T14:52:08.327Z</time>
+      </trkpt>
+      <trkpt lat="43.270890" lon="-1.424875">
+        <ele>659.6</ele>
+        <time>2025-06-17T14:53:25.728Z</time>
+      </trkpt>
+      <trkpt lat="43.270984" lon="-1.424544">
+        <ele>663.6</ele>
+        <time>2025-06-17T14:54:31.646Z</time>
+      </trkpt>
+      <trkpt lat="43.271017" lon="-1.424215">
+        <ele>667.1</ele>
+        <time>2025-06-17T14:55:31.105Z</time>
+      </trkpt>
+      <trkpt lat="43.271067" lon="-1.423904">
+        <ele>670.3</ele>
+        <time>2025-06-17T14:56:26.514Z</time>
+      </trkpt>
+      <trkpt lat="43.271347" lon="-1.423360">
+        <ele>676.4</ele>
+        <time>2025-06-17T14:58:16.249Z</time>
+      </trkpt>
+      <trkpt lat="43.272004" lon="-1.422032">
+        <ele>684.7</ele>
+        <time>2025-06-17T15:01:32.664Z</time>
+      </trkpt>
+      <trkpt lat="43.272158" lon="-1.421758">
+        <ele>685.2</ele>
+        <time>2025-06-17T15:02:02.065Z</time>
+      </trkpt>
+      <trkpt lat="43.272389" lon="-1.421335">
+        <ele>686.0</ele>
+        <time>2025-06-17T15:02:47.000Z</time>
+      </trkpt>
+      <trkpt lat="43.272489" lon="-1.421021">
+        <ele>690.3</ele>
+        <time>2025-06-17T15:03:55.192Z</time>
+      </trkpt>
+      <trkpt lat="43.272604" lon="-1.419932">
+        <ele>704.0</ele>
+        <time>2025-06-17T15:07:32.257Z</time>
+      </trkpt>
+      <trkpt lat="43.272553" lon="-1.419217">
+        <ele>705.9</ele>
+        <time>2025-06-17T15:08:41.578Z</time>
+      </trkpt>
+      <trkpt lat="43.272517" lon="-1.418555">
+        <ele>707.6</ele>
+        <time>2025-06-17T15:09:45.725Z</time>
+      </trkpt>
+      <trkpt lat="43.272487" lon="-1.418151">
+        <ele>709.7</ele>
+        <time>2025-06-17T15:10:34.925Z</time>
+      </trkpt>
+      <trkpt lat="43.272564" lon="-1.417345">
+        <ele>713.8</ele>
+        <time>2025-06-17T15:12:13.743Z</time>
+      </trkpt>
+      <trkpt lat="43.272641" lon="-1.417007">
+        <ele>714.1</ele>
+        <time>2025-06-17T15:12:42.277Z</time>
+      </trkpt>
+      <trkpt lat="43.272799" lon="-1.416763">
+        <ele>714.5</ele>
+        <time>2025-06-17T15:13:08.366Z</time>
+      </trkpt>
+      <trkpt lat="43.272831" lon="-1.416461">
+        <ele>716.0</ele>
+        <time>2025-06-17T15:13:48.031Z</time>
+      </trkpt>
+      <trkpt lat="43.273015" lon="-1.415847">
+        <ele>719.0</ele>
+        <time>2025-06-17T15:15:04.712Z</time>
+      </trkpt>
+      <trkpt lat="43.273052" lon="-1.415371">
+        <ele>721.5</ele>
+        <time>2025-06-17T15:16:03.837Z</time>
+      </trkpt>
+      <trkpt lat="43.272970" lon="-1.414799">
+        <ele>721.7</ele>
+        <time>2025-06-17T15:16:46.672Z</time>
+      </trkpt>
+      <trkpt lat="43.272837" lon="-1.413983">
+        <ele>719.6</ele>
+        <time>2025-06-17T15:17:57.222Z</time>
+      </trkpt>
+      <trkpt lat="43.272749" lon="-1.413434">
+        <ele>717.8</ele>
+        <time>2025-06-17T15:18:46.997Z</time>
+      </trkpt>
+      <trkpt lat="43.272686" lon="-1.413023">
+        <ele>715.6</ele>
+        <time>2025-06-17T15:19:29.435Z</time>
+      </trkpt>
+      <trkpt lat="43.272440" lon="-1.412381">
+        <ele>709.7</ele>
+        <time>2025-06-17T15:20:55.230Z</time>
+      </trkpt>
+      <trkpt lat="43.272237" lon="-1.411838">
+        <ele>703.8</ele>
+        <time>2025-06-17T15:22:13.511Z</time>
+      </trkpt>
+      <trkpt lat="43.271989" lon="-1.411333">
+        <ele>700.7</ele>
+        <time>2025-06-17T15:23:14.445Z</time>
+      </trkpt>
+      <trkpt lat="43.271940" lon="-1.410928">
+        <ele>699.8</ele>
+        <time>2025-06-17T15:23:47.840Z</time>
+      </trkpt>
+      <trkpt lat="43.271952" lon="-1.410503">
+        <ele>698.1</ele>
+        <time>2025-06-17T15:24:27.896Z</time>
+      </trkpt>
+      <trkpt lat="43.271911" lon="-1.410064">
+        <ele>696.3</ele>
+        <time>2025-06-17T15:25:09.539Z</time>
+      </trkpt>
+      <trkpt lat="43.271919" lon="-1.409397">
+        <ele>694.8</ele>
+        <time>2025-06-17T15:26:04.822Z</time>
+      </trkpt>
+      <trkpt lat="43.271949" lon="-1.408790">
+        <ele>694.0</ele>
+        <time>2025-06-17T15:26:51.628Z</time>
+      </trkpt>
+      <trkpt lat="43.271841" lon="-1.408309">
+        <ele>693.4</ele>
+        <time>2025-06-17T15:27:30.296Z</time>
+      </trkpt>
+      <trkpt lat="43.271763" lon="-1.407787">
+        <ele>690.6</ele>
+        <time>2025-06-17T15:28:23.907Z</time>
+      </trkpt>
+      <trkpt lat="43.271717" lon="-1.407421">
+        <ele>688.7</ele>
+        <time>2025-06-17T15:29:01.286Z</time>
+      </trkpt>
+      <trkpt lat="43.271618" lon="-1.407109">
+        <ele>682.8</ele>
+        <time>2025-06-17T15:30:00.209Z</time>
+      </trkpt>
+      <trkpt lat="43.271441" lon="-1.406915">
+        <ele>677.4</ele>
+        <time>2025-06-17T15:30:54.044Z</time>
+      </trkpt>
+      <trkpt lat="43.271011" lon="-1.406495">
+        <ele>665.8</ele>
+        <time>2025-06-17T15:32:54.090Z</time>
+      </trkpt>
+      <trkpt lat="43.270839" lon="-1.406159">
+        <ele>662.2</ele>
+        <time>2025-06-17T15:33:44.584Z</time>
+      </trkpt>
+      <trkpt lat="43.270643" lon="-1.405992">
+        <ele>659.5</ele>
+        <time>2025-06-17T15:34:22.860Z</time>
+      </trkpt>
+      <trkpt lat="43.270483" lon="-1.405734">
+        <ele>660.3</ele>
+        <time>2025-06-17T15:34:54.712Z</time>
+      </trkpt>
+      <trkpt lat="43.270363" lon="-1.405384">
+        <ele>661.2</ele>
+        <time>2025-06-17T15:35:30.660Z</time>
+      </trkpt>
+      <trkpt lat="43.270284" lon="-1.404998">
+        <ele>661.2</ele>
+        <time>2025-06-17T15:35:58.606Z</time>
+      </trkpt>
+      <trkpt lat="43.270125" lon="-1.404707">
+        <ele>661.1</ele>
+        <time>2025-06-17T15:36:23.963Z</time>
+      </trkpt>
+      <trkpt lat="43.269929" lon="-1.404468">
+        <ele>661.5</ele>
+        <time>2025-06-17T15:36:52.812Z</time>
+      </trkpt>
+      <trkpt lat="43.269807" lon="-1.404163">
+        <ele>661.9</ele>
+        <time>2025-06-17T15:37:20.548Z</time>
+      </trkpt>
+      <trkpt lat="43.269629" lon="-1.403853">
+        <ele>662.2</ele>
+        <time>2025-06-17T15:37:51.234Z</time>
+      </trkpt>
+      <trkpt lat="43.269468" lon="-1.403574">
+        <ele>662.5</ele>
+        <time>2025-06-17T15:38:18.884Z</time>
+      </trkpt>
+      <trkpt lat="43.269284" lon="-1.403004">
+        <ele>662.6</ele>
+        <time>2025-06-17T15:39:04.066Z</time>
+      </trkpt>
+      <trkpt lat="43.269169" lon="-1.402761">
+        <ele>662.2</ele>
+        <time>2025-06-17T15:39:30.989Z</time>
+      </trkpt>
+      <trkpt lat="43.269118" lon="-1.402410">
+        <ele>661.7</ele>
+        <time>2025-06-17T15:39:59.927Z</time>
+      </trkpt>
+      <trkpt lat="43.269037" lon="-1.401961">
+        <ele>660.8</ele>
+        <time>2025-06-17T15:40:37.831Z</time>
+      </trkpt>
+      <trkpt lat="43.268906" lon="-1.401548">
+        <ele>660.0</ele>
+        <time>2025-06-17T15:41:14.288Z</time>
+      </trkpt>
+      <trkpt lat="43.268810" lon="-1.401206">
+        <ele>659.4</ele>
+        <time>2025-06-17T15:41:43.335Z</time>
+      </trkpt>
+      <trkpt lat="43.268655" lon="-1.400880">
+        <ele>657.2</ele>
+        <time>2025-06-17T15:42:23.722Z</time>
+      </trkpt>
+      <trkpt lat="43.268409" lon="-1.400547">
+        <ele>655.8</ele>
+        <time>2025-06-17T15:43:04.781Z</time>
+      </trkpt>
+      <trkpt lat="43.268078" lon="-1.400408">
+        <ele>656.7</ele>
+        <time>2025-06-17T15:43:46.076Z</time>
+      </trkpt>
+      <trkpt lat="43.267836" lon="-1.400278">
+        <ele>652.9</ele>
+        <time>2025-06-17T15:44:33.491Z</time>
+      </trkpt>
+      <trkpt lat="43.267594" lon="-1.400041">
+        <ele>648.6</ele>
+        <time>2025-06-17T15:45:28.405Z</time>
+      </trkpt>
+      <trkpt lat="43.267507" lon="-1.399636">
+        <ele>639.2</ele>
+        <time>2025-06-17T15:46:54.441Z</time>
+      </trkpt>
+      <trkpt lat="43.267382" lon="-1.399264">
+        <ele>630.1</ele>
+        <time>2025-06-17T15:48:17.449Z</time>
+      </trkpt>
+      <trkpt lat="43.267278" lon="-1.398895">
+        <ele>622.4</ele>
+        <time>2025-06-17T15:49:30.789Z</time>
+      </trkpt>
+      <trkpt lat="43.267074" lon="-1.398548">
+        <ele>617.6</ele>
+        <time>2025-06-17T15:50:30.582Z</time>
+      </trkpt>
+      <trkpt lat="43.266955" lon="-1.398799">
+        <ele>619.3</ele>
+        <time>2025-06-17T15:51:16.930Z</time>
+      </trkpt>
+      <trkpt lat="43.266974" lon="-1.399144">
+        <ele>622.1</ele>
+        <time>2025-06-17T15:52:12.894Z</time>
+      </trkpt>
+      <trkpt lat="43.266863" lon="-1.399476">
+        <ele>625.6</ele>
+        <time>2025-06-17T15:53:13.429Z</time>
+      </trkpt>
+      <trkpt lat="43.266649" lon="-1.399528">
+        <ele>621.0</ele>
+        <time>2025-06-17T15:54:03.447Z</time>
+      </trkpt>
+      <trkpt lat="43.266499" lon="-1.399532">
+        <ele>614.9</ele>
+        <time>2025-06-17T15:55:02.032Z</time>
+      </trkpt>
+      <trkpt lat="43.266430" lon="-1.399357">
+        <ele>608.2</ele>
+        <time>2025-06-17T15:56:04.816Z</time>
+      </trkpt>
+      <trkpt lat="43.266398" lon="-1.399082">
+        <ele>600.5</ele>
+        <time>2025-06-17T15:57:15.161Z</time>
+      </trkpt>
+      <trkpt lat="43.266144" lon="-1.398949">
+        <ele>587.6</ele>
+        <time>2025-06-17T15:59:02.318Z</time>
+      </trkpt>
+      <trkpt lat="43.265987" lon="-1.398626">
+        <ele>573.5</ele>
+        <time>2025-06-17T16:00:58.217Z</time>
+      </trkpt>
+      <trkpt lat="43.265896" lon="-1.398236">
+        <ele>566.0</ele>
+        <time>2025-06-17T16:02:12.675Z</time>
+      </trkpt>
+      <trkpt lat="43.265738" lon="-1.397825">
+        <ele>556.5</ele>
+        <time>2025-06-17T16:03:42.141Z</time>
+      </trkpt>
+      <trkpt lat="43.265653" lon="-1.397325">
+        <ele>544.0</ele>
+        <time>2025-06-17T16:05:35.414Z</time>
+      </trkpt>
+      <trkpt lat="43.265565" lon="-1.396955">
+        <ele>535.5</ele>
+        <time>2025-06-17T16:06:53.779Z</time>
+      </trkpt>
+      <trkpt lat="43.265444" lon="-1.396453">
+        <ele>523.1</ele>
+        <time>2025-06-17T16:08:48.356Z</time>
+      </trkpt>
+      <trkpt lat="43.265394" lon="-1.396078">
+        <ele>515.8</ele>
+        <time>2025-06-17T16:10:00.880Z</time>
+      </trkpt>
+      <trkpt lat="43.265274" lon="-1.395812">
+        <ele>510.3</ele>
+        <time>2025-06-17T16:10:55.587Z</time>
+      </trkpt>
+      <trkpt lat="43.264965" lon="-1.395584">
+        <ele>487.6</ele>
+        <time>2025-06-17T16:13:45.057Z</time>
+      </trkpt>
+      <trkpt lat="43.264831" lon="-1.395378">
+        <ele>475.2</ele>
+        <time>2025-06-17T16:15:23.096Z</time>
+      </trkpt>
+      <trkpt lat="43.264669" lon="-1.394986">
+        <ele>464.2</ele>
+        <time>2025-06-17T16:17:00.506Z</time>
+      </trkpt>
+      <trkpt lat="43.264524" lon="-1.394661">
+        <ele>456.4</ele>
+        <time>2025-06-17T16:18:13.994Z</time>
+      </trkpt>
+      <trkpt lat="43.264337" lon="-1.394334">
+        <ele>448.3</ele>
+        <time>2025-06-17T16:19:32.224Z</time>
+      </trkpt>
+      <trkpt lat="43.264115" lon="-1.394002">
+        <ele>443.1</ele>
+        <time>2025-06-17T16:20:35.012Z</time>
+      </trkpt>
+      <trkpt lat="43.264046" lon="-1.393583">
+        <ele>440.7</ele>
+        <time>2025-06-17T16:21:19.294Z</time>
+      </trkpt>
+      <trkpt lat="43.263901" lon="-1.393176">
+        <ele>440.1</ele>
+        <time>2025-06-17T16:21:55.046Z</time>
+      </trkpt>
+      <trkpt lat="43.263782" lon="-1.392866">
+        <ele>433.3</ele>
+        <time>2025-06-17T16:23:00.844Z</time>
+      </trkpt>
+      <trkpt lat="43.263725" lon="-1.392345">
+        <ele>421.8</ele>
+        <time>2025-06-17T16:24:46.992Z</time>
+      </trkpt>
+      <trkpt lat="43.263642" lon="-1.391960">
+        <ele>412.3</ele>
+        <time>2025-06-17T16:26:12.145Z</time>
+      </trkpt>
+      <trkpt lat="43.263690" lon="-1.391635">
+        <ele>416.1</ele>
+        <time>2025-06-17T16:27:15.532Z</time>
+      </trkpt>
+      <trkpt lat="43.263907" lon="-1.391468">
+        <ele>419.7</ele>
+        <time>2025-06-17T16:28:16.995Z</time>
+      </trkpt>
+      <trkpt lat="43.264030" lon="-1.391165">
+        <ele>418.8</ele>
+        <time>2025-06-17T16:28:47.089Z</time>
+      </trkpt>
+      <trkpt lat="43.264222" lon="-1.390909">
+        <ele>415.3</ele>
+        <time>2025-06-17T16:29:33.908Z</time>
+      </trkpt>
+      <trkpt lat="43.264199" lon="-1.390598">
+        <ele>405.7</ele>
+        <time>2025-06-17T16:30:53.561Z</time>
+      </trkpt>
+      <trkpt lat="43.264241" lon="-1.390279">
+        <ele>391.7</ele>
+        <time>2025-06-17T16:32:40.667Z</time>
+      </trkpt>
+      <trkpt lat="43.264139" lon="-1.389925">
+        <ele>365.9</ele>
+        <time>2025-06-17T16:35:42.448Z</time>
+      </trkpt>
+      <trkpt lat="43.264116" lon="-1.389581">
+        <ele>354.1</ele>
+        <time>2025-06-17T16:37:19.261Z</time>
+      </trkpt>
+      <trkpt lat="43.264389" lon="-1.389494">
+        <ele>362.2</ele>
+        <time>2025-06-17T16:39:09.545Z</time>
+      </trkpt>
+      <trkpt lat="43.264718" lon="-1.389399">
+        <ele>376.2</ele>
+        <time>2025-06-17T16:42:07.761Z</time>
+      </trkpt>
+      <trkpt lat="43.264884" lon="-1.389162">
+        <ele>388.0</ele>
+        <time>2025-06-17T16:44:32.009Z</time>
+      </trkpt>
+      <trkpt lat="43.265159" lon="-1.388921">
+        <ele>388.2</ele>
+        <time>2025-06-17T16:45:05.918Z</time>
+      </trkpt>
+      <trkpt lat="43.265059" lon="-1.388686">
+        <ele>385.2</ele>
+        <time>2025-06-17T16:45:46.945Z</time>
+      </trkpt>
+      <trkpt lat="43.264905" lon="-1.388451">
+        <ele>370.4</ele>
+        <time>2025-06-17T16:47:37.408Z</time>
+      </trkpt>
+      <trkpt lat="43.264693" lon="-1.388108">
+        <ele>348.5</ele>
+        <time>2025-06-17T16:50:21.872Z</time>
+      </trkpt>
+      <trkpt lat="43.264717" lon="-1.387672">
+        <ele>344.9</ele>
+        <time>2025-06-17T16:51:14.812Z</time>
+      </trkpt>
+      <trkpt lat="43.264534" lon="-1.387354">
+        <ele>335.4</ele>
+        <time>2025-06-17T16:52:42.069Z</time>
+      </trkpt>
+      <trkpt lat="43.264340" lon="-1.387201">
+        <ele>324.7</ele>
+        <time>2025-06-17T16:54:07.928Z</time>
+      </trkpt>
+      <trkpt lat="43.264156" lon="-1.386895">
+        <ele>317.2</ele>
+        <time>2025-06-17T16:55:20.991Z</time>
+      </trkpt>
+      <trkpt lat="43.264173" lon="-1.386487">
+        <ele>314.9</ele>
+        <time>2025-06-17T16:56:03.944Z</time>
+      </trkpt>
+      <trkpt lat="43.264196" lon="-1.386155">
+        <ele>315.8</ele>
+        <time>2025-06-17T16:56:37.429Z</time>
+      </trkpt>
+      <trkpt lat="43.264280" lon="-1.385783">
+        <ele>317.0</ele>
+        <time>2025-06-17T16:57:16.475Z</time>
+      </trkpt>
+      <trkpt lat="43.264294" lon="-1.385460">
+        <ele>314.8</ele>
+        <time>2025-06-17T16:57:52.223Z</time>
+      </trkpt>
+      <trkpt lat="43.264220" lon="-1.385146">
+        <ele>312.6</ele>
+        <time>2025-06-17T16:58:29.026Z</time>
+      </trkpt>
+      <trkpt lat="43.264003" lon="-1.384919">
+        <ele>300.9</ele>
+        <time>2025-06-17T17:00:05.424Z</time>
+      </trkpt>
+      <trkpt lat="43.263855" lon="-1.384721">
+        <ele>291.4</ele>
+        <time>2025-06-17T17:01:24.751Z</time>
+      </trkpt>
+      <trkpt lat="43.263654" lon="-1.384399">
+        <ele>278.1</ele>
+        <time>2025-06-17T17:03:19.388Z</time>
+      </trkpt>
+      <trkpt lat="43.263478" lon="-1.384253">
+        <ele>272.5</ele>
+        <time>2025-06-17T17:04:18.072Z</time>
+      </trkpt>
+      <trkpt lat="43.263414" lon="-1.384131">
+        <ele>264.8</ele>
+        <time>2025-06-17T17:05:43.783Z</time>
+      </trkpt>
+      <trkpt lat="43.263574" lon="-1.383756">
+        <ele>262.2</ele>
+        <time>2025-06-17T17:06:30.108Z</time>
+      </trkpt>
+      <trkpt lat="43.263692" lon="-1.383479">
+        <ele>260.1</ele>
+        <time>2025-06-17T17:07:04.553Z</time>
+      </trkpt>
+      <trkpt lat="43.263373" lon="-1.383797">
+        <ele>256.3</ele>
+        <time>2025-06-17T17:08:10.422Z</time>
+      </trkpt>
+      <trkpt lat="43.263123" lon="-1.384018">
+        <ele>250.2</ele>
+        <time>2025-06-17T17:09:15.117Z</time>
+      </trkpt>
+      <trkpt lat="43.262748" lon="-1.384222">
+        <ele>242.0</ele>
+        <time>2025-06-17T17:10:42.726Z</time>
+      </trkpt>
+      <trkpt lat="43.262912" lon="-1.383980">
+        <ele>243.3</ele>
+        <time>2025-06-17T17:11:39.183Z</time>
+      </trkpt>
+      <trkpt lat="43.263130" lon="-1.383766">
+        <ele>241.1</ele>
+        <time>2025-06-17T17:12:17.863Z</time>
+      </trkpt>
+      <trkpt lat="43.262818" lon="-1.383787">
+        <ele>231.0</ele>
+        <time>2025-06-17T17:13:58.937Z</time>
+      </trkpt>
+      <trkpt lat="43.262576" lon="-1.383809">
+        <ele>222.3</ele>
+        <time>2025-06-17T17:15:14.039Z</time>
+      </trkpt>
+      <trkpt lat="43.262365" lon="-1.383980">
+        <ele>218.4</ele>
+        <time>2025-06-17T17:16:00.913Z</time>
+      </trkpt>
+      <trkpt lat="43.261712" lon="-1.385057">
+        <ele>202.3</ele>
+        <time>2025-06-17T17:19:15.002Z</time>
+      </trkpt>
+      <trkpt lat="43.261783" lon="-1.384725">
+        <ele>200.5</ele>
+        <time>2025-06-17T17:19:56.136Z</time>
+      </trkpt>
+      <trkpt lat="43.261884" lon="-1.384354">
+        <ele>199.0</ele>
+        <time>2025-06-17T17:20:33.066Z</time>
+      </trkpt>
+      <trkpt lat="43.262004" lon="-1.383870">
+        <ele>190.6</ele>
+        <time>2025-06-17T17:21:58.928Z</time>
+      </trkpt>
+      <trkpt lat="43.261991" lon="-1.383388">
+        <ele>186.3</ele>
+        <time>2025-06-17T17:22:57.776Z</time>
+      </trkpt>
+      <trkpt lat="43.262178" lon="-1.383112">
+        <ele>187.0</ele>
+        <time>2025-06-17T17:23:30.297Z</time>
+      </trkpt>
+      <trkpt lat="43.262951" lon="-1.382360">
+        <ele>189.1</ele>
+        <time>2025-06-17T17:25:22.443Z</time>
+      </trkpt>
+      <trkpt lat="43.263193" lon="-1.381985">
+        <ele>183.8</ele>
+        <time>2025-06-17T17:26:29.219Z</time>
+      </trkpt>
+      <trkpt lat="43.263412" lon="-1.381238">
+        <ele>172.6</ele>
+        <time>2025-06-17T17:28:32.558Z</time>
+      </trkpt>
+      <trkpt lat="43.263500" lon="-1.380945">
+        <ele>167.5</ele>
+        <time>2025-06-17T17:29:24.748Z</time>
+      </trkpt>
+      <trkpt lat="43.263619" lon="-1.380576">
+        <ele>167.2</ele>
+        <time>2025-06-17T17:29:55.101Z</time>
+      </trkpt>
+      <trkpt lat="43.263788" lon="-1.380221">
+        <ele>166.7</ele>
+        <time>2025-06-17T17:30:27.051Z</time>
+      </trkpt>
+      <trkpt lat="43.264121" lon="-1.379838">
+        <ele>167.6</ele>
+        <time>2025-06-17T17:31:16.876Z</time>
+      </trkpt>
+      <trkpt lat="43.264510" lon="-1.379563">
+        <ele>168.4</ele>
+        <time>2025-06-17T17:32:07.063Z</time>
+      </trkpt>
+      <trkpt lat="43.264751" lon="-1.379483">
+        <ele>167.9</ele>
+        <time>2025-06-17T17:32:33.774Z</time>
+      </trkpt>
+      <trkpt lat="43.264781" lon="-1.379176">
+        <ele>167.4</ele>
+        <time>2025-06-17T17:32:58.785Z</time>
+      </trkpt>
+      <trkpt lat="43.265110" lon="-1.378838">
+        <ele>169.3</ele>
+        <time>2025-06-17T17:33:58.220Z</time>
+      </trkpt>
+      <trkpt lat="43.265302" lon="-1.378637">
+        <ele>170.5</ele>
+        <time>2025-06-17T17:34:32.921Z</time>
+      </trkpt>
+      <trkpt lat="43.265925" lon="-1.378283">
+        <ele>167.4</ele>
+        <time>2025-06-17T17:35:55.470Z</time>
+      </trkpt>
+      <trkpt lat="43.266957" lon="-1.377888">
+        <ele>153.5</ele>
+        <time>2025-06-17T17:39:01.192Z</time>
+      </trkpt>
+      <trkpt lat="43.267228" lon="-1.377658">
+        <ele>148.6</ele>
+        <time>2025-06-17T17:40:00.909Z</time>
+      </trkpt>
+      <trkpt lat="43.267394" lon="-1.377337">
+        <ele>144.3</ele>
+        <time>2025-06-17T17:40:54.413Z</time>
+      </trkpt>
+      <trkpt lat="43.267483" lon="-1.377054">
+        <ele>142.7</ele>
+        <time>2025-06-17T17:41:25.096Z</time>
+      </trkpt>
+      <trkpt lat="43.267504" lon="-1.376510">
+        <ele>140.0</ele>
+        <time>2025-06-17T17:42:19.190Z</time>
+      </trkpt>
+      <trkpt lat="43.267432" lon="-1.375997">
+        <ele>140.7</ele>
+        <time>2025-06-17T17:43:02.315Z</time>
+      </trkpt>
+      <trkpt lat="43.267294" lon="-1.375730">
+        <ele>141.1</ele>
+        <time>2025-06-17T17:43:29.323Z</time>
+      </trkpt>
+      <trkpt lat="43.267023" lon="-1.375622">
+        <ele>141.8</ele>
+        <time>2025-06-17T17:44:04.936Z</time>
+      </trkpt>
+      <trkpt lat="43.266561" lon="-1.375895">
+        <ele>143.1</ele>
+        <time>2025-06-17T17:45:05.898Z</time>
+      </trkpt>
+      <trkpt lat="43.266175" lon="-1.376052">
+        <ele>149.8</ele>
+        <time>2025-06-17T17:46:52.858Z</time>
+      </trkpt>
+      <trkpt lat="43.265860" lon="-1.376095">
+        <ele>155.0</ele>
+        <time>2025-06-17T17:48:17.054Z</time>
+      </trkpt>
+      <trkpt lat="43.265396" lon="-1.375891">
+        <ele>159.6</ele>
+        <time>2025-06-17T17:49:51.230Z</time>
+      </trkpt>
+      <trkpt lat="43.265199" lon="-1.375656">
+        <ele>158.0</ele>
+        <time>2025-06-17T17:50:25.600Z</time>
+      </trkpt>
+      <trkpt lat="43.265036" lon="-1.375323">
+        <ele>156.2</ele>
+        <time>2025-06-17T17:51:04.145Z</time>
+      </trkpt>
+      <trkpt lat="43.264936" lon="-1.374935">
+        <ele>155.2</ele>
+        <time>2025-06-17T17:51:39.259Z</time>
+      </trkpt>
+      <trkpt lat="43.264888" lon="-1.373766">
+        <ele>152.0</ele>
+        <time>2025-06-17T17:53:19.231Z</time>
+      </trkpt>
+      <trkpt lat="43.264858" lon="-1.373250">
+        <ele>150.8</ele>
+        <time>2025-06-17T17:54:02.740Z</time>
+      </trkpt>
+      <trkpt lat="43.264812" lon="-1.372877">
+        <ele>149.9</ele>
+        <time>2025-06-17T17:54:34.430Z</time>
+      </trkpt>
+      <trkpt lat="43.264617" lon="-1.372392">
+        <ele>151.1</ele>
+        <time>2025-06-17T17:55:26.122Z</time>
+      </trkpt>
+      <trkpt lat="43.264302" lon="-1.371948">
+        <ele>153.2</ele>
+        <time>2025-06-17T17:56:31.199Z</time>
+      </trkpt>
+      <trkpt lat="43.263772" lon="-1.371558">
+        <ele>156.9</ele>
+        <time>2025-06-17T17:58:06.278Z</time>
+      </trkpt>
+      <trkpt lat="43.263399" lon="-1.371212">
+        <ele>159.6</ele>
+        <time>2025-06-17T17:59:16.615Z</time>
+      </trkpt>
+      <trkpt lat="43.262768" lon="-1.370359">
+        <ele>157.1</ele>
+        <time>2025-06-17T18:00:55.925Z</time>
+      </trkpt>
+      <trkpt lat="43.262543" lon="-1.369997">
+        <ele>151.7</ele>
+        <time>2025-06-17T18:02:01.221Z</time>
+      </trkpt>
+      <trkpt lat="43.262248" lon="-1.369298">
+        <ele>142.6</ele>
+        <time>2025-06-17T18:03:52.124Z</time>
+      </trkpt>
+      <trkpt lat="43.262185" lon="-1.368910">
+        <ele>141.9</ele>
+        <time>2025-06-17T18:04:23.999Z</time>
+      </trkpt>
+      <trkpt lat="43.262184" lon="-1.368581">
+        <ele>141.3</ele>
+        <time>2025-06-17T18:04:50.434Z</time>
+      </trkpt>
+      <trkpt lat="43.262060" lon="-1.368146">
+        <ele>137.7</ele>
+        <time>2025-06-17T18:05:45.534Z</time>
+      </trkpt>
+      <trkpt lat="43.261810" lon="-1.367425">
+        <ele>131.8</ele>
+        <time>2025-06-17T18:07:16.414Z</time>
+      </trkpt>
+      <trkpt lat="43.261718" lon="-1.366924">
+        <ele>129.0</ele>
+        <time>2025-06-17T18:08:08.946Z</time>
+      </trkpt>
+      <trkpt lat="43.261696" lon="-1.366572">
+        <ele>127.1</ele>
+        <time>2025-06-17T18:08:44.934Z</time>
+      </trkpt>
+      <trkpt lat="43.261758" lon="-1.366206">
+        <ele>127.3</ele>
+        <time>2025-06-17T18:09:12.968Z</time>
+      </trkpt>
+      <trkpt lat="43.261997" lon="-1.365895">
+        <ele>127.5</ele>
+        <time>2025-06-17T18:09:47.207Z</time>
+      </trkpt>
+      <trkpt lat="43.262219" lon="-1.365835">
+        <ele>125.9</ele>
+        <time>2025-06-17T18:10:18.356Z</time>
+      </trkpt>
+      <trkpt lat="43.262494" lon="-1.365769">
+        <ele>123.9</ele>
+        <time>2025-06-17T18:10:56.821Z</time>
+      </trkpt>
+      <trkpt lat="43.262661" lon="-1.365562">
+        <ele>123.3</ele>
+        <time>2025-06-17T18:11:22.935Z</time>
+      </trkpt>
+      <trkpt lat="43.262627" lon="-1.365022">
+        <ele>122.2</ele>
+        <time>2025-06-17T18:12:07.548Z</time>
+      </trkpt>
+      <trkpt lat="43.262605" lon="-1.364711">
+        <ele>123.0</ele>
+        <time>2025-06-17T18:12:36.638Z</time>
+      </trkpt>
+      <trkpt lat="43.262715" lon="-1.364062">
+        <ele>124.5</ele>
+        <time>2025-06-17T18:13:38.747Z</time>
+      </trkpt>
+      <trkpt lat="43.262951" lon="-1.363628">
+        <ele>122.1</ele>
+        <time>2025-06-17T18:14:32.856Z</time>
+      </trkpt>
+      <trkpt lat="43.263347" lon="-1.363474">
+        <ele>119.6</ele>
+        <time>2025-06-17T18:15:26.692Z</time>
+      </trkpt>
+      <trkpt lat="43.263589" lon="-1.363219">
+        <ele>117.7</ele>
+        <time>2025-06-17T18:16:07.534Z</time>
+      </trkpt>
+      <trkpt lat="43.263630" lon="-1.362694">
+        <ele>115.3</ele>
+        <time>2025-06-17T18:16:59.137Z</time>
+      </trkpt>
+      <trkpt lat="43.263693" lon="-1.362233">
+        <ele>111.8</ele>
+        <time>2025-06-17T18:17:52.520Z</time>
+      </trkpt>
+      <trkpt lat="43.263758" lon="-1.361908">
+        <ele>109.3</ele>
+        <time>2025-06-17T18:18:30.893Z</time>
+      </trkpt>
+      <trkpt lat="43.263577" lon="-1.361507">
+        <ele>122.7</ele>
+        <time>2025-06-17T18:21:20.910Z</time>
+      </trkpt>
+      <trkpt lat="43.263295" lon="-1.360898">
+        <ele>143.2</ele>
+        <time>2025-06-17T18:25:41.854Z</time>
+      </trkpt>
+      <trkpt lat="43.263522" lon="-1.360553">
+        <ele>144.1</ele>
+        <time>2025-06-17T18:26:23.574Z</time>
+      </trkpt>
+      <trkpt lat="43.263693" lon="-1.360197">
+        <ele>143.8</ele>
+        <time>2025-06-17T18:26:56.481Z</time>
+      </trkpt>
+      <trkpt lat="43.264175" lon="-1.359648">
+        <ele>140.8</ele>
+        <time>2025-06-17T18:28:15.651Z</time>
+      </trkpt>
+      <trkpt lat="43.264356" lon="-1.358819">
+        <ele>142.5</ele>
+        <time>2025-06-17T18:29:33.723Z</time>
+      </trkpt>
+      <trkpt lat="43.264448" lon="-1.358314">
+        <ele>137.0</ele>
+        <time>2025-06-17T18:30:42.941Z</time>
+      </trkpt>
+      <trkpt lat="43.264579" lon="-1.357939">
+        <ele>132.6</ele>
+        <time>2025-06-17T18:31:38.133Z</time>
+      </trkpt>
+      <trkpt lat="43.264649" lon="-1.357555">
+        <ele>133.0</ele>
+        <time>2025-06-17T18:32:10.184Z</time>
+      </trkpt>
+      <trkpt lat="43.264411" lon="-1.357407">
+        <ele>133.4</ele>
+        <time>2025-06-17T18:32:41.710Z</time>
+      </trkpt>
+      <trkpt lat="43.263868" lon="-1.357222">
+        <ele>143.4</ele>
+        <time>2025-06-17T18:35:17.634Z</time>
+      </trkpt>
+      <trkpt lat="43.263544" lon="-1.356863">
+        <ele>141.2</ele>
+        <time>2025-06-17T18:36:10.602Z</time>
+      </trkpt>
+      <trkpt lat="43.263335" lon="-1.356685">
+        <ele>139.9</ele>
+        <time>2025-06-17T18:36:42.290Z</time>
+      </trkpt>
+      <trkpt lat="43.263153" lon="-1.356056">
+        <ele>137.0</ele>
+        <time>2025-06-17T18:37:47.159Z</time>
+      </trkpt>
+      <trkpt lat="43.263013" lon="-1.355801">
+        <ele>137.2</ele>
+        <time>2025-06-17T18:38:11.994Z</time>
+      </trkpt>
+      <trkpt lat="43.263101" lon="-1.355476">
+        <ele>137.5</ele>
+        <time>2025-06-17T18:38:40.906Z</time>
+      </trkpt>
+      <trkpt lat="43.263298" lon="-1.355275">
+        <ele>133.8</ele>
+        <time>2025-06-17T18:39:26.792Z</time>
+      </trkpt>
+      <trkpt lat="43.263587" lon="-1.355063">
+        <ele>128.8</ele>
+        <time>2025-06-17T18:40:27.943Z</time>
+      </trkpt>
+      <trkpt lat="43.263802" lon="-1.354685">
+        <ele>131.6</ele>
+        <time>2025-06-17T18:41:31.330Z</time>
+      </trkpt>
+      <trkpt lat="43.263886" lon="-1.354301">
+        <ele>133.9</ele>
+        <time>2025-06-17T18:42:23.102Z</time>
+      </trkpt>
+      <trkpt lat="43.264015" lon="-1.353971">
+        <ele>136.1</ele>
+        <time>2025-06-17T18:43:11.843Z</time>
+      </trkpt>
+      <trkpt lat="43.263974" lon="-1.353655">
+        <ele>138.0</ele>
+        <time>2025-06-17T18:43:53.951Z</time>
+      </trkpt>
+      <trkpt lat="43.263880" lon="-1.353263">
+        <ele>142.5</ele>
+        <time>2025-06-17T18:45:08.624Z</time>
+      </trkpt>
+      <trkpt lat="43.263841" lon="-1.352872">
+        <ele>146.6</ele>
+        <time>2025-06-17T18:46:19.115Z</time>
+      </trkpt>
+      <trkpt lat="43.263958" lon="-1.352584">
+        <ele>145.9</ele>
+        <time>2025-06-17T18:46:47.599Z</time>
+      </trkpt>
+      <trkpt lat="43.264198" lon="-1.352480">
+        <ele>145.2</ele>
+        <time>2025-06-17T18:47:15.999Z</time>
+      </trkpt>
+      <trkpt lat="43.264575" lon="-1.352427">
+        <ele>141.2</ele>
+        <time>2025-06-17T18:48:16.139Z</time>
+      </trkpt>
+      <trkpt lat="43.264976" lon="-1.352171">
+        <ele>137.0</ele>
+        <time>2025-06-17T18:49:23.722Z</time>
+      </trkpt>
+      <trkpt lat="43.265091" lon="-1.351865">
+        <ele>134.7</ele>
+        <time>2025-06-17T18:50:01.027Z</time>
+      </trkpt>
+      <trkpt lat="43.265240" lon="-1.351043">
+        <ele>134.3</ele>
+        <time>2025-06-17T18:51:02.765Z</time>
+      </trkpt>
+      <trkpt lat="43.265233" lon="-1.350885">
+        <ele>135.2</ele>
+        <time>2025-06-17T18:51:22.774Z</time>
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx>
