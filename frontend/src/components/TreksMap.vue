@@ -2,6 +2,7 @@
 import { ref, onMounted, onUnmounted, watch } from 'vue'
 import type { FeatureCollection, MultiLineString, Point } from 'geojson'
 import maplibregl, { MAP_STYLE_URL } from '../lib/maplibre'
+import { setupOutdoorMap } from '../lib/outdoorMap'
 import type { MapView } from '../stores/treks'
 import type { TrekSummary } from '../types/trek'
 import type { BBox } from '../utils/geo'
@@ -210,6 +211,8 @@ onMounted(() => {
   })
 
   map.addControl(new maplibregl.NavigationControl(), 'top-right')
+  // Sentiers visibles, itinéraires balisés et choix du fond Plan / Topo
+  setupOutdoorMap(map)
   // « Autour de moi » : centre la carte sur la position, la liste suit
   map.addControl(
     new maplibregl.GeolocateControl({

@@ -2,8 +2,10 @@
 import { computed, onMounted, onUnmounted, ref, shallowRef, watch } from 'vue'
 import type { FeatureCollection, LineString } from 'geojson'
 import maplibregl, { MAP_STYLE_URL } from '../lib/maplibre'
+import { setupOutdoorMap } from '../lib/outdoorMap'
 import { OsmPoiLayer, osmPoiStatusLabel, type OsmPoiStatus } from '../lib/osmPoiLayer'
 import ElevationProfile, { type ProfileHover } from './ElevationProfile.vue'
+import MapLayout from './MapLayout.vue'
 import PlaceSearch from './PlaceSearch.vue'
 import WaypointList from './WaypointList.vue'
 import type { GeoJSONLineString, POI } from '../types/trek'
@@ -12,13 +14,14 @@ import { haversineKm } from '../utils/geo'
 import { POI_ICONS } from '../utils/poi'
 import { routeOnTrails } from '../utils/routing'
 import { placeName, type Place } from '../utils/geocoding'
-import { nearestLoadedOsmPoi } from '../utils/overpass'
+import { nearestLoadedOsmPoi, type OsmPoi } from '../utils/overpass'
 import {
   addControl,
   buildGpx,
   closeLoop,
   cutAfter,
   cutBefore,
+  passThrough,
   emptyTrack,
   insertControl,
   moveControl,
@@ -62,15 +65,26 @@ const MAX_HISTORY = 100
 
 // --- Historique : chaque modification ajoute une version (annuler / rétablir) ---
 
+// Une version = la trace, et les points d'intérêt ajoutés pendant l'édition (points utiles
+// OSM par lesquels on fait passer la trace) : annuler retire aussi ces points
+interface Version {
+  track: EditableTrack
+  addedPois: POI[]
+}
+
 // shallowRef : les traces comptent des milliers de points, inutile de les rendre réactifs
-const history = shallowRef<EditableTrack[]>([emptyTrack()])
+const history = shallowRef<Version[]>([{ track: emptyTrack(), addedPois: [] }])
 const position = ref(0)
-const track = computed(() => history.value[position.value]!)
+const track = computed(() => history.value[position.value]!.track)
+const addedPois = computed(() => history.value[position.value]!.addedPois)
+/** POI de l'étape + ceux ajoutés ici : affichés, nomment les points, exportés dans le GPX */
+const allPois = computed(() => [...props.pois, ...addedPois.value])
 const hasChanges = computed(() => position.value !== 0)
 
-function commit(next: EditableTrack) {
+function commit(next: EditableTrack, newPoi?: POI) {
   const kept = history.value.slice(0, position.value + 1)
-  history.value = [...kept, next].slice(-MAX_HISTORY)
+  const pois = newPoi ? [...addedPois.value, newPoi] : addedPois.value
+  history.value = [...kept, { track: next, addedPois: pois }].slice(-MAX_HISTORY)
   position.value = history.value.length - 1
 }
 
@@ -86,7 +100,11 @@ const isLoading = ref(true)
 const notice = ref<string | null>(null)
 
 /** Lance une modification ; une seule à la fois (les calculs d'itinéraire sont asynchrones) */
-async function run(operation: (current: EditableTrack) => EditableTrack | Promise<EditableTrack>) {
+async function run(
+  operation: (current: EditableTrack) => EditableTrack | Promise<EditableTrack>,
+  /** Point d'intérêt ajouté en même temps (annulé avec la modification) */
+  newPoi?: POI,
+) {
   if (isBusy.value || isLoading.value) {
     renderControls()
     return
@@ -95,8 +113,9 @@ async function run(operation: (current: EditableTrack) => EditableTrack | Promis
   notice.value = null
   closeMenu()
   placePopup?.remove()
+  osmPopup?.remove()
   try {
-    commit(await operation(track.value))
+    commit(await operation(track.value), newPoi)
   } catch (e) {
     notice.value = e instanceof Error ? e.message : 'Modification impossible'
     renderControls()
@@ -156,7 +175,9 @@ const waypointNames = computed(() => {
   void osmStatus.value // recalcul quand de nouveaux points utiles sont chargés
   const last = track.value.controls.length - 1
   return track.value.controls.map((point, index) => {
-    const poi = props.pois.find((p) => haversineKm(p.location.coordinates, point) <= NAME_RADIUS_KM)
+    const poi = allPois.value.find(
+      (p) => haversineKm(p.location.coordinates, point) <= NAME_RADIUS_KM,
+    )
     const osm = nearestLoadedOsmPoi(point, NAME_RADIUS_KM)
     const named = poi?.name ?? (osm && osm.name !== osm.kind ? osm.name : null)
     return (
@@ -219,6 +240,66 @@ function onPlaceSelect(place: Place) {
   button.focus()
 }
 
+// --- Point utile OpenStreetMap → itinéraire ---
+
+let osmPopup: maplibregl.Popup | null = null
+
+// Un point utile déjà ajouté à l'étape (à ~15 m près) n'est plus proposé
+function isAlreadyAdded(osm: OsmPoi): boolean {
+  return allPois.value.some(
+    ({ location: { coordinates } }) => haversineKm(coordinates, osm.coordinates) < 0.015,
+  )
+}
+
+function showOsmPopup(osm: OsmPoi) {
+  if (!map) return
+  closeMenu()
+  placePopup?.remove()
+  osmPopup?.remove()
+
+  const content = document.createElement('div')
+  content.className = 'control-menu osm-add'
+  const title = document.createElement('strong')
+  title.textContent = `${POI_ICONS[osm.type]} ${osm.name}`
+  content.append(title)
+  const details = [osm.name === osm.kind ? '' : osm.kind, osm.notes ?? ''].filter(Boolean)
+  if (details.length) {
+    const p = document.createElement('p')
+    p.textContent = details.join(' · ')
+    content.append(p)
+  }
+  const button = document.createElement('button')
+  button.type = 'button'
+  button.className = 'osm-add-button'
+  button.textContent = track.value.controls.length ? "Ajouter à l'itinéraire" : "Partir d'ici"
+  const label = document.createElement('label')
+  label.className = 'osm-add-check'
+  const checkbox = document.createElement('input')
+  checkbox.type = 'checkbox'
+  checkbox.checked = true
+  label.append(checkbox, " Ajouter aussi aux points d'intérêt de l'étape")
+  button.addEventListener('click', () => {
+    osmPopup?.remove()
+    const poi: POI | undefined = checkbox.checked
+      ? {
+          _id: `osm-${osm.id}`,
+          type: osm.type,
+          name: osm.name,
+          notes: osm.notes,
+          location: { type: 'Point', coordinates: osm.coordinates },
+        }
+      : undefined
+    run((current) => passThrough(current, osm.coordinates, router), poi)
+  })
+  content.append(button, label)
+
+  osmPopup = new maplibregl.Popup({ offset: 14, maxWidth: '280px', closeOnClick: false })
+    .setLngLat(osm.coordinates)
+    .setDOMContent(content)
+    .addTo(map)
+  button.focus()
+}
+
 function startFromPrevious() {
   const point = previousEnd.value
   if (point) run((current) => addControl(current, point, router))
@@ -237,7 +318,7 @@ function finish() {
     saveError.value = 'La trace doit relier au moins deux points.'
     return
   }
-  const xml = buildGpx(props.title, points.value, props.pois)
+  const xml = buildGpx(props.title, points.value, allPois.value)
   const slug = props.title.replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-|-$/g, '') || 'trace'
   const file = new File([xml], `${slug}.gpx`, { type: 'application/gpx+xml' })
   emit('save', { file, durationMin: stats.value.durationMin })
@@ -265,7 +346,7 @@ async function loadInitialPoints() {
   if (initial.length < 2 && props.fallbackTrack) {
     initial = props.fallbackTrack.coordinates.map(([lon, lat]) => [lon, lat, null])
   }
-  history.value = [trackFromPoints(initial)]
+  history.value = [{ track: trackFromPoints(initial), addedPois: [] }]
   position.value = 0
   isLoading.value = false
 }
@@ -392,7 +473,7 @@ function renderControls() {
 
 function renderPois() {
   poiMarkers.forEach((m) => m.remove())
-  poiMarkers = props.pois.map((poi) => {
+  poiMarkers = allPois.value.map((poi) => {
     const el = document.createElement('div')
     el.className = 'track-editor-poi'
     el.textContent = POI_ICONS[poi.type]
@@ -446,7 +527,7 @@ function fitToContent() {
     ...points.value.map(([lon, lat]): LonLat => [lon, lat]),
     ...(previousEnd.value ? [previousEnd.value] : []),
     ...(nextStart.value ? [nextStart.value] : []),
-    ...props.pois.map((p) => p.location.coordinates),
+    ...allPois.value.map((p) => p.location.coordinates),
   ]
   const [first] = coordinates
   if (!first) return
@@ -529,6 +610,8 @@ onMounted(() => {
     attributionControl: { compact: true },
   })
   map.addControl(new maplibregl.NavigationControl(), 'top-right')
+  // Sentiers visibles, itinéraires balisés et choix du fond Plan / Topo
+  setupOutdoorMap(map)
   map.addControl(new maplibregl.ScaleControl(), 'bottom-left')
 
   map.on('load', async () => {
@@ -537,7 +620,11 @@ onMounted(() => {
     await loading
     renderTrack()
     fitToContent()
-    osmLayer = new OsmPoiLayer(map!, { onStatus: (status) => (osmStatus.value = status) })
+    osmLayer = new OsmPoiLayer(map!, {
+      onSelect: showOsmPopup,
+      onStatus: (status) => (osmStatus.value = status),
+      isHidden: isAlreadyAdded,
+    })
     osmLayer.setEnabled(showOsm.value)
   })
 
@@ -554,9 +641,10 @@ onMounted(() => {
   // Clic sur la carte : prolonge la trace (ou pose le départ)
   map.on('click', (e) => {
     if (isOnOverlay(e.originalEvent)) return
-    if (menu || placePopup?.isOpen()) {
+    if (menu || placePopup?.isOpen() || osmPopup?.isOpen()) {
       closeMenu()
       placePopup?.remove()
+      osmPopup?.remove()
       return
     }
     if (map!.queryRenderedFeatures(e.point, { layers: [HIT_LAYER] }).length) return
@@ -566,6 +654,11 @@ onMounted(() => {
 })
 
 watch(track, renderTrack)
+// POI ajoutés (ou retirés en annulant) : marqueurs et calque OSM à jour
+watch(addedPois, () => {
+  renderPois()
+  osmLayer?.refresh()
+})
 watch(highlightedIndex, (index) => {
   controlMarkers.forEach((marker, i) =>
     marker.getElement().classList.toggle('is-highlighted', i === index),
@@ -601,6 +694,7 @@ function onKeydown(e: KeyboardEvent) {
   } else if (e.key === 'Escape') {
     if (menu) closeMenu()
     else if (placePopup?.isOpen()) placePopup.remove()
+    else if (osmPopup?.isOpen()) osmPopup.remove()
     else cancel()
   }
 }
@@ -616,160 +710,168 @@ onUnmounted(() => {
 <template>
   <Teleport to="body">
     <div class="editor" role="dialog" aria-modal="true" aria-labelledby="track-editor-title">
-      <aside class="panel">
-        <header class="panel-header">
-          <p class="eyebrow">Trace de l'étape</p>
-          <h2 id="track-editor-title" tabindex="-1">{{ title }}</h2>
-          <p class="hint">
-            <template v-if="track.controls.length">
-              Clique sur la carte pour prolonger. Attrape la trace pour la déplacer, glisse un point
-              pour le bouger, clique dessus pour le supprimer ou couper.
-            </template>
-            <template v-else>Clique sur la carte pour poser le départ.</template>
-          </p>
-        </header>
+      <MapLayout panel-label="Trace de l'étape" fullscreen flush>
+        <template #panel>
+          <div class="panel-inner">
+            <header class="panel-header">
+              <p class="eyebrow">Trace de l'étape</p>
+              <h2 id="track-editor-title" tabindex="-1">{{ title }}</h2>
+              <p class="hint">
+                <template v-if="track.controls.length">
+                  Clique sur la carte pour prolonger. Attrape la trace pour la déplacer, glisse un
+                  point pour le bouger, clique dessus pour le supprimer ou couper.
+                </template>
+                <template v-else>Clique sur la carte pour poser le départ.</template>
+              </p>
+            </header>
 
-        <div class="section">
-          <label v-if="track.controls.length" class="check">
-            <input v-model="extendFromStart" type="checkbox" />
-            Prolonger depuis le départ (au lieu de l'arrivée)
-          </label>
-          <button
-            v-if="!track.controls.length && previousEnd"
-            type="button"
-            class="btn"
-            :disabled="isBusy || isLoading"
-            @click="startFromPrevious"
-          >
-            Partir de l'arrivée de l'étape précédente
-          </button>
+            <div class="section">
+              <label v-if="track.controls.length" class="check">
+                <input v-model="extendFromStart" type="checkbox" />
+                Prolonger depuis le départ (au lieu de l'arrivée)
+              </label>
+              <button
+                v-if="!track.controls.length && previousEnd"
+                type="button"
+                class="btn"
+                :disabled="isBusy || isLoading"
+                @click="startFromPrevious"
+              >
+                Partir de l'arrivée de l'étape précédente
+              </button>
 
-          <div class="toolbar">
-            <button
-              type="button"
-              class="btn btn-icon"
-              title="Annuler (Ctrl+Z)"
-              aria-label="Annuler"
-              :disabled="isBusy || position === 0"
-              @click="undo"
-            >
-              ↶
-            </button>
-            <button
-              type="button"
-              class="btn btn-icon"
-              title="Rétablir (Ctrl+Y)"
-              aria-label="Rétablir"
-              :disabled="isBusy || position === history.length - 1"
-              @click="redo"
-            >
-              ↷
-            </button>
-            <button
-              type="button"
-              class="btn"
-              :disabled="isBusy || track.controls.length < 2"
-              @click="run(reverseTrack)"
-            >
-              ⇄ Inverser
-            </button>
-            <button
-              type="button"
-              class="btn"
-              :disabled="isBusy || track.controls.length < 2"
-              @click="run((current) => closeLoop(current, router))"
-            >
-              ⟲ Boucler
-            </button>
-            <button
-              type="button"
-              class="btn"
-              :disabled="isBusy || !track.controls.length"
-              @click="run(emptyTrack)"
-            >
-              Tout effacer
-            </button>
-          </div>
-          <p class="status" aria-live="polite">
-            <template v-if="isLoading">Chargement de la trace…</template>
-            <template v-else-if="isBusy">Calcul de l'itinéraire…</template>
-            <template v-else-if="notice">{{ notice }}</template>
-          </p>
-        </div>
+              <div class="toolbar">
+                <button
+                  type="button"
+                  class="btn btn-icon"
+                  title="Annuler (Ctrl+Z)"
+                  aria-label="Annuler"
+                  :disabled="isBusy || position === 0"
+                  @click="undo"
+                >
+                  ↶
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-icon"
+                  title="Rétablir (Ctrl+Y)"
+                  aria-label="Rétablir"
+                  :disabled="isBusy || position === history.length - 1"
+                  @click="redo"
+                >
+                  ↷
+                </button>
+                <button
+                  type="button"
+                  class="btn"
+                  :disabled="isBusy || track.controls.length < 2"
+                  @click="run(reverseTrack)"
+                >
+                  ⇄ Inverser
+                </button>
+                <button
+                  type="button"
+                  class="btn"
+                  :disabled="isBusy || track.controls.length < 2"
+                  @click="run((current) => closeLoop(current, router))"
+                >
+                  ⟲ Boucler
+                </button>
+                <button
+                  type="button"
+                  class="btn"
+                  :disabled="isBusy || !track.controls.length"
+                  @click="run(emptyTrack)"
+                >
+                  Tout effacer
+                </button>
+              </div>
+              <p class="status" aria-live="polite">
+                <template v-if="isLoading">Chargement de la trace…</template>
+                <template v-else-if="isBusy">Calcul de l'itinéraire…</template>
+                <template v-else-if="notice">{{ notice }}</template>
+              </p>
+            </div>
 
-        <div v-if="track.controls.length" class="section">
-          <WaypointList
-            class="waypoint-list"
-            :names="waypointNames"
-            :highlighted-index="highlightedIndex"
-            :disabled="isBusy || isLoading"
-            @reorder="(from, to) => run((current) => reorderControl(current, from, to, router))"
-            @remove="(index) => run((current) => removeControl(current, index, router))"
-            @focus="focusWaypoint"
-            @hover="highlightedIndex = $event"
-            @add="placeSearch?.focus()"
-          />
-        </div>
+            <div v-if="track.controls.length" class="section">
+              <WaypointList
+                class="waypoint-list"
+                :names="waypointNames"
+                :highlighted-index="highlightedIndex"
+                :disabled="isBusy || isLoading"
+                @reorder="(from, to) => run((current) => reorderControl(current, from, to, router))"
+                @remove="(index) => run((current) => removeControl(current, index, router))"
+                @focus="focusWaypoint"
+                @hover="highlightedIndex = $event"
+                @add="placeSearch?.focus()"
+              />
+            </div>
 
-        <dl class="stats">
-          <div>
-            <dt>Distance</dt>
-            <dd>{{ stats.distanceKm.toFixed(1) }} km</dd>
-          </div>
-          <div>
-            <dt>D+</dt>
-            <dd>{{ stats.elevationGain }} m</dd>
-          </div>
-          <div>
-            <dt>D−</dt>
-            <dd>{{ stats.elevationLoss }} m</dd>
-          </div>
-          <div>
-            <dt>Durée estimée</dt>
-            <dd>{{ formatDuration(stats.durationMin) }}</dd>
-          </div>
-        </dl>
+            <ul v-if="warnings.length" class="warnings">
+              <li v-for="warning in warnings" :key="warning">⚠ {{ warning }}</li>
+            </ul>
 
-        <div class="section profile">
+            <div class="section">
+              <label class="check">
+                <input v-model="showOsm" type="checkbox" />
+                Points utiles OpenStreetMap
+              </label>
+              <p v-if="showOsm && osmStatus.state !== 'off'" class="status">
+                {{ osmPoiStatusLabel(osmStatus) }}
+              </p>
+            </div>
+
+            <footer class="panel-footer">
+              <p v-if="saveError" class="field-error" role="alert">{{ saveError }}</p>
+              <button type="button" class="btn" @click="cancel">Annuler</button>
+              <button type="button" class="btn btn-primary" :disabled="isBusy" @click="finish">
+                Terminer
+              </button>
+            </footer>
+          </div>
+        </template>
+
+        <template #map>
+          <div class="map-wrap">
+            <div ref="mapContainer" class="map" />
+            <PlaceSearch
+              ref="placeSearch"
+              class="map-search"
+              :near="searchBias"
+              @select="onPlaceSelect"
+            />
+          </div>
+        </template>
+
+        <!-- Comme sur les pages trek et étape : chiffres clés et profil sous la carte -->
+        <template #dock>
+          <dl class="stats">
+            <div>
+              <dt>Distance</dt>
+              <dd>{{ stats.distanceKm.toFixed(1) }} km</dd>
+            </div>
+            <div>
+              <dt>D+</dt>
+              <dd>{{ stats.elevationGain }} m</dd>
+            </div>
+            <div>
+              <dt>D−</dt>
+              <dd>{{ stats.elevationLoss }} m</dd>
+            </div>
+            <div>
+              <dt>Durée estimée</dt>
+              <dd>{{ formatDuration(stats.durationMin) }}</dd>
+            </div>
+          </dl>
+
           <ElevationProfile
             v-if="profileSegments.length"
             :segments="profileSegments"
             @hover="onProfileHover"
           />
-        </div>
-
-        <ul v-if="warnings.length" class="warnings">
-          <li v-for="warning in warnings" :key="warning">⚠ {{ warning }}</li>
-        </ul>
-
-        <div class="section">
-          <label class="check">
-            <input v-model="showOsm" type="checkbox" />
-            Points utiles OpenStreetMap
-          </label>
-          <p v-if="showOsm && osmStatus.state !== 'off'" class="status">
-            {{ osmPoiStatusLabel(osmStatus) }}
-          </p>
-        </div>
-
-        <footer class="panel-footer">
-          <p v-if="saveError" class="field-error" role="alert">{{ saveError }}</p>
-          <button type="button" class="btn" @click="cancel">Annuler</button>
-          <button type="button" class="btn btn-primary" :disabled="isBusy" @click="finish">
-            Terminer
-          </button>
-        </footer>
-      </aside>
-
-      <div class="map-wrap">
-        <div ref="mapContainer" class="map" />
-        <PlaceSearch
-          ref="placeSearch"
-          class="map-search"
-          :near="searchBias"
-          @select="onPlaceSelect"
-        />
-      </div>
+          <p v-else class="status">Le profil d'altitude s'affichera avec la trace.</p>
+        </template>
+      </MapLayout>
     </div>
   </Teleport>
 </template>
@@ -779,17 +881,14 @@ onUnmounted(() => {
   position: fixed;
   inset: 0;
   z-index: 1000;
-  display: grid;
-  grid-template-columns: minmax(320px, 400px) 1fr;
+  overflow-y: auto; /* mobile : la mise en page s'empile et défile */
   background: var(--color-bg);
 }
-.panel {
+/* Pied (Annuler / Terminer) toujours en bas du panneau, même si son contenu est court */
+.panel-inner {
   display: flex;
   flex-direction: column;
-  min-height: 0;
-  overflow-y: auto;
-  border-right: var(--border-hairline);
-  background: var(--color-bg-deep);
+  min-height: 100%;
 }
 .panel-header,
 .section {
@@ -800,8 +899,8 @@ onUnmounted(() => {
 }
 .panel-header h2 {
   margin: 0.2rem 0 0;
-  font-size: 1.6rem;
-  line-height: 1.15;
+  font-size: clamp(2rem, 2.4vw, 2.6rem);
+  line-height: 1.1;
 }
 .panel-header h2:focus {
   outline: none;
@@ -827,11 +926,6 @@ onUnmounted(() => {
 }
 .waypoint-list {
   width: 100%;
-}
-.map-wrap {
-  position: relative;
-  min-width: 0;
-  min-height: 0;
 }
 .map-wrap .map {
   position: absolute;
@@ -864,28 +958,24 @@ onUnmounted(() => {
   color: var(--color-text-muted);
   font-size: 0.85rem;
 }
+/* Chiffres clés en ligne, au-dessus du profil (bande sous la carte) */
 .stats {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--space-xs);
-  margin: 0;
-  padding: var(--space-sm) var(--space-md);
-  border-top: var(--border-hairline);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs) var(--space-lg);
+  margin: 0 0 var(--space-xs);
 }
 .stats dt {
   color: var(--color-text-muted);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
 }
 .stats dd {
   margin: 0.15rem 0 0;
   font-family: var(--font-display);
-  font-size: 1.35rem;
+  font-size: 1.7rem;
   white-space: nowrap;
-}
-.profile {
-  align-items: stretch;
 }
 .warnings {
   margin: 0;
@@ -895,6 +985,8 @@ onUnmounted(() => {
   font-size: 0.85rem;
 }
 .panel-footer {
+  position: sticky;
+  bottom: 0;
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
@@ -902,28 +994,10 @@ onUnmounted(() => {
   margin-top: auto;
   padding: var(--space-sm) var(--space-md);
   border-top: var(--border-hairline);
+  background: var(--color-bg);
 }
 .panel-footer .field-error {
   width: 100%;
-}
-.map {
-  min-width: 0;
-  min-height: 0;
-}
-
-@media (max-width: 760px) {
-  .editor {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: 55vh minmax(0, 1fr);
-  }
-  .map-wrap {
-    grid-row: 1;
-  }
-  .panel {
-    grid-row: 2;
-    border-right: none;
-    border-top: var(--border-hairline);
-  }
 }
 </style>
 
@@ -999,6 +1073,30 @@ onUnmounted(() => {
   font: inherit;
   font-size: 0.85rem;
   text-align: left;
+  cursor: pointer;
+}
+.osm-add p {
+  margin: 0.15rem 0 0.35rem;
+  color: #4a5a52;
+  font-size: 0.8rem;
+}
+.control-menu .osm-add-button {
+  background: #1c2823;
+  color: #fff;
+  font-weight: 600;
+  text-align: center;
+}
+.control-menu .osm-add-button:hover,
+.control-menu .osm-add-button:focus-visible {
+  background: #33463c;
+}
+.osm-add-check {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.35rem;
+  color: #1c2823;
+  font-size: 0.8rem;
   cursor: pointer;
 }
 .control-menu button:hover,

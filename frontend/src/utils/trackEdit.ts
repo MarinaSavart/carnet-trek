@@ -358,3 +358,32 @@ export function buildGpx(name: string, points: TrackPoint[], pois: POI[]): strin
     '</gpx>',
   ].join('\n')
 }
+
+/**
+ * Fait passer la trace par un point (ex. une source choisie sur la carte) :
+ * - trace vide : le point devient le départ ;
+ * - point plus proche du milieu de la trace que de ses extrémités : détour local, comme
+ *   quand on attrape la trace (seule la portion autour est recalculée) ;
+ * - sinon, la trace est prolongée jusqu'au point, depuis l'extrémité la plus proche.
+ */
+export async function passThrough(
+  track: EditableTrack,
+  point: LonLat,
+  route: SegmentRouter,
+): Promise<EditableTrack> {
+  if (track.controls.length < 2) return addControl(track, point, route)
+
+  let nearest = { segment: 0, vertex: 0, km: Infinity }
+  track.segments.forEach((segment, s) =>
+    segment.points.forEach((p, v) => {
+      const km = haversineKm(lonLat(p), point)
+      if (km < nearest.km) nearest = { segment: s, vertex: v, km }
+    }),
+  )
+  const toStart = haversineKm(track.controls[0]!, point)
+  const toEnd = haversineKm(track.controls[track.controls.length - 1]!, point)
+  if (nearest.km < Math.min(toStart, toEnd)) {
+    return insertControl(track, nearest.segment, nearest.vertex, point, route)
+  }
+  return addControl(track, point, route, toStart < toEnd)
+}

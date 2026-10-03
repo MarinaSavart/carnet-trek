@@ -2,6 +2,7 @@
 import { ref, onMounted, onUnmounted, watch } from 'vue'
 import type { FeatureCollection, LineString } from 'geojson'
 import maplibregl, { MAP_STYLE_URL } from '../lib/maplibre'
+import { setupOutdoorMap } from '../lib/outdoorMap'
 import { OsmPoiLayer, osmPoiStatusLabel } from '../lib/osmPoiLayer'
 import type { Etape, POI } from '../types/trek'
 import { getEtapeColor } from '../utils/etapeColors'
@@ -272,6 +273,8 @@ onMounted(() => {
   })
 
   map.addControl(new maplibregl.NavigationControl(), 'top-right')
+  // Sentiers visibles, itinéraires balisés et choix du fond Plan / Topo
+  setupOutdoorMap(map)
   map.addControl(new maplibregl.ScaleControl(), 'bottom-left')
   if (props.osmPois) map.addControl(createOsmPoiControl(), 'top-left')
   map.on('load', renderEtapes)
