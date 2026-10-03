@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed, onMounted, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import TreksMap from '../components/TreksMap.vue'
 import { useTreksStore, type MapView } from '../stores/treks'
@@ -8,7 +8,9 @@ import type { TrekSummary } from '../types/trek'
 import { getEtapeColor } from '../utils/etapeColors'
 import { formatDuration } from '../utils/format'
 import { bboxIntersects, distanceToTrackKm, trackBBox, type BBox } from '../utils/geo'
+import { matchesSearch } from '../utils/search'
 
+const route = useRoute()
 const router = useRouter()
 const store = useTreksStore()
 const { summaries, homeMapView } = storeToRefs(store)
@@ -40,6 +42,36 @@ const colors = computed(() =>
   Object.fromEntries(summaries.value.map((trek, index) => [trek._id, getEtapeColor(index)])),
 )
 
+// Recherche par nom ou région. Elle vit dans l'URL (?q=…) : on la retrouve en revenant
+// d'une page trek, et le lien se partage
+const queryParam = () => (typeof route.query.q === 'string' ? route.query.q : '')
+// Valeur locale : le champ ne dépend pas de la mise à jour (asynchrone) de l'URL
+const search = ref(queryParam())
+watch(search, (value) => {
+  if (value === queryParam()) return
+  router.replace({ query: { ...route.query, q: value.trim() ? value : undefined } })
+})
+// URL changée de l'extérieur (précédent / suivant du navigateur)
+watch(queryParam, (value) => {
+  if (value !== search.value) search.value = value
+})
+const isSearching = computed(() => search.value.trim() !== '')
+
+const results = computed(() =>
+  summaries.value.filter((trek) => matchesSearch([trek.name, trek.region], search.value)),
+)
+
+// La carte se recadre sur les résultats, une fois la saisie posée (pas à chaque lettre)
+let fitTimer: ReturnType<typeof setTimeout> | undefined
+watch(
+  () => results.value.map((t) => t._id).join(),
+  () => {
+    clearTimeout(fitTimer)
+    if (!isSearching.value || !results.value.length) return
+    fitTimer = setTimeout(() => map.value?.fitAll(), 400)
+  },
+)
+
 interface PlacedTrek {
   trek: TrekSummary
   /** Distance au centre de la carte ; null sans tracé */
@@ -54,7 +86,7 @@ const placed = computed(() => {
   const nearby: PlacedTrek[] = []
   const elsewhere: PlacedTrek[] = []
 
-  for (const trek of summaries.value) {
+  for (const trek of results.value) {
     if (!trek.track || !view || !bounds) {
       elsewhere.push({ trek, distanceKm: null })
       continue
@@ -87,8 +119,39 @@ function formatDistance(km: number): string {
 <template>
   <div class="page">
     <div class="heading">
-      <h1>Mes treks</h1>
-      <RouterLink to="/treks/new" class="btn btn-primary">+ Nouveau trek</RouterLink>
+      <div class="heading-row">
+        <h1>Mes treks</h1>
+        <RouterLink to="/treks/new" class="btn btn-primary">+ Nouveau trek</RouterLink>
+      </div>
+      <div v-if="summaries.length" class="search" role="search">
+        <label for="trek-search" class="visually-hidden">Rechercher un trek</label>
+        <span class="search-icon" aria-hidden="true">⌕</span>
+        <input
+          id="trek-search"
+          v-model="search"
+          type="search"
+          class="input search-input"
+          placeholder="Rechercher un trek ou une région…"
+          autocomplete="off"
+          aria-describedby="search-count"
+        />
+        <button
+          v-if="isSearching"
+          type="button"
+          class="search-clear"
+          aria-label="Effacer la recherche"
+          @click="search = ''"
+        >
+          ×
+        </button>
+      </div>
+      <p id="search-count" class="search-count" aria-live="polite">
+        <template v-if="isSearching">
+          {{ results.length }} trek{{ results.length > 1 ? 's' : '' }} trouvé{{
+            results.length > 1 ? 's' : ''
+          }}
+        </template>
+      </p>
     </div>
 
     <div class="list-column">
@@ -102,6 +165,11 @@ function formatDistance(km: number): string {
       <div v-else-if="!summaries.length" class="status">
         <p>Aucun trek pour l'instant.</p>
         <RouterLink to="/treks/new" class="btn">Créer mon premier trek</RouterLink>
+      </div>
+
+      <div v-else-if="!results.length" class="status">
+        <p>Aucun trek ne correspond à « {{ search.trim() }} ».</p>
+        <button type="button" class="btn" @click="search = ''">Effacer la recherche</button>
       </div>
 
       <template v-else>
@@ -189,7 +257,7 @@ function formatDistance(km: number): string {
     <aside class="map-column" aria-label="Carte des treks">
       <TreksMap
         ref="map"
-        :treks="summaries"
+        :treks="results"
         :colors="colors"
         :highlighted-id="highlightedId"
         :initial-view="initialView"
@@ -256,12 +324,62 @@ function formatDistance(km: number): string {
   }
 }
 
-.heading {
+.heading-row {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-sm);
+}
+.search {
+  position: relative;
+  margin-top: var(--space-sm);
+}
+.search-icon {
+  position: absolute;
+  top: 50%;
+  left: 0.9rem;
+  translate: 0 -50%;
+  color: var(--color-text-muted);
+  font-size: 1.2rem;
+  pointer-events: none;
+}
+.search-input {
+  padding-left: 2.4rem;
+  padding-right: 2.4rem;
+  border-radius: var(--radius-pill);
+}
+/* Croix native du champ de recherche : remplacée par notre bouton, plus visible */
+.search-input::-webkit-search-cancel-button {
+  appearance: none;
+}
+.search-clear {
+  position: absolute;
+  top: 50%;
+  right: 0.5rem;
+  translate: 0 -50%;
+  width: 1.8rem;
+  height: 1.8rem;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: var(--color-text-muted);
+  font: inherit;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+.search-clear:hover {
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+}
+.search-clear:focus-visible {
+  outline: 2px solid var(--color-accent);
+}
+.search-count {
+  min-height: 1.2em;
+  margin: 0.4rem 0 0 1rem;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
 }
 .status {
   display: flex;
