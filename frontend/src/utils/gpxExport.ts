@@ -1,24 +1,20 @@
 import type { Etape } from '../types/trek'
+import { piecePois, type Piece } from './decoupage'
+import { haversineKm } from './geo'
+import { escapeXml, poiWaypointXml } from './gpxWaypoints'
 
-// GPX d'une étape fusionnée : un segment de tracé par étape d'origine. Les fichiers
-// d'origine sont relus pour garder altitudes et horaires ; une étape sans fichier
-// est reconstituée à partir de son tracé (sans altitude).
+// GPX d'un trek ou d'une journée : une seule trace continue, morceaux d'étapes mis bout à
+// bout (une montre GPS la suit d'un trait). Les fichiers d'origine sont relus pour garder
+// altitudes et horaires, et coupés au bon km quand la journée ne prend qu'une partie
+// d'une étape ; une étape sans fichier est reconstituée à partir de son tracé (sans
+// altitude). Les points d'intérêt sont ceux de l'appli (éventuellement édités), pas ceux
+// du fichier d'origine, avec leur type (voir gpxWaypoints.ts).
 
 interface TrackPoint {
   lat: string
   lon: string
   ele?: string
   time?: string
-}
-
-interface Waypoint extends TrackPoint {
-  name?: string
-  desc?: string
-  sym?: string
-}
-
-function escapeXml(value: string): string {
-  return value.replace(/[<>&'"]/g, (c) => `&#${c.charCodeAt(0)};`)
 }
 
 function childText(el: Element, tag: string): string | undefined {
@@ -34,22 +30,14 @@ function readPoint(el: Element): TrackPoint {
   }
 }
 
-async function readEtape(etape: Etape): Promise<{ points: TrackPoint[]; waypoints: Waypoint[] }> {
+async function readTrackPoints(etape: Etape): Promise<TrackPoint[]> {
   if (etape.gpxFile) {
     try {
       const response = await fetch(etape.gpxFile.url)
       if (response.ok) {
         const doc = new DOMParser().parseFromString(await response.text(), 'application/xml')
         if (!doc.getElementsByTagName('parsererror').length) {
-          return {
-            points: Array.from(doc.getElementsByTagName('trkpt')).map(readPoint),
-            waypoints: Array.from(doc.getElementsByTagName('wpt')).map((wpt) => ({
-              ...readPoint(wpt),
-              name: childText(wpt, 'name'),
-              desc: childText(wpt, 'desc'),
-              sym: childText(wpt, 'sym'),
-            })),
-          }
+          return Array.from(doc.getElementsByTagName('trkpt')).map(readPoint)
         }
       }
     } catch {
@@ -57,44 +45,50 @@ async function readEtape(etape: Etape): Promise<{ points: TrackPoint[]; waypoint
     }
   }
   // Attention à l'ordre : GeoJSON stocke [lon, lat]
-  return {
-    points: (etape.gpxTrack?.coordinates ?? []).map(([lon, lat]) => ({
-      lat: String(lat),
-      lon: String(lon),
-    })),
-    waypoints: etape.pois.map((poi) => ({
-      lat: String(poi.location.coordinates[1]),
-      lon: String(poi.location.coordinates[0]),
-      name: poi.name,
-      desc: poi.notes,
-    })),
-  }
+  return (etape.gpxTrack?.coordinates ?? []).map(([lon, lat]) => ({
+    lat: String(lat),
+    lon: String(lon),
+  }))
 }
 
-function pointXml(tag: string, point: Waypoint, indent: string): string {
-  const children = (['ele', 'time', 'name', 'desc', 'sym'] as const)
+function trackPointXml(point: TrackPoint): string {
+  const children = (['ele', 'time'] as const)
     .filter((key) => point[key] !== undefined)
     .map((key) => `<${key}>${escapeXml(point[key]!)}</${key}>`)
     .join('')
-  return `${indent}<${tag} lat="${escapeXml(point.lat)}" lon="${escapeXml(point.lon)}">${children}</${tag}>`
+  return `      <trkpt lat="${escapeXml(point.lat)}" lon="${escapeXml(point.lon)}">${children}</trkpt>`
 }
 
-export async function buildMergedGpx(name: string, etapes: Etape[]): Promise<string> {
-  const parts = await Promise.all(etapes.map(readEtape))
-  const waypoints = parts.flatMap((p) => p.waypoints).map((w) => pointXml('wpt', w, '  '))
-  const segments = parts.map(
-    (p) =>
-      `    <trkseg>\n${p.points.map((pt) => pointXml('trkpt', pt, '      ')).join('\n')}\n    </trkseg>`,
+const lonLat = (point: TrackPoint): [number, number] => [Number(point.lon), Number(point.lat)]
+
+// Garde les points entre deux positions (km mesurés sur la trace, comme pour la coupe)
+function sliceBetween(points: TrackPoint[], fromKm: number, toKm: number): TrackPoint[] {
+  let km = 0
+  return points.filter((point, i) => {
+    if (i > 0) km += haversineKm(lonLat(points[i - 1]!), lonLat(point))
+    return km >= fromKm && km <= toKm
+  })
+}
+
+export async function buildMergedGpx(name: string, pieces: Piece[]): Promise<string> {
+  const parts = await Promise.all(
+    pieces.map(async (piece) => {
+      const points = await readTrackPoints(piece.etape)
+      return piece.whole ? points : sliceBetween(points, piece.fromKm, piece.toKm)
+    }),
   )
+  const waypoints = pieces.flatMap(piecePois).map((poi) => poiWaypointXml(poi))
 
   return [
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<gpx version="1.1" creator="Carnet Trek" xmlns="http://www.topografix.com/GPX/1/1">',
     `  <metadata><name>${escapeXml(name)}</name></metadata>`,
     ...waypoints,
-    `  <trk>`,
+    '  <trk>',
     `    <name>${escapeXml(name)}</name>`,
-    ...segments,
+    '    <trkseg>',
+    ...parts.flat().map(trackPointXml),
+    '    </trkseg>',
     '  </trk>',
     '</gpx>',
   ].join('\n')

@@ -70,6 +70,27 @@ export function computeElevationDelta(elevations: number[]): { gain: number; los
   return { gain: Math.round(gain), loss: Math.round(loss) }
 }
 
+// Préfixes écrits à l'export (voir frontend/src/utils/gpxWaypoints.ts) : retirés du nom,
+// ils donnent le type quand le fichier n'a pas de symbole reconnu
+const NAME_PREFIX_TO_POI_TYPE: Record<string, POIType> = {
+  EAU: 'point_eau',
+  REFUGE: 'refuge',
+  CAMPING: 'camping',
+  SOMMET: 'sommet',
+  RAVITO: 'ravitaillement',
+}
+const NAME_PREFIX = /^(EAU|REFUGE|CAMPING|SOMMET|RAVITO) · (.+)$/
+
+function readPoiNameAndType(wpt: Element): { name: string; type: POIType } {
+  const rawName = childText(wpt, 'name') ?? 'Point sans nom'
+  const symbolType = SYMBOL_TO_POI_TYPE[childText(wpt, 'sym')?.toLowerCase() ?? '']
+  const prefixed = NAME_PREFIX.exec(rawName)
+  return {
+    name: prefixed ? prefixed[2]! : rawName,
+    type: symbolType ?? (prefixed ? NAME_PREFIX_TO_POI_TYPE[prefixed[1]!] : undefined) ?? 'autre',
+  }
+}
+
 export function parseGpx(xml: string, idPrefix = 'gpx'): ParsedGpx {
   const doc = new DOMParser().parseFromString(xml, 'application/xml')
   if (doc.getElementsByTagName('parsererror').length) {
@@ -103,8 +124,7 @@ export function parseGpx(xml: string, idPrefix = 'gpx'): ParsedGpx {
 
   const waypoints = Array.from(doc.getElementsByTagName('wpt')).map((wpt, index): POI => ({
     _id: `${idPrefix}-wpt-${index}`,
-    type: SYMBOL_TO_POI_TYPE[childText(wpt, 'sym')?.toLowerCase() ?? ''] ?? 'autre',
-    name: childText(wpt, 'name') ?? 'Point sans nom',
+    ...readPoiNameAndType(wpt),
     notes: childText(wpt, 'desc'),
     location: { type: 'Point', coordinates: readLonLat(wpt) },
   }))

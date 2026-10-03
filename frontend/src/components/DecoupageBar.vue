@@ -4,18 +4,27 @@ import { useRoute } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { useVariantes } from '../composables/useVariantes'
 import type { Etape, Variante } from '../types/trek'
-import { groupsOfIds, nightsFromGroups, serializeDecoupage } from '../utils/decoupage'
+import {
+  dayCount,
+  decoupageFromSaved,
+  decoupageKey,
+  decoupageToSaved,
+  isDefaultDecoupage,
+  type Decoupage,
+} from '../utils/decoupage'
+import { canCut } from '../utils/etapeGeometry'
+import { proposeDecoupage } from '../utils/proposeDecoupage'
 
 const props = defineProps<{
   trekId: string
   /** Étapes d'origine, dans l'ordre */
   etapes: Etape[]
   /** Découpage affiché (voir utils/decoupage.ts) */
-  nights: boolean[]
+  decoupage: Decoupage
 }>()
 
 const emit = defineEmits<{
-  apply: [nights: boolean[]]
+  apply: [decoupage: Decoupage]
   reset: []
 }>()
 
@@ -25,33 +34,37 @@ const route = useRoute()
 const auth = useAuthStore()
 const { variantes, save, remove } = useVariantes(() => props.trekId)
 
-const displayCount = computed(() => props.nights.filter(Boolean).length + 1)
-const isCustom = computed(() => displayCount.value !== props.etapes.length)
-const current = computed(() => serializeDecoupage(props.nights))
+const displayCount = computed(() => dayCount(props.decoupage))
+const isCustom = computed(() => !isDefaultDecoupage(props.decoupage))
+const current = computed(() => decoupageKey(props.decoupage))
+// Un trek d'une seule étape se découpe encore, si sa trace permet d'y ajouter une nuit
+const canAdapt = computed(() => props.etapes.length > 1 || props.etapes.some(canCut))
 
-function etapesLabel(count: number): string {
+function daysLabel(count: number): string {
   return `${count} étape${count > 1 ? 's' : ''}`
 }
 
-function varianteNights(variante: Variante): boolean[] | null {
-  return variante.isStale ? null : nightsFromGroups(variante.groups, props.etapes)
+const varianteDays = (variante: Variante) => variante.groups.length + variante.cuts.length
+
+function varianteDecoupage(variante: Variante): Decoupage | null {
+  return variante.isStale ? null : decoupageFromSaved(variante.groups, variante.cuts, props.etapes)
 }
 
 function isActive(variante: Variante): boolean {
-  const nights = varianteNights(variante)
-  return nights !== null && serializeDecoupage(nights) === current.value
+  const decoupage = varianteDecoupage(variante)
+  return decoupage !== null && decoupageKey(decoupage) === current.value
 }
 
 // Découpage affiché pas encore proposé : on invite à l'enregistrer
 const isNew = computed(() => isCustom.value && !variantes.value.some(isActive))
 
 function apply(variante: Variante) {
-  const nights = varianteNights(variante)
-  if (nights) emit('apply', nights)
+  const decoupage = varianteDecoupage(variante)
+  if (decoupage) emit('apply', decoupage)
 }
 
 async function removeVariante(variante: Variante) {
-  const label = `Supprimer le découpage en ${etapesLabel(variante.groups.length)} ?`
+  const label = `Supprimer le découpage en ${daysLabel(varianteDays(variante))} ?`
   if (!window.confirm(label)) return
   try {
     await remove(variante._id)
@@ -67,13 +80,31 @@ async function saveCurrent() {
   isSaving.value = true
   saveError.value = null
   try {
-    await save(groupsOfIds(props.nights, props.etapes))
+    await save(decoupageToSaved(props.decoupage, props.etapes))
     editing.value = false
   } catch (e) {
     saveError.value = e instanceof Error ? e.message : 'Enregistrement impossible'
   } finally {
     isSaving.value = false
   }
+}
+
+// --- « Propose-moi un découpage en N jours » ---
+
+const wantedDays = ref<number | ''>('')
+const lodgingOnly = ref(true)
+const proposeError = ref<string | null>(null)
+
+function propose() {
+  proposeError.value = null
+  const days = Number(wantedDays.value)
+  if (!Number.isInteger(days) || days < 1) {
+    proposeError.value = 'Indique un nombre de jours'
+    return
+  }
+  const result = proposeDecoupage(props.etapes, { days, lodgingOnly: lodgingOnly.value })
+  if (result.ok) emit('apply', result.decoupage)
+  else proposeError.value = result.message
 }
 </script>
 
@@ -90,7 +121,7 @@ async function saveCurrent() {
             :aria-pressed="!isCustom"
             @click="emit('reset')"
           >
-            Voir en {{ etapesLabel(etapes.length) }}
+            Voir en {{ daysLabel(etapes.length) }}
             <span class="variante-note">origine</span>
           </button>
         </li>
@@ -109,14 +140,14 @@ async function saveCurrent() {
             :title="variante.isStale ? 'Le trek a été modifié depuis : découpage à refaire' : ''"
             @click="apply(variante)"
           >
-            Voir en {{ etapesLabel(variante.groups.length) }}
+            Voir en {{ daysLabel(varianteDays(variante)) }}
             <span v-if="variante.isStale" class="variante-note">trek modifié</span>
           </button>
           <button
             v-if="variante.canDelete"
             type="button"
             class="variante-remove"
-            :aria-label="`Supprimer le découpage en ${etapesLabel(variante.groups.length)}`"
+            :aria-label="`Supprimer le découpage en ${daysLabel(varianteDays(variante))}`"
             @click="removeVariante(variante)"
           >
             ×
@@ -127,7 +158,7 @@ async function saveCurrent() {
 
     <div v-if="isNew" class="banner" role="status">
       <p class="banner-text">
-        <strong>Nouveau découpage : {{ etapesLabel(displayCount) }}.</strong>
+        <strong>Nouveau découpage : {{ daysLabel(displayCount) }}.</strong>
         Enregistre-le pour le proposer à tout le monde.
       </p>
       <button
@@ -149,8 +180,32 @@ async function saveCurrent() {
       <p v-if="saveError" class="field-error" role="alert">{{ saveError }}</p>
     </div>
 
+    <form v-if="canAdapt" class="propose" @submit.prevent="propose">
+      <label class="propose-row">
+        <span>Je veux faire ce trek en</span>
+        <input
+          v-model.number="wantedDays"
+          type="number"
+          min="1"
+          max="60"
+          inputmode="numeric"
+          class="input propose-input"
+          aria-describedby="propose-error"
+        />
+        <span>jours</span>
+      </label>
+      <button type="submit" class="btn">Proposer</button>
+      <label class="propose-check">
+        <input v-model="lodgingOnly" type="checkbox" />
+        Dormir seulement en fin d'étape, en refuge, cabane ou camping
+      </label>
+      <p v-if="proposeError" id="propose-error" class="field-error" role="alert">
+        {{ proposeError }}
+      </p>
+    </form>
+
     <button
-      v-if="etapes.length > 1"
+      v-if="canAdapt"
       type="button"
       class="btn edit-toggle"
       :class="{ 'btn-primary': editing }"
@@ -160,8 +215,8 @@ async function saveCurrent() {
       {{ editing ? 'Terminer le découpage' : 'Adapter le découpage' }}
     </button>
     <p v-if="editing" class="hint">
-      Retire une nuit 🌙 entre deux étapes pour les fusionner. La carte et le profil suivent en
-      direct.
+      Retire une nuit 🌙 entre deux étapes pour les fusionner, ou ajoute une nuit dans une étape
+      pour la couper. La carte et le profil suivent en direct.
     </p>
   </section>
 </template>
@@ -266,6 +321,41 @@ async function saveCurrent() {
 }
 .banner-text {
   margin: 0;
+}
+.propose {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-xs) var(--space-sm);
+  width: 100%;
+}
+.propose-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.propose-input {
+  width: 4.5rem;
+  padding: 0.4rem 0.6rem;
+  text-align: center;
+}
+.propose .btn {
+  margin-bottom: 0;
+}
+.propose-check {
+  display: flex;
+  flex-basis: 100%;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.propose-check input {
+  accent-color: var(--color-accent);
+}
+.propose .field-error {
+  flex-basis: 100%;
 }
 .hint {
   margin: 0;

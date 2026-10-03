@@ -9,8 +9,11 @@ export async function fetchVariantes(trekId: string): Promise<Variante[]> {
 }
 
 /** Enregistre un découpage ; s'il existe déjà, l'API renvoie l'existant */
-export async function createVariante(trekId: string, groups: string[][]): Promise<Variante> {
-  return request<Variante>(base(trekId), { method: 'POST', ...jsonBody({ groups }) })
+export async function createVariante(
+  trekId: string,
+  input: Pick<Variante, 'groups' | 'cuts'>,
+): Promise<Variante> {
+  return request<Variante>(base(trekId), { method: 'POST', ...jsonBody(input) })
 }
 
 export async function deleteVariante(trekId: string, varianteId: string): Promise<void> {

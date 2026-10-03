@@ -1,6 +1,7 @@
-import type { ElevationPoint, POI, POIType } from '../types/trek'
+import type { ElevationPoint, POI } from '../types/trek'
 import { computeElevationDelta } from './gpx'
 import { haversineKm } from './geo'
+import { escapeXml, poiWaypointXml } from './gpxWaypoints'
 
 // Modèle de l'éditeur de trace : des poignées (points de contrôle) reliées par des
 // tronçons. Un GPX importé démarre avec deux poignées (départ, arrivée) et un seul tronçon
@@ -334,33 +335,9 @@ export function readGpxPoints(xml: string): TrackPoint[] {
   })
 }
 
-// Symboles GPX relus à l'import (voir SYMBOL_TO_POI_TYPE dans gpx.ts) : un POI exporté
-// puis réimporté garde son type
-const POI_TYPE_TO_SYMBOL: Partial<Record<POIType, string>> = {
-  point_eau: 'Drinking Water',
-  refuge: 'Lodging',
-  camping: 'Campground',
-  sommet: 'Summit',
-  ravitaillement: 'Convenience Store',
-}
-
-function escapeXml(value: string): string {
-  return value.replace(/[<>&'"]/g, (c) => `&#${c.charCodeAt(0)};`)
-}
-
 /** Fichier GPX de la trace éditée, avec les points d'intérêt de l'étape en waypoints */
 export function buildGpx(name: string, points: TrackPoint[], pois: POI[]): string {
-  const waypoints = pois.map((poi) => {
-    const [lon, lat] = poi.location.coordinates
-    const symbol = POI_TYPE_TO_SYMBOL[poi.type]
-    return [
-      `  <wpt lat="${lat}" lon="${lon}">`,
-      `<name>${escapeXml(poi.name)}</name>`,
-      poi.notes ? `<desc>${escapeXml(poi.notes)}</desc>` : '',
-      symbol ? `<sym>${symbol}</sym>` : '',
-      '</wpt>',
-    ].join('')
-  })
+  const waypoints = pois.map((poi) => poiWaypointXml(poi))
   const trackPointsXml = points.map(
     ([lon, lat, ele]) =>
       `      <trkpt lat="${lat.toFixed(6)}" lon="${lon.toFixed(6)}">` +

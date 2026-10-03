@@ -6,7 +6,8 @@ import { useDecoupage } from '../composables/useDecoupage'
 import DifficultyBadge from '../components/DifficultyBadge.vue'
 import TrekOverviewMap from '../components/TrekOverviewMap.vue'
 import PhotoGallery from '../components/PhotoGallery.vue'
-import NavigateToStart from '../components/NavigateToStart.vue'
+import ActionsMenu from '../components/ActionsMenu.vue'
+import { useAuthStore } from '../stores/auth'
 import ElevationProfile, {
   type ProfileHover,
   type ProfileSegment,
@@ -15,6 +16,7 @@ import { formatDuration } from '../utils/format'
 import { getEtapeColor } from '../utils/etapeColors'
 import { POI_ICONS } from '../utils/poi'
 import { buildMergedGpx } from '../utils/gpxExport'
+import { describePieces } from '../utils/decoupage'
 
 const route = useRoute()
 const router = useRouter()
@@ -41,11 +43,13 @@ const next = computed(() => etapes.value[index.value + 1])
 const start = computed(
   () => etape.value?.gpxTrack?.coordinates[0] ?? etape.value?.pois[0]?.location.coordinates ?? null,
 )
+const auth = useAuthStore()
+
 const gpxDownload = computed(() => {
   const current = etape.value
-  if (current?.sources) {
-    const sources = current.sources
-    return { name: `${current.name}.gpx`, build: () => buildMergedGpx(current.name, sources) }
+  if (current?.pieces) {
+    const pieces = current.pieces
+    return { name: `${current.name}.gpx`, build: () => buildMergedGpx(current.name, pieces) }
   }
   return current?.gpxFile ? { url: current.gpxFile.url, name: current.gpxFile.originalName } : null
 })
@@ -93,13 +97,24 @@ function openEtape(etapeId: string) {
   <div v-if="etape" class="page" :style="{ '--etape-color': getEtapeColor(index) }">
     <header class="header">
       <div class="title-bar">
-        <RouterLink :to="trekLink" class="back-link"> ← {{ trek?.name ?? 'Treks' }} </RouterLink>
+        <div class="header-top">
+          <RouterLink :to="trekLink" class="back-link"> ← {{ trek?.name ?? 'Treks' }} </RouterLink>
+          <ActionsMenu
+            :start="start"
+            :gpx="gpxDownload"
+            :gpx-label="
+              etape.pieces ? 'Télécharger le GPX de la journée' : 'Télécharger le GPX de l\'étape'
+            "
+            :edit-to="trek && auth.canEdit(trek) ? `/treks/${trek._id}/modifier` : null"
+            edit-label="Modifier le trek"
+          />
+        </div>
 
         <p class="eyebrow">
           <span class="etape-order" aria-hidden="true">{{ etape.order }}</span>
           Étape {{ index + 1 }} sur {{ etapes.length }}
-          <span v-if="etape.sources" class="eyebrow-merged">
-            · fusion des étapes {{ etape.sources.map((s) => s.order).join(', ') }}
+          <span v-if="etape.pieces" class="eyebrow-merged">
+            · {{ describePieces(etape.pieces) }}
           </span>
         </p>
         <div class="title-row">
@@ -108,7 +123,6 @@ function openEtape(etapeId: string) {
         </div>
       </div>
       <p v-if="etape.description" class="description">{{ etape.description }}</p>
-      <NavigateToStart v-if="start" :start="start" :gpx="gpxDownload" class="navigate" />
 
       <PhotoGallery :photos="etape.photos ?? []" />
 
@@ -241,8 +255,11 @@ function openEtape(etapeId: string) {
   justify-content: space-between;
   gap: var(--space-sm);
 }
-.navigate {
-  margin-top: var(--space-sm);
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
 }
 .description {
   color: var(--color-text-muted);
