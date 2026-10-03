@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useTrek } from '../composables/useTrek'
+import { useDecoupage } from '../composables/useDecoupage'
 import DifficultyBadge from '../components/DifficultyBadge.vue'
 import TrekOverviewMap from '../components/TrekOverviewMap.vue'
 import PhotoGallery from '../components/PhotoGallery.vue'
@@ -13,14 +14,25 @@ import ElevationProfile, {
 import { formatDuration } from '../utils/format'
 import { getEtapeColor } from '../utils/etapeColors'
 import { POI_ICONS } from '../utils/poi'
+import { buildMergedGpx } from '../utils/gpxExport'
 
 const route = useRoute()
 const router = useRouter()
 const { trek, error } = useTrek(() => route.params.trekId as string)
-const etape = computed(() => trek.value?.etapes.find((e) => e._id === route.params.etapeId))
+const sourceEtapes = computed(() =>
+  [...(trek.value?.etapes ?? [])].sort((a, b) => a.order - b.order),
+)
 
-// Toutes les étapes du trek, pour la carte et la navigation précédente / suivante
-const etapes = computed(() => [...(trek.value?.etapes ?? [])].sort((a, b) => a.order - b.order))
+// Toutes les étapes du trek dans le découpage choisi (?decoupage=…), pour la carte et la
+// navigation précédente / suivante
+const { displayEtapes: etapes, query } = useDecoupage(sourceEtapes)
+
+// Étape affichée : une étape fusionnée a pour identifiant ceux de ses étapes jointes par
+// « + ». Un lien vers une étape d'origine absorbée par une fusion mène à l'étape fusionnée.
+const etape = computed(() => {
+  const id = route.params.etapeId
+  return etapes.value.find((e) => e._id === id || e.sources?.some((s) => s._id === id))
+})
 const index = computed(() => etapes.value.findIndex((e) => e._id === etape.value?._id))
 const previous = computed(() => etapes.value[index.value - 1])
 const next = computed(() => etapes.value[index.value + 1])
@@ -29,11 +41,14 @@ const next = computed(() => etapes.value[index.value + 1])
 const start = computed(
   () => etape.value?.gpxTrack?.coordinates[0] ?? etape.value?.pois[0]?.location.coordinates ?? null,
 )
-const gpxDownload = computed(() =>
-  etape.value?.gpxFile
-    ? { url: etape.value.gpxFile.url, name: etape.value.gpxFile.originalName }
-    : null,
-)
+const gpxDownload = computed(() => {
+  const current = etape.value
+  if (current?.sources) {
+    const sources = current.sources
+    return { name: `${current.name}.gpx`, build: () => buildMergedGpx(current.name, sources) }
+  }
+  return current?.gpxFile ? { url: current.gpxFile.url, name: current.gpxFile.originalName } : null
+})
 
 const profileSegments = computed<ProfileSegment[]>(() =>
   etape.value?.elevationProfile?.length
@@ -61,8 +76,16 @@ function onTrackHover(value: ProfileHover | null) {
 const highlightedEtapeId = ref<string | null>(null)
 const highlightedPoiId = ref<string | null>(null)
 
+function etapeLink(etapeId: string) {
+  return { path: `/treks/${trek.value?._id}/etapes/${etapeId}`, query: query.value }
+}
+
+const trekLink = computed(() =>
+  trek.value ? { path: `/treks/${trek.value._id}`, query: query.value } : '/',
+)
+
 function openEtape(etapeId: string) {
-  router.push(`/treks/${trek.value?._id}/etapes/${etapeId}`)
+  router.push(etapeLink(etapeId))
 }
 </script>
 
@@ -70,13 +93,14 @@ function openEtape(etapeId: string) {
   <div v-if="etape" class="page" :style="{ '--etape-color': getEtapeColor(index) }">
     <header class="header">
       <div class="title-bar">
-        <RouterLink :to="trek ? `/treks/${trek._id}` : '/'" class="back-link">
-          ← {{ trek?.name ?? 'Treks' }}
-        </RouterLink>
+        <RouterLink :to="trekLink" class="back-link"> ← {{ trek?.name ?? 'Treks' }} </RouterLink>
 
         <p class="eyebrow">
           <span class="etape-order" aria-hidden="true">{{ etape.order }}</span>
           Étape {{ index + 1 }} sur {{ etapes.length }}
+          <span v-if="etape.sources" class="eyebrow-merged">
+            · fusion des étapes {{ etape.sources.map((s) => s.order).join(', ') }}
+          </span>
         </p>
         <div class="title-row">
           <h1>{{ etape.name }}</h1>
@@ -135,19 +159,11 @@ function openEtape(etapeId: string) {
       <p v-else class="empty">Aucun point d'intérêt pour cette étape.</p>
 
       <nav v-if="previous || next" class="etape-nav" aria-label="Étapes voisines">
-        <RouterLink
-          v-if="previous"
-          :to="`/treks/${trek?._id}/etapes/${previous._id}`"
-          class="etape-nav-link"
-        >
+        <RouterLink v-if="previous" :to="etapeLink(previous._id)" class="etape-nav-link">
           <span class="etape-nav-label">← Étape précédente</span>
           {{ previous.name }}
         </RouterLink>
-        <RouterLink
-          v-if="next"
-          :to="`/treks/${trek?._id}/etapes/${next._id}`"
-          class="etape-nav-link is-next"
-        >
+        <RouterLink v-if="next" :to="etapeLink(next._id)" class="etape-nav-link is-next">
           <span class="etape-nav-label">Étape suivante →</span>
           {{ next.name }}
         </RouterLink>
@@ -170,7 +186,7 @@ function openEtape(etapeId: string) {
     </aside>
   </div>
   <div v-else class="page-status">
-    <RouterLink :to="trek ? `/treks/${trek._id}` : '/'" class="back-link">← Retour</RouterLink>
+    <RouterLink :to="trekLink" class="back-link">← Retour</RouterLink>
     <p :role="error || trek ? 'alert' : 'status'">
       {{ error ?? (trek ? 'Étape introuvable' : 'Chargement…') }}
     </p>
@@ -200,6 +216,11 @@ function openEtape(etapeId: string) {
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+.eyebrow-merged {
+  color: var(--color-accent);
+  text-transform: none;
+  letter-spacing: 0;
 }
 .etape-order {
   display: inline-grid;

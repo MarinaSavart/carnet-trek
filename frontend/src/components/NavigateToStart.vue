@@ -4,8 +4,11 @@ import { computed, onBeforeUnmount, ref, watch } from 'vue'
 const props = defineProps<{
   /** Point de départ, convention GeoJSON [longitude, latitude] */
   start: [number, number]
-  /** Trace GPX téléchargeable (page étape) */
-  gpx?: { url: string; name: string } | null
+  /**
+   * Trace GPX téléchargeable (page étape) : un fichier existant (`url`), ou généré à la
+   * demande (`build`, étape fusionnée)
+   */
+  gpx?: { url: string; name: string } | { name: string; build: () => Promise<string> } | null
 }>()
 
 const isOpen = ref(false)
@@ -26,6 +29,24 @@ const links = computed(() => [
   { label: 'Waze', href: `https://waze.com/ul?ll=${latLon.value}&navigate=yes` },
   { label: "Plans d'Apple", href: `https://maps.apple.com/?daddr=${latLon.value}` },
 ])
+
+const isBuildingGpx = ref(false)
+
+async function downloadBuiltGpx() {
+  if (!props.gpx || !('build' in props.gpx)) return
+  isBuildingGpx.value = true
+  try {
+    const blob = new Blob([await props.gpx.build()], { type: 'application/gpx+xml' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = props.gpx.name
+    link.click()
+    URL.revokeObjectURL(url)
+  } finally {
+    isBuildingGpx.value = false
+  }
+}
 
 async function copyCoordinates() {
   try {
@@ -90,11 +111,22 @@ onBeforeUnmount(() => {
             {{ copied ? 'Coordonnées copiées ✓' : 'Copier les coordonnées' }}
           </button>
         </li>
-        <li v-if="gpx">
+        <li v-if="gpx && 'url' in gpx">
           <a :href="gpx.url" :download="gpx.name" class="menu-item">
             Télécharger la trace GPX
             <span class="external" aria-hidden="true">↓</span>
           </a>
+        </li>
+        <li v-else-if="gpx">
+          <button
+            type="button"
+            class="menu-item"
+            :disabled="isBuildingGpx"
+            @click="downloadBuiltGpx"
+          >
+            {{ isBuildingGpx ? 'Préparation de la trace…' : 'Télécharger la trace GPX' }}
+            <span class="external" aria-hidden="true">↓</span>
+          </button>
         </li>
       </ul>
       <p class="coordinates">{{ latLon.replace(',', ', ') }}</p>
