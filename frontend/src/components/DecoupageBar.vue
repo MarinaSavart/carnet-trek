@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { useVariantes } from '../composables/useVariantes'
@@ -29,6 +29,21 @@ const emit = defineEmits<{
 }>()
 
 const editing = defineModel<boolean>('editing', { required: true })
+
+// Découpage au moment d'entrer en mode édition : « Annuler » y revient
+const beforeEditing = ref<Decoupage | null>(null)
+watch(
+  editing,
+  (isEditing) => {
+    beforeEditing.value = isEditing ? props.decoupage : null
+  },
+  { immediate: true },
+)
+
+function cancelEditing() {
+  if (beforeEditing.value) emit('apply', beforeEditing.value)
+  editing.value = false
+}
 
 const route = useRoute()
 const auth = useAuthStore()
@@ -231,16 +246,18 @@ function propose() {
       </p>
     </form>
 
-    <button
-      v-if="canAdapt"
-      type="button"
-      class="btn edit-toggle"
-      :class="{ 'btn-primary': editing }"
-      :aria-pressed="editing"
-      @click="editing = !editing"
-    >
-      {{ editing ? 'Terminer le découpage' : 'Adapter le découpage' }}
-    </button>
+    <div v-if="canAdapt" class="edit-actions">
+      <button
+        type="button"
+        class="btn edit-toggle"
+        :class="{ 'btn-primary': editing }"
+        :aria-pressed="editing"
+        @click="editing = !editing"
+      >
+        {{ editing ? 'Terminer le découpage' : 'Adapter le découpage' }}
+      </button>
+      <button v-if="editing" type="button" class="btn" @click="cancelEditing">Annuler</button>
+    </div>
     <p v-if="editing" class="hint">
       Retire une nuit 🌙 entre deux étapes pour les fusionner, ou ajoute une nuit dans une étape
       pour la couper. La carte et le profil suivent en direct.
@@ -425,6 +442,11 @@ function propose() {
 }
 .propose .field-error {
   flex-basis: 100%;
+}
+.edit-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
 }
 .hint {
   margin: 0;
