@@ -9,6 +9,7 @@ import DifficultyBadge from '../components/DifficultyBadge.vue'
 import TrekOverviewMap from '../components/TrekOverviewMap.vue'
 import PhotoGallery from '../components/PhotoGallery.vue'
 import ActionsMenu from '../components/ActionsMenu.vue'
+import MapLayout from '../components/MapLayout.vue'
 import DecoupageBar from '../components/DecoupageBar.vue'
 import CutPicker from '../components/CutPicker.vue'
 import ElevationProfile, {
@@ -167,28 +168,167 @@ function openEtape(etapeId: string) {
 </script>
 
 <template>
-  <div v-if="trek" class="page">
-    <header class="header">
-      <div class="title-bar">
-        <div class="header-top">
-          <RouterLink to="/" class="back-link">← Treks</RouterLink>
-          <ActionsMenu
-            :start="start"
-            :gpx="trekGpx"
-            gpx-label="Télécharger le GPX du trek"
-            :edit-to="auth.canEdit(trek) ? `/treks/${trek._id}/modifier` : null"
-            :can-delete="auth.canEdit(trek)"
-            :is-deleting="isDeleting"
-            @delete="removeTrek"
-          />
+  <MapLayout v-if="trek" panel-label="Trek et étapes">
+    <template #panel>
+      <header class="header">
+        <div class="title-bar">
+          <div class="header-top">
+            <RouterLink to="/" class="back-link">← Treks</RouterLink>
+            <ActionsMenu
+              :start="start"
+              :gpx="trekGpx"
+              gpx-label="Télécharger le GPX du trek"
+              :edit-to="auth.canEdit(trek) ? `/treks/${trek._id}/modifier` : null"
+              :can-delete="auth.canEdit(trek)"
+              :is-deleting="isDeleting"
+              @delete="removeTrek"
+            />
+          </div>
+          <h1>{{ trek.name }}</h1>
+          <p class="region">{{ trek.region }}</p>
         </div>
-        <h1>{{ trek.name }}</h1>
-        <p class="region">{{ trek.region }}</p>
-      </div>
-      <p class="description">{{ trek.description }}</p>
+        <p class="description">{{ trek.description }}</p>
 
-      <PhotoGallery :photos="photos" />
+        <PhotoGallery :photos="photos" />
 
+        <DecoupageBar
+          v-model:editing="isEditingDecoupage"
+          :trek-id="trek._id"
+          :etapes="sourceEtapes"
+          :decoupage="decoupage"
+          @apply="setDecoupage"
+          @reset="reset"
+        />
+      </header>
+
+      <section class="etapes-column" aria-label="Étapes">
+        <!-- Mode découpage : étapes d'origine, séparées par les nuits que l'on peut retirer,
+           et nuits ajoutées au milieu d'une étape -->
+        <ol v-if="isEditingDecoupage" class="etapes">
+          <template v-for="(etape, index) in sourceEtapes" :key="etape._id">
+            <li
+              class="etape-item is-compact"
+              :style="{ '--etape-color': getEtapeColor(dayOfEtape[index] ?? 0) }"
+            >
+              <div class="etape-heading">
+                <h2 class="etape-title">
+                  <span class="etape-order" aria-hidden="true">{{
+                    (dayOfEtape[index] ?? 0) + 1
+                  }}</span>
+                  <span class="visually-hidden">Étape d'origine {{ etape.order }} :</span>
+                  {{ etape.name }}
+                </h2>
+              </div>
+              <p class="etape-meta">
+                <span title="Distance">↔ {{ etape.distanceKm }} km</span>
+                <span title="Durée">⏱︎ {{ formatDuration(etape.durationMin) }}</span>
+                <span title="Dénivelé positif">↗ {{ etape.elevationGain }} m</span>
+              </p>
+              <ul v-if="cutsOf(index).length" class="cuts">
+                <li v-for="km in cutsOf(index)" :key="km" class="cut">
+                  🌙 Nuit à {{ cutName(etape, km) }}
+                  <span class="cut-km">km {{ formatKm(km) }}</span>
+                  <button
+                    type="button"
+                    class="cut-remove"
+                    :aria-label="`Retirer la nuit à ${cutName(etape, km)}`"
+                    @click="removeCut(index, km)"
+                  >
+                    ×
+                  </button>
+                </li>
+              </ul>
+              <CutPicker
+                v-if="cutPickerFor === index"
+                :etape="etape"
+                :existing-kms="cutsOf(index)"
+                @add="onCutAdd(index, $event)"
+                @preview="mapCursor = $event"
+                @close="cutPickerFor = null"
+              />
+              <button
+                v-else-if="canCut(etape)"
+                type="button"
+                class="add-cut"
+                @click="cutPickerFor = index"
+              >
+                + Ajouter une nuit dans cette étape
+              </button>
+            </li>
+            <li v-if="index < sourceEtapes.length - 1" class="night">
+              <button
+                type="button"
+                class="night-toggle"
+                :class="{ 'is-off': !decoupage.nights[index] }"
+                :aria-pressed="decoupage.nights[index]"
+                @click="toggleNight(index)"
+              >
+                <template v-if="decoupage.nights[index]">
+                  🌙 Nuit à {{ arrivalName(etape.name) }}
+                </template>
+                <template v-else
+                  >Pas d'arrêt à {{ arrivalName(etape.name) }} : on continue</template
+                >
+              </button>
+            </li>
+          </template>
+        </ol>
+
+        <ol v-else class="etapes">
+          <li
+            v-for="(etape, index) in etapes"
+            :key="etape._id"
+            class="etape-item"
+            :class="{ 'is-highlighted': highlightedId === etape._id }"
+            :style="{ '--etape-color': getEtapeColor(index) }"
+            @mouseenter="highlightedId = etape._id"
+            @mouseleave="highlightedId = null"
+          >
+            <RouterLink :to="etapeLink(etape._id)" class="etape-link">
+              <div class="etape-heading">
+                <h2 class="etape-title">
+                  <span class="etape-order" aria-hidden="true">{{ etape.order }}</span>
+                  <span class="visually-hidden">Étape {{ etape.order }} :</span>
+                  {{ etape.name }}
+                </h2>
+                <DifficultyBadge :difficulty="etape.difficulty" />
+              </div>
+              <p class="etape-meta">
+                <span title="Distance">↔ {{ etape.distanceKm }} km</span>
+                <span title="Durée">⏱︎ {{ formatDuration(etape.durationMin) }}</span>
+                <span title="Dénivelé positif">↗ {{ etape.elevationGain }} m</span>
+                <span title="Dénivelé négatif">↘ {{ etape.elevationLoss }} m</span>
+              </p>
+              <p v-if="etape.pieces" class="etape-sources">
+                {{ describePieces(etape.pieces) }}
+              </p>
+              <p v-if="etape.pois.length || etape.photos?.length" class="etape-pois">
+                <span v-if="etape.pois.length">
+                  {{ etape.pois.length }} point{{ etape.pois.length > 1 ? 's' : '' }} d'intérêt
+                </span>
+                <span v-if="etape.photos?.length">
+                  {{ etape.photos.length }} photo{{ etape.photos.length > 1 ? 's' : '' }}
+                </span>
+              </p>
+            </RouterLink>
+          </li>
+        </ol>
+      </section>
+    </template>
+
+    <template #map>
+      <TrekOverviewMap
+        :etapes="etapes"
+        :highlighted-id="highlightedId"
+        :cursor="mapCursor"
+        @hover="highlightedId = $event"
+        @track-hover="onTrackHover"
+        @select="openEtape"
+      />
+    </template>
+
+    <!-- Bande sous la carte, façon Strava : chiffres clés et profil sur toute la largeur -->
+    <template #dock>
       <dl class="totals">
         <div class="total">
           <dt>Distance</dt>
@@ -220,140 +360,8 @@ function openEtape(etapeId: string) {
         :cursor="profileCursor"
         @hover="onProfileHover"
       />
-
-      <DecoupageBar
-        v-model:editing="isEditingDecoupage"
-        :trek-id="trek._id"
-        :etapes="sourceEtapes"
-        :decoupage="decoupage"
-        @apply="setDecoupage"
-        @reset="reset"
-      />
-    </header>
-
-    <section class="etapes-column" aria-label="Étapes">
-      <!-- Mode découpage : étapes d'origine, séparées par les nuits que l'on peut retirer,
-           et nuits ajoutées au milieu d'une étape -->
-      <ol v-if="isEditingDecoupage" class="etapes">
-        <template v-for="(etape, index) in sourceEtapes" :key="etape._id">
-          <li
-            class="etape-item is-compact"
-            :style="{ '--etape-color': getEtapeColor(dayOfEtape[index] ?? 0) }"
-          >
-            <div class="etape-heading">
-              <h2 class="etape-title">
-                <span class="etape-order" aria-hidden="true">{{
-                  (dayOfEtape[index] ?? 0) + 1
-                }}</span>
-                <span class="visually-hidden">Étape d'origine {{ etape.order }} :</span>
-                {{ etape.name }}
-              </h2>
-            </div>
-            <p class="etape-meta">
-              <span title="Distance">↔ {{ etape.distanceKm }} km</span>
-              <span title="Durée">⏱︎ {{ formatDuration(etape.durationMin) }}</span>
-              <span title="Dénivelé positif">↗ {{ etape.elevationGain }} m</span>
-            </p>
-            <ul v-if="cutsOf(index).length" class="cuts">
-              <li v-for="km in cutsOf(index)" :key="km" class="cut">
-                🌙 Nuit à {{ cutName(etape, km) }}
-                <span class="cut-km">km {{ formatKm(km) }}</span>
-                <button
-                  type="button"
-                  class="cut-remove"
-                  :aria-label="`Retirer la nuit à ${cutName(etape, km)}`"
-                  @click="removeCut(index, km)"
-                >
-                  ×
-                </button>
-              </li>
-            </ul>
-            <CutPicker
-              v-if="cutPickerFor === index"
-              :etape="etape"
-              :existing-kms="cutsOf(index)"
-              @add="onCutAdd(index, $event)"
-              @preview="mapCursor = $event"
-              @close="cutPickerFor = null"
-            />
-            <button
-              v-else-if="canCut(etape)"
-              type="button"
-              class="add-cut"
-              @click="cutPickerFor = index"
-            >
-              + Ajouter une nuit dans cette étape
-            </button>
-          </li>
-          <li v-if="index < sourceEtapes.length - 1" class="night">
-            <button
-              type="button"
-              class="night-toggle"
-              :class="{ 'is-off': !decoupage.nights[index] }"
-              :aria-pressed="decoupage.nights[index]"
-              @click="toggleNight(index)"
-            >
-              <template v-if="decoupage.nights[index]">
-                🌙 Nuit à {{ arrivalName(etape.name) }}
-              </template>
-              <template v-else>Pas d'arrêt à {{ arrivalName(etape.name) }} : on continue</template>
-            </button>
-          </li>
-        </template>
-      </ol>
-
-      <ol v-else class="etapes">
-        <li
-          v-for="(etape, index) in etapes"
-          :key="etape._id"
-          class="etape-item"
-          :class="{ 'is-highlighted': highlightedId === etape._id }"
-          :style="{ '--etape-color': getEtapeColor(index) }"
-          @mouseenter="highlightedId = etape._id"
-          @mouseleave="highlightedId = null"
-        >
-          <RouterLink :to="etapeLink(etape._id)" class="etape-link">
-            <div class="etape-heading">
-              <h2 class="etape-title">
-                <span class="etape-order" aria-hidden="true">{{ etape.order }}</span>
-                <span class="visually-hidden">Étape {{ etape.order }} :</span>
-                {{ etape.name }}
-              </h2>
-              <DifficultyBadge :difficulty="etape.difficulty" />
-            </div>
-            <p class="etape-meta">
-              <span title="Distance">↔ {{ etape.distanceKm }} km</span>
-              <span title="Durée">⏱︎ {{ formatDuration(etape.durationMin) }}</span>
-              <span title="Dénivelé positif">↗ {{ etape.elevationGain }} m</span>
-              <span title="Dénivelé négatif">↘ {{ etape.elevationLoss }} m</span>
-            </p>
-            <p v-if="etape.pieces" class="etape-sources">
-              {{ describePieces(etape.pieces) }}
-            </p>
-            <p v-if="etape.pois.length || etape.photos?.length" class="etape-pois">
-              <span v-if="etape.pois.length">
-                {{ etape.pois.length }} point{{ etape.pois.length > 1 ? 's' : '' }} d'intérêt
-              </span>
-              <span v-if="etape.photos?.length">
-                {{ etape.photos.length }} photo{{ etape.photos.length > 1 ? 's' : '' }}
-              </span>
-            </p>
-          </RouterLink>
-        </li>
-      </ol>
-    </section>
-
-    <aside class="map-column">
-      <TrekOverviewMap
-        :etapes="etapes"
-        :highlighted-id="highlightedId"
-        :cursor="mapCursor"
-        @hover="highlightedId = $event"
-        @track-hover="onTrackHover"
-        @select="openEtape"
-      />
-    </aside>
-  </div>
+    </template>
+  </MapLayout>
   <div v-else class="page-status">
     <RouterLink to="/" class="back-link">← Treks</RouterLink>
     <p :role="error ? 'alert' : 'status'">{{ error ?? 'Chargement…' }}</p>
@@ -361,13 +369,6 @@ function openEtape(etapeId: string) {
 </template>
 
 <style scoped>
-.page {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: var(--space-lg) var(--space-md);
-  /* Largeur de la carte sur desktop : proche de ce que donnait l'ancienne grille (1fr / 1.1fr) */
-  --map-width: clamp(420px, 40vw, 583px);
-}
 .header-top {
   display: flex;
   align-items: center;
@@ -382,6 +383,9 @@ function openEtape(etapeId: string) {
 }
 .header h1 {
   margin-top: var(--space-xs);
+  /* Le panneau est étroit : titre un peu plus petit que sur une page pleine largeur */
+  font-size: clamp(2rem, 2.4vw, 2.6rem);
+  line-height: 1.1;
 }
 .region {
   color: var(--color-accent);
@@ -391,25 +395,22 @@ function openEtape(etapeId: string) {
   color: var(--color-text-muted);
   max-width: 65ch;
 }
+/* Chiffres clés en ligne, au-dessus du profil (bande sous la carte) */
 .totals {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(84px, 1fr));
-  gap: var(--space-md);
-  margin: var(--space-md) 0 var(--space-md);
-  padding: var(--space-md);
-  border: var(--border-hairline);
-  border-radius: var(--radius-lg);
-  background: var(--color-surface);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs) var(--space-lg);
+  margin: 0 0 var(--space-xs);
 }
 .total dt {
   color: var(--color-text-muted);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 .total dd {
-  margin: 0.25rem 0 0;
-  font-size: 2.1rem;
+  margin: 0.15rem 0 0;
+  font-size: 1.7rem;
   white-space: nowrap;
 }
 .stat-unit {
@@ -419,59 +420,19 @@ function openEtape(etapeId: string) {
   margin-left: 0.25rem;
 }
 
-/* Mobile : en-tête, carte, puis liste des étapes */
-.page {
-  display: grid;
-  /* minmax(0, 1fr) : la colonne ne s'élargit jamais au-delà de l'écran à cause d'un contenu */
-  grid-template-columns: minmax(0, 1fr);
-  grid-template-areas: 'header' 'map' 'etapes';
-  gap: var(--space-md);
-}
-.header {
-  grid-area: header;
-}
 .etapes-column {
-  grid-area: etapes;
-}
-.map-column {
-  grid-area: map;
-  height: 360px;
-  border: var(--border-hairline);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-soft);
-  overflow: hidden;
+  margin-top: var(--space-md);
 }
 
-/* Desktop : en-tête et étapes à gauche (largeur réduite pour laisser la place à la carte) ;
-   la carte est en position fixed, ancrée à l'écran — elle ne défile jamais, contrairement à
-   un position: sticky qui se décroche dès que la colonne de gauche devient plus courte qu'elle */
-@media (min-width: 960px) {
-  .page {
-    display: block;
-  }
-  .header,
-  .etapes-column {
-    margin-right: calc(var(--map-width) + var(--space-lg));
-  }
-  /* Bandeau titre collé sous la navbar, pendant que la description/photos/étapes défilent */
+/* Desktop : bandeau titre collé en haut du panneau pendant que le reste défile */
+@media (min-width: 901px) {
   .title-bar {
     position: sticky;
-    top: var(--navbar-height);
+    top: calc(-1 * var(--space-md));
     z-index: 10;
-    /* Même dégradé que le fond de page, figé par rapport à l'écran : se fond avec le contenu
-       qui défile dessous au lieu de trancher par une couleur plate */
-    background: var(--page-gradient), var(--color-bg);
-    background-attachment: fixed;
-    padding: var(--space-sm) 0;
-    margin: calc(-1 * var(--space-sm)) 0 0;
-  }
-  .map-column {
-    position: fixed;
-    top: calc(var(--navbar-height) + var(--space-md));
-    /* Aligne le bord droit de la carte sur celui du conteneur centré (max-width: 1200px) */
-    right: max(var(--space-md), calc((100vw - 1200px) / 2 + var(--space-md)));
-    width: var(--map-width);
-    height: calc(100vh - var(--navbar-height) - 2 * var(--space-md));
+    margin: calc(-1 * var(--space-md)) calc(-1 * var(--space-md)) 0;
+    padding: var(--space-md) var(--space-md) var(--space-sm);
+    background: var(--color-bg);
   }
 }
 

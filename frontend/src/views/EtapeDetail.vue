@@ -7,6 +7,7 @@ import DifficultyBadge from '../components/DifficultyBadge.vue'
 import TrekOverviewMap from '../components/TrekOverviewMap.vue'
 import PhotoGallery from '../components/PhotoGallery.vue'
 import ActionsMenu from '../components/ActionsMenu.vue'
+import MapLayout from '../components/MapLayout.vue'
 import { useAuthStore } from '../stores/auth'
 import ElevationProfile, {
   type ProfileHover,
@@ -94,38 +95,93 @@ function openEtape(etapeId: string) {
 </script>
 
 <template>
-  <div v-if="etape" class="page" :style="{ '--etape-color': getEtapeColor(index) }">
-    <header class="header">
-      <div class="title-bar">
-        <div class="header-top">
-          <RouterLink :to="trekLink" class="back-link"> ← {{ trek?.name ?? 'Treks' }} </RouterLink>
-          <ActionsMenu
-            :start="start"
-            :gpx="gpxDownload"
-            :gpx-label="
-              etape.pieces ? 'Télécharger le GPX de la journée' : 'Télécharger le GPX de l\'étape'
-            "
-            :edit-to="trek && auth.canEdit(trek) ? `/treks/${trek._id}/modifier` : null"
-            edit-label="Modifier le trek"
-          />
+  <MapLayout v-if="etape" panel-label="Étape" :style="{ '--etape-color': getEtapeColor(index) }">
+    <template #panel>
+      <header class="header">
+        <div class="title-bar">
+          <div class="header-top">
+            <RouterLink :to="trekLink" class="back-link">
+              ← {{ trek?.name ?? 'Treks' }}
+            </RouterLink>
+            <ActionsMenu
+              :start="start"
+              :gpx="gpxDownload"
+              :gpx-label="
+                etape.pieces ? 'Télécharger le GPX de la journée' : 'Télécharger le GPX de l\'étape'
+              "
+              :edit-to="trek && auth.canEdit(trek) ? `/treks/${trek._id}/modifier` : null"
+              edit-label="Modifier le trek"
+            />
+          </div>
+
+          <p class="eyebrow">
+            <span class="etape-order" aria-hidden="true">{{ etape.order }}</span>
+            Étape {{ index + 1 }} sur {{ etapes.length }}
+            <span v-if="etape.pieces" class="eyebrow-merged">
+              · {{ describePieces(etape.pieces) }}
+            </span>
+          </p>
+          <div class="title-row">
+            <h1>{{ etape.name }}</h1>
+            <DifficultyBadge :difficulty="etape.difficulty" />
+          </div>
         </div>
+        <p v-if="etape.description" class="description">{{ etape.description }}</p>
 
-        <p class="eyebrow">
-          <span class="etape-order" aria-hidden="true">{{ etape.order }}</span>
-          Étape {{ index + 1 }} sur {{ etapes.length }}
-          <span v-if="etape.pieces" class="eyebrow-merged">
-            · {{ describePieces(etape.pieces) }}
-          </span>
-        </p>
-        <div class="title-row">
-          <h1>{{ etape.name }}</h1>
-          <DifficultyBadge :difficulty="etape.difficulty" />
-        </div>
-      </div>
-      <p v-if="etape.description" class="description">{{ etape.description }}</p>
+        <PhotoGallery :photos="etape.photos ?? []" />
+      </header>
 
-      <PhotoGallery :photos="etape.photos ?? []" />
+      <section class="content">
+        <h2>Points d'intérêt</h2>
+        <ul v-if="etape.pois.length" class="pois">
+          <li
+            v-for="poi in etape.pois"
+            :key="poi._id"
+            class="poi-item"
+            :class="{ 'is-highlighted': highlightedPoiId === poi._id }"
+            @mouseenter="highlightedPoiId = poi._id"
+            @mouseleave="highlightedPoiId = null"
+          >
+            <span class="poi-icon">{{ POI_ICONS[poi.type] }}</span>
+            <div>
+              <strong>{{ poi.name }}</strong>
+              <p v-if="poi.notes" class="poi-notes">{{ poi.notes }}</p>
+            </div>
+          </li>
+        </ul>
+        <p v-else class="empty">Aucun point d'intérêt pour cette étape.</p>
 
+        <nav v-if="previous || next" class="etape-nav" aria-label="Étapes voisines">
+          <RouterLink v-if="previous" :to="etapeLink(previous._id)" class="etape-nav-link">
+            <span class="etape-nav-label">← Étape précédente</span>
+            {{ previous.name }}
+          </RouterLink>
+          <RouterLink v-if="next" :to="etapeLink(next._id)" class="etape-nav-link is-next">
+            <span class="etape-nav-label">Étape suivante →</span>
+            {{ next.name }}
+          </RouterLink>
+        </nav>
+      </section>
+    </template>
+
+    <template #map>
+      <TrekOverviewMap
+        :etapes="etapes"
+        :focused-id="etape._id"
+        :highlighted-id="highlightedEtapeId"
+        :pois="etape.pois"
+        :highlighted-poi-id="highlightedPoiId"
+        :cursor="mapCursor"
+        osm-pois
+        @hover="highlightedEtapeId = $event"
+        @track-hover="onTrackHover"
+        @select="openEtape"
+        @poi-hover="highlightedPoiId = $event"
+      />
+    </template>
+
+    <!-- Bande sous la carte, façon Strava : chiffres clés et profil sur toute la largeur -->
+    <template #dock>
       <dl class="stats">
         <div class="stat">
           <dt>Distance</dt>
@@ -150,56 +206,8 @@ function openEtape(etapeId: string) {
         :cursor="profileCursor"
         @hover="mapCursor = $event?.coordinates ?? null"
       />
-    </header>
-
-    <section class="content">
-      <h2>Points d'intérêt</h2>
-      <ul v-if="etape.pois.length" class="pois">
-        <li
-          v-for="poi in etape.pois"
-          :key="poi._id"
-          class="poi-item"
-          :class="{ 'is-highlighted': highlightedPoiId === poi._id }"
-          @mouseenter="highlightedPoiId = poi._id"
-          @mouseleave="highlightedPoiId = null"
-        >
-          <span class="poi-icon">{{ POI_ICONS[poi.type] }}</span>
-          <div>
-            <strong>{{ poi.name }}</strong>
-            <p v-if="poi.notes" class="poi-notes">{{ poi.notes }}</p>
-          </div>
-        </li>
-      </ul>
-      <p v-else class="empty">Aucun point d'intérêt pour cette étape.</p>
-
-      <nav v-if="previous || next" class="etape-nav" aria-label="Étapes voisines">
-        <RouterLink v-if="previous" :to="etapeLink(previous._id)" class="etape-nav-link">
-          <span class="etape-nav-label">← Étape précédente</span>
-          {{ previous.name }}
-        </RouterLink>
-        <RouterLink v-if="next" :to="etapeLink(next._id)" class="etape-nav-link is-next">
-          <span class="etape-nav-label">Étape suivante →</span>
-          {{ next.name }}
-        </RouterLink>
-      </nav>
-    </section>
-
-    <aside class="map-column">
-      <TrekOverviewMap
-        :etapes="etapes"
-        :focused-id="etape._id"
-        :highlighted-id="highlightedEtapeId"
-        :pois="etape.pois"
-        :highlighted-poi-id="highlightedPoiId"
-        :cursor="mapCursor"
-        osm-pois
-        @hover="highlightedEtapeId = $event"
-        @track-hover="onTrackHover"
-        @select="openEtape"
-        @poi-hover="highlightedPoiId = $event"
-      />
-    </aside>
-  </div>
+    </template>
+  </MapLayout>
   <div v-else class="page-status">
     <RouterLink :to="trekLink" class="back-link">← Retour</RouterLink>
     <p :role="error || trek ? 'alert' : 'status'">
@@ -209,13 +217,6 @@ function openEtape(etapeId: string) {
 </template>
 
 <style scoped>
-.page {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: var(--space-lg) var(--space-md);
-  /* Largeur de la carte sur desktop : proche de ce que donnait l'ancienne grille (1fr / 1.1fr) */
-  --map-width: clamp(420px, 40vw, 583px);
-}
 .page-status {
   max-width: 1200px;
   margin: 0 auto;
@@ -267,30 +268,30 @@ function openEtape(etapeId: string) {
   white-space: pre-line;
 }
 .title-row h1 {
-  line-height: 1.15;
+  /* Le panneau est étroit : titre un peu plus petit que sur une page pleine largeur */
+  font-size: clamp(2rem, 2.4vw, 2.6rem);
+  line-height: 1.1;
 }
 .title-row :deep(.badge) {
   margin-top: 0.75rem;
 }
+/* Chiffres clés en ligne, au-dessus du profil (bande sous la carte) */
 .stats {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
-  gap: var(--space-md) var(--space-lg);
-  margin: var(--space-md) 0;
-  padding: var(--space-md);
-  border: var(--border-hairline);
-  border-radius: var(--radius-lg);
-  background: var(--color-surface);
+  gap: var(--space-xs) var(--space-lg);
+  margin: 0 0 var(--space-xs);
 }
 .stat dt {
   color: var(--color-text-muted);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 .stat dd {
-  margin: 0.25rem 0 0;
+  margin: 0.15rem 0 0;
+  font-size: 1.7rem;
+  white-space: nowrap;
 }
 .stat-unit {
   font-family: var(--font-body);
@@ -299,59 +300,19 @@ function openEtape(etapeId: string) {
   margin-left: 0.25rem;
 }
 
-/* Mobile : en-tête, carte, puis contenu */
-.page {
-  display: grid;
-  /* minmax(0, 1fr) : la colonne ne s'élargit jamais au-delà de l'écran à cause d'un contenu */
-  grid-template-columns: minmax(0, 1fr);
-  grid-template-areas: 'header' 'map' 'content';
-  gap: var(--space-md);
-}
-.header {
-  grid-area: header;
-}
 .content {
-  grid-area: content;
-}
-.map-column {
-  grid-area: map;
-  height: 360px;
-  border: var(--border-hairline);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-soft);
-  overflow: hidden;
+  margin-top: var(--space-md);
 }
 
-/* Desktop : en-tête et contenu à gauche (largeur réduite pour laisser la place à la carte) ;
-   la carte est en position fixed, ancrée à l'écran — elle ne défile jamais, contrairement à
-   un position: sticky qui se décroche dès que la colonne de gauche devient plus courte qu'elle */
-@media (min-width: 960px) {
-  .page {
-    display: block;
-  }
-  .header,
-  .content {
-    margin-right: calc(var(--map-width) + var(--space-lg));
-  }
-  /* Bandeau titre collé sous la navbar, pendant que la description/photos/contenu défilent */
+/* Desktop : bandeau titre collé en haut du panneau pendant que le reste défile */
+@media (min-width: 901px) {
   .title-bar {
     position: sticky;
-    top: var(--navbar-height);
+    top: calc(-1 * var(--space-md));
     z-index: 10;
-    /* Même dégradé que le fond de page, figé par rapport à l'écran : se fond avec le contenu
-       qui défile dessous au lieu de trancher par une couleur plate */
-    background: var(--page-gradient), var(--color-bg);
-    background-attachment: fixed;
-    padding: var(--space-sm) 0;
-    margin: calc(-1 * var(--space-sm)) 0 0;
-  }
-  .map-column {
-    position: fixed;
-    top: calc(var(--navbar-height) + var(--space-md));
-    /* Aligne le bord droit de la carte sur celui du conteneur centré (max-width: 1200px) */
-    right: max(var(--space-md), calc((100vw - 1200px) / 2 + var(--space-md)));
-    width: var(--map-width);
-    height: calc(100vh - var(--navbar-height) - 2 * var(--space-md));
+    margin: calc(-1 * var(--space-md)) calc(-1 * var(--space-md)) 0;
+    padding: var(--space-md) var(--space-md) var(--space-sm);
+    background: var(--color-bg);
   }
 }
 

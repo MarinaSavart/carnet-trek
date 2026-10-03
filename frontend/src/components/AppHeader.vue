@@ -72,11 +72,9 @@ async function logout() {
   align-items: center;
   justify-content: space-between;
   gap: var(--space-sm);
+  /* Pleine largeur, comme les pages avec carte en dessous */
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
   padding: 0 var(--space-md);
-  border-bottom: var(--border-hairline);
 }
 .brand {
   display: inline-flex;
