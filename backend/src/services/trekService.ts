@@ -13,6 +13,7 @@ import {
 import { simplifyLine } from '../lib/simplify.js'
 import { Trek } from '../models/Trek.js'
 import type { EtapeInput, TrekInput, TrekUpdateInput } from '../validation/trek.js'
+import { deleteTrekVariantes } from './varianteService.js'
 
 export interface EtapeFiles {
   gpx?: IncomingFile
@@ -131,7 +132,7 @@ export async function deleteTrek(id: string, userId: string): Promise<void> {
     throw new HttpError(403, "Seul l'auteur du trek peut le supprimer")
   }
   await Trek.deleteOne({ _id: id })
-  await removeTrekFiles(id)
+  await Promise.all([removeTrekFiles(id), deleteTrekVariantes(id)])
 }
 
 /**

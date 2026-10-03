@@ -90,3 +90,14 @@ export interface Trek {
   region: string
   etapes: Etape[]
 }
+
+/** Découpage d'un trek proposé par un utilisateur, visible par tous (groupes d'étapes fusionnées) */
+export interface Variante {
+  _id: string
+  /** Identifiants des étapes d'origine, groupe par groupe */
+  groups: string[][]
+  /** Le trek a changé depuis l'enregistrement : le découpage ne s'applique plus */
+  isStale: boolean
+  /** Auteur du découpage ou du trek */
+  canDelete: boolean
+}
