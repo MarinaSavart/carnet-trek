@@ -8,11 +8,18 @@
 defineProps<{
   /** Nom du panneau pour les lecteurs d'écran (ex. « Treks », « Étapes ») */
   panelLabel: string
+  /** Tout l'écran (fenêtre plein écran, sans la barre du haut : éditeur de trace) */
+  fullscreen?: boolean
+  /** Panneau sans marge intérieure : le contenu gère ses propres sections */
+  flush?: boolean
 }>()
 </script>
 
 <template>
-  <div class="map-layout" :class="{ 'has-dock': $slots.dock }">
+  <div
+    class="map-layout"
+    :class="{ 'has-dock': $slots.dock, 'is-fullscreen': fullscreen, 'is-flush': flush }"
+  >
     <div class="panel" role="region" :aria-label="panelLabel">
       <slot name="panel" />
     </div>
@@ -40,6 +47,9 @@ defineProps<{
     'panel map'
     'panel dock';
 }
+.map-layout.is-fullscreen {
+  height: 100dvh;
+}
 .panel {
   grid-area: panel;
   min-height: 0;
@@ -49,6 +59,9 @@ defineProps<{
   padding: var(--space-md) var(--space-md) var(--space-lg);
   border-right: var(--border-hairline);
   background: var(--color-bg);
+}
+.is-flush .panel {
+  padding: 0;
 }
 .map {
   grid-area: map;
@@ -73,7 +86,8 @@ defineProps<{
 /* Mobile et petites tablettes : la page défile, carte en haut */
 @media (max-width: 900px) {
   .map-layout,
-  .map-layout.has-dock {
+  .map-layout.has-dock,
+  .map-layout.is-fullscreen {
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto;
     grid-template-areas: 'map' 'dock' 'panel';
@@ -87,6 +101,9 @@ defineProps<{
     overflow: visible;
     border-right: none;
     padding: var(--space-md);
+  }
+  .is-flush .panel {
+    padding: 0;
   }
 }
 </style>

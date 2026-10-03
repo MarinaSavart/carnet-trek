@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import maplibregl, { MAP_STYLE_URL } from '../lib/maplibre'
+import { setupOutdoorMap } from '../lib/outdoorMap'
 import { OsmPoiLayer, osmPoiStatusLabel, type OsmPoiStatus } from '../lib/osmPoiLayer'
 import type { GeoJSONLineString, POI, POIType } from '../types/trek'
 import type { OsmPoi } from '../utils/overpass'
@@ -285,6 +286,8 @@ onMounted(() => {
     attributionControl: { compact: true },
   })
   map.addControl(new maplibregl.NavigationControl(), 'top-right')
+  // Sentiers visibles, itinéraires balisés et choix du fond Plan / Topo
+  setupOutdoorMap(map)
   map.addControl(new maplibregl.ScaleControl(), 'bottom-left')
 
   map.on('load', () => {
