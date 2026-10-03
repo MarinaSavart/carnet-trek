@@ -93,7 +93,7 @@ export async function createTrek(input: TrekInput, files: EtapeFiles[], ownerId?
             : undefined,
           gpxTrack: gpx?.track,
           elevationProfile: gpx?.elevationProfile,
-          pois: gpx?.waypoints ?? [],
+          pois: etape.pois ?? gpx?.waypoints ?? [],
           photos: await Promise.all(
             etapeFiles.photos.map((photo) =>
               savePhoto(trekId.toString(), etapeId.toString(), photo),
@@ -240,6 +240,8 @@ export async function updateTrek(
           difficulty: etape.difficulty,
           ...stats,
           ...gpxFields,
+          // POI édités à la main : priment sur ceux du GPX et sur ceux déjà enregistrés
+          ...(etape.pois && { pois: etape.pois }),
           photos: [...keptPhotos, ...newPhotos],
         }
       }),

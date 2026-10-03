@@ -1,9 +1,19 @@
 import { z } from 'zod'
-import { DIFFICULTIES } from '../models/Trek.js'
+import { DIFFICULTIES, POI_TYPES } from '../models/Trek.js'
 
 // Stats d'une étape : facultatives quand un GPX est fourni (il les calcule),
 // obligatoires sinon — la règle est appliquée par le service, qui connaît les fichiers.
 const optionalStat = (max: number) => z.number().min(0).max(max).nullish()
+
+// Convention GeoJSON : [longitude, latitude]
+const lonLat = z.tuple([z.number().min(-180).max(180), z.number().min(-90).max(90)])
+
+export const poiInputSchema = z.object({
+  type: z.enum(POI_TYPES),
+  name: z.string().trim().min(1, 'Le nom du point est obligatoire').max(200),
+  notes: z.string().trim().max(2000).optional(),
+  location: z.object({ type: z.literal('Point'), coordinates: lonLat }),
+})
 
 export const etapeInputSchema = z.object({
   name: z.string().trim().min(1, "Le nom de l'étape est obligatoire").max(200),
@@ -13,6 +23,11 @@ export const etapeInputSchema = z.object({
   elevationGain: optionalStat(20_000),
   elevationLoss: optionalStat(20_000),
   durationMin: optionalStat(60 * 24 * 7),
+  /**
+   * Points d'intérêt édités à la main : remplacent ceux de l'étape. Absent : ceux du GPX
+   * (nouvelle trace) ou ceux déjà enregistrés
+   */
+  pois: z.array(poiInputSchema).max(200).optional(),
 })
 
 export const trekInputSchema = z.object({

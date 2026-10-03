@@ -178,6 +178,7 @@ function openEtape(etapeId: string) {
         :pois="etape.pois"
         :highlighted-poi-id="highlightedPoiId"
         :cursor="mapCursor"
+        osm-pois
         @hover="highlightedEtapeId = $event"
         @track-hover="onTrackHover"
         @select="openEtape"
