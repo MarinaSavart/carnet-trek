@@ -4,10 +4,12 @@ import { useRoute, useRouter } from 'vue-router'
 import { useTreksStore } from '../stores/treks'
 import { useAuthStore } from '../stores/auth'
 import { useTrek } from '../composables/useTrek'
+import { useDecoupage } from '../composables/useDecoupage'
 import DifficultyBadge from '../components/DifficultyBadge.vue'
 import TrekOverviewMap from '../components/TrekOverviewMap.vue'
 import PhotoGallery from '../components/PhotoGallery.vue'
 import NavigateToStart from '../components/NavigateToStart.vue'
+import DecoupageBar from '../components/DecoupageBar.vue'
 import ElevationProfile, {
   type ProfileHover,
   type ProfileSegment,
@@ -15,6 +17,7 @@ import ElevationProfile, {
 import type { GalleryPhoto } from '../types/trek'
 import { formatDuration } from '../utils/format'
 import { getEtapeColor } from '../utils/etapeColors'
+import { groupIndexes } from '../utils/decoupage'
 
 const route = useRoute()
 const router = useRouter()
@@ -23,7 +26,25 @@ const auth = useAuthStore()
 
 const { trek, error } = useTrek(() => route.params.id as string)
 
-const etapes = computed(() => [...(trek.value?.etapes ?? [])].sort((a, b) => a.order - b.order))
+const sourceEtapes = computed(() =>
+  [...(trek.value?.etapes ?? [])].sort((a, b) => a.order - b.order),
+)
+
+// Découpage choisi par le visiteur (étapes fusionnées) : la liste, la carte et le profil
+// affichent ces étapes ; le trek lui-même n'est jamais modifié
+const { nights, displayEtapes, query, setNights, toggleNight, reset } = useDecoupage(sourceEtapes)
+const etapes = displayEtapes
+const isEditingDecoupage = ref(false)
+
+// Mode découpage : groupe (= étape affichée) de chaque étape d'origine, pour la couleur
+const groupOfEtape = computed(() =>
+  groupIndexes(nights.value).flatMap((group, groupIndex) => group.map(() => groupIndex)),
+)
+
+// « Hendaye → Olhette » → « Olhette » ; sans flèche, le nom complet
+function arrivalName(name: string): string {
+  return name.split(/\s*(?:→|->)\s*/).pop() || name
+}
 
 const totals = computed(() =>
   etapes.value.reduce(
@@ -99,8 +120,12 @@ async function removeTrek() {
   }
 }
 
+function etapeLink(etapeId: string) {
+  return { path: `/treks/${trek.value?._id}/etapes/${etapeId}`, query: query.value }
+}
+
 function openEtape(etapeId: string) {
-  router.push(`/treks/${trek.value?._id}/etapes/${etapeId}`)
+  router.push(etapeLink(etapeId))
 }
 </script>
 
@@ -156,10 +181,56 @@ function openEtape(etapeId: string) {
         :cursor="profileCursor"
         @hover="onProfileHover"
       />
+
+      <DecoupageBar
+        v-model:editing="isEditingDecoupage"
+        :trek-id="trek._id"
+        :etapes="sourceEtapes"
+        :nights="nights"
+        @apply="setNights"
+        @reset="reset"
+      />
     </header>
 
     <section class="etapes-column" aria-label="Étapes">
-      <ol class="etapes">
+      <!-- Mode découpage : étapes d'origine, séparées par les nuits que l'on peut retirer -->
+      <ol v-if="isEditingDecoupage" class="etapes">
+        <template v-for="(etape, index) in sourceEtapes" :key="etape._id">
+          <li
+            class="etape-item is-compact"
+            :style="{ '--etape-color': getEtapeColor(groupOfEtape[index] ?? 0) }"
+          >
+            <div class="etape-heading">
+              <h2 class="etape-title">
+                <span class="etape-order" aria-hidden="true">{{
+                  (groupOfEtape[index] ?? 0) + 1
+                }}</span>
+                <span class="visually-hidden">Étape d'origine {{ etape.order }} :</span>
+                {{ etape.name }}
+              </h2>
+            </div>
+            <p class="etape-meta">
+              <span title="Distance">↔ {{ etape.distanceKm }} km</span>
+              <span title="Durée">⏱︎ {{ formatDuration(etape.durationMin) }}</span>
+              <span title="Dénivelé positif">↗ {{ etape.elevationGain }} m</span>
+            </p>
+          </li>
+          <li v-if="index < sourceEtapes.length - 1" class="night">
+            <button
+              type="button"
+              class="night-toggle"
+              :class="{ 'is-off': !nights[index] }"
+              :aria-pressed="nights[index]"
+              @click="toggleNight(index)"
+            >
+              <template v-if="nights[index]">🌙 Nuit à {{ arrivalName(etape.name) }}</template>
+              <template v-else>Pas d'arrêt à {{ arrivalName(etape.name) }} : on continue</template>
+            </button>
+          </li>
+        </template>
+      </ol>
+
+      <ol v-else class="etapes">
         <li
           v-for="(etape, index) in etapes"
           :key="etape._id"
@@ -169,7 +240,7 @@ function openEtape(etapeId: string) {
           @mouseenter="highlightedId = etape._id"
           @mouseleave="highlightedId = null"
         >
-          <RouterLink :to="`/treks/${trek._id}/etapes/${etape._id}`" class="etape-link">
+          <RouterLink :to="etapeLink(etape._id)" class="etape-link">
             <div class="etape-heading">
               <h2 class="etape-title">
                 <span class="etape-order" aria-hidden="true">{{ etape.order }}</span>
@@ -183,6 +254,9 @@ function openEtape(etapeId: string) {
               <span title="Durée">⏱︎ {{ formatDuration(etape.durationMin) }}</span>
               <span title="Dénivelé positif">↗ {{ etape.elevationGain }} m</span>
               <span title="Dénivelé négatif">↘ {{ etape.elevationLoss }} m</span>
+            </p>
+            <p v-if="etape.sources" class="etape-sources">
+              Fusion des étapes {{ etape.sources.map((s) => s.order).join(', ') }}
             </p>
             <p v-if="etape.pois.length || etape.photos?.length" class="etape-pois">
               <span v-if="etape.pois.length">
@@ -398,6 +472,50 @@ function openEtape(etapeId: string) {
   margin: var(--space-xs) 0 0;
   padding-left: 2.35rem;
   font-size: 0.9rem;
+}
+.etape-sources {
+  padding-left: 2.35rem;
+  color: var(--color-accent);
+  font-size: 0.85rem;
+  margin: 0.25rem 0 0;
+}
+.etape-item.is-compact {
+  padding: 0.6rem var(--space-sm);
+}
+.etape-item.is-compact .etape-title {
+  font-size: 1.1rem;
+}
+.night {
+  display: flex;
+  justify-content: center;
+}
+.night-toggle {
+  padding: 0.3rem 0.9rem;
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--color-bg-deep);
+  color: var(--color-text);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+.night-toggle:hover {
+  border-color: var(--color-accent);
+}
+.night-toggle:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+.night-toggle.is-off {
+  border-style: solid;
+  border-color: transparent;
+  background: none;
+  color: var(--color-text-faint);
+  text-decoration: line-through;
 }
 .etape-pois {
   display: flex;

@@ -15,8 +15,10 @@ declare module 'vue-router' {
 
 const router = createRouter({
   history: createWebHistory(),
-  // Nouvelle page → retour en haut ; bouton précédent → position d'origine restaurée
-  scrollBehavior: (_to, _from, savedPosition) => savedPosition ?? { top: 0 },
+  // Nouvelle page → retour en haut ; bouton précédent → position d'origine restaurée ;
+  // simple changement de paramètres (ex. découpage d'un trek) → on ne bouge pas
+  scrollBehavior: (to, from, savedPosition) =>
+    savedPosition ?? (to.path === from.path ? false : { top: 0 }),
   routes: [
     { path: '/', name: 'home', component: TrekList },
     {

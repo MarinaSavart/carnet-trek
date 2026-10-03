@@ -7,6 +7,7 @@ import { loadUser } from './middleware/auth.js'
 import { errorHandler } from './middleware/errorHandler.js'
 import authRouter from './routes/auth.js'
 import treksRouter from './routes/treks.js'
+import variantesRouter from './routes/variantes.js'
 
 const app = express()
 
@@ -60,6 +61,7 @@ app.use('/api', (req, res, next) => {
 
 app.use('/api', loadUser)
 app.use('/api/auth', authRouter)
+app.use('/api/treks/:trekId/variantes', variantesRouter)
 app.use('/api/treks', treksRouter)
 
 app.use('/api', (_req, res) => {
