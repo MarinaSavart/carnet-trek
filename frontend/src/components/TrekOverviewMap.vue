@@ -2,6 +2,7 @@
 import { ref, onMounted, onUnmounted, watch } from 'vue'
 import type { FeatureCollection, LineString } from 'geojson'
 import maplibregl, { MAP_STYLE_URL } from '../lib/maplibre'
+import { OsmPoiLayer, osmPoiStatusLabel } from '../lib/osmPoiLayer'
 import type { Etape, POI } from '../types/trek'
 import { getEtapeColor } from '../utils/etapeColors'
 import { POI_ICONS } from '../utils/poi'
@@ -17,6 +18,8 @@ const props = defineProps<{
   highlightedPoiId?: string | null
   /** Position survolée sur le profil d'altitude */
   cursor?: [number, number] | null
+  /** Bouton « Points utiles » (eau, refuges… d'OpenStreetMap), désactivé par défaut */
+  osmPois?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -58,6 +61,41 @@ let etapeMarkers = new Map<string, maplibregl.Marker>()
 let poiMarkers = new Map<string, maplibregl.Marker>()
 let cursorMarker: maplibregl.Marker | null = null
 let resizeObserver: ResizeObserver | null = null
+let osmLayer: OsmPoiLayer | null = null
+
+// Bouton posé sur la carte : active le calque et affiche son état (zoom, chargement…)
+function createOsmPoiControl(): maplibregl.IControl {
+  const container = document.createElement('div')
+  container.className = 'maplibregl-ctrl osm-poi-control'
+  const button = document.createElement('button')
+  button.type = 'button'
+  button.className = 'osm-poi-toggle'
+  button.textContent = '💧 Points utiles'
+  button.setAttribute('aria-pressed', 'false')
+  const status = document.createElement('p')
+  status.className = 'osm-poi-status'
+  status.setAttribute('aria-live', 'polite')
+  container.append(button, status)
+
+  return {
+    onAdd: (target) => {
+      osmLayer = new OsmPoiLayer(target, {
+        onStatus: (value) => (status.textContent = osmPoiStatusLabel(value)),
+      })
+      button.addEventListener('click', () => {
+        const enabled = button.getAttribute('aria-pressed') !== 'true'
+        button.setAttribute('aria-pressed', String(enabled))
+        osmLayer?.setEnabled(enabled)
+      })
+      return container
+    },
+    onRemove: () => {
+      osmLayer?.destroy()
+      osmLayer = null
+      container.remove()
+    },
+  }
+}
 // Tant que l'utilisateur n'a pas déplacé la carte, on garde le cadrage automatique
 let userHasMoved = false
 
@@ -235,6 +273,7 @@ onMounted(() => {
 
   map.addControl(new maplibregl.NavigationControl(), 'top-right')
   map.addControl(new maplibregl.ScaleControl(), 'bottom-left')
+  if (props.osmPois) map.addControl(createOsmPoiControl(), 'top-left')
   map.on('load', renderEtapes)
   map.on('movestart', (e) => {
     if (e.originalEvent) userHasMoved = true
@@ -307,6 +346,7 @@ watch(
 
 onUnmounted(() => {
   resizeObserver?.disconnect()
+  osmLayer?.destroy()
   map?.remove()
 })
 </script>
@@ -379,6 +419,44 @@ onUnmounted(() => {
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
   pointer-events: none;
   z-index: 4;
+}
+.osm-poi-control {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+}
+.osm-poi-toggle {
+  padding: 0.35rem 0.75rem;
+  border: none;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--color-bg-deep);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+}
+.osm-poi-toggle[aria-pressed='true'] {
+  background: var(--color-bg-deep);
+  color: #fff;
+}
+.osm-poi-toggle:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+.osm-poi-status {
+  margin: 0;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--color-bg-deep);
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+}
+.osm-poi-status:empty {
+  display: none;
 }
 .maplibregl-popup-content {
   color: var(--color-bg-deep);

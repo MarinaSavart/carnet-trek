@@ -51,7 +51,7 @@ function readLonLat(el: Element): [number, number] {
   return [Number(el.getAttribute('lon')), Number(el.getAttribute('lat'))]
 }
 
-function computeElevationDelta(elevations: number[]): { gain: number; loss: number } {
+export function computeElevationDelta(elevations: number[]): { gain: number; loss: number } {
   let gain = 0
   let loss = 0
   let reference = elevations[0]

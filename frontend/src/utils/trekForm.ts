@@ -1,4 +1,4 @@
-import type { Difficulty, Trek } from '../types/trek'
+import type { Difficulty, GeoJSONLineString, POI, Trek } from '../types/trek'
 import type { ParsedGpx } from './gpx'
 
 export interface PhotoDraft {
@@ -38,6 +38,14 @@ export interface EtapeDraft {
   hadGpx: boolean
   /** Modification : nom de la trace GPX actuelle, null si retirée (ou remplacée) */
   existingGpxName: string | null
+  /** Modification : URL de la trace GPX actuelle (relue par l'éditeur, pour les altitudes) */
+  existingGpxUrl: string | null
+  /** Tracé affiché dans l'éditeur de points d'intérêt (nouveau GPX ou trace actuelle) */
+  track: GeoJSONLineString | null
+  /** Points d'intérêt de l'étape (ceux du GPX, ou déjà enregistrés) */
+  pois: POI[]
+  /** Points édités à la main : envoyés au serveur, ils remplacent ceux du GPX */
+  poisEdited: boolean
 }
 
 export interface TrekDraft {
@@ -72,6 +80,10 @@ export function createEtapeDraft(): EtapeDraft {
     existingPhotos: [],
     hadGpx: false,
     existingGpxName: null,
+    existingGpxUrl: null,
+    track: null,
+    pois: [],
+    poisEdited: false,
   }
 }
 
@@ -100,6 +112,9 @@ export function trekToDraft(trek: Trek): TrekDraft {
         })),
         hadGpx: Boolean(etape.gpxFile),
         existingGpxName: etape.gpxFile?.originalName ?? null,
+        existingGpxUrl: etape.gpxFile?.url ?? null,
+        track: etape.gpxTrack ?? null,
+        pois: etape.pois ?? [],
       })),
   }
 }
@@ -160,6 +175,15 @@ export function draftToFormData(draft: TrekDraft): FormData {
       elevationGain: etape.elevationGain,
       elevationLoss: etape.elevationLoss,
       durationMin: etape.durationMin,
+      // Sans édition à la main, le serveur garde ses POI (ou prend ceux du nouveau GPX)
+      ...(etape.poisEdited && {
+        pois: etape.pois.map(({ type, name, notes, location }) => ({
+          type,
+          name: name.trim(),
+          notes: notes?.trim() || undefined,
+          location,
+        })),
+      }),
     })),
   }
   formData.append('data', JSON.stringify(data))

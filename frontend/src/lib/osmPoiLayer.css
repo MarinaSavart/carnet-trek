@@ -1,0 +1,26 @@
+/* Points utiles OpenStreetMap : plus petits et plus discrets que les POI de l'étape */
+.osm-poi-marker {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 1.5px solid rgba(28, 40, 35, 0.55);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  font-size: 0.7rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  transition:
+    width 0.15s ease,
+    height 0.15s ease;
+}
+.osm-poi-marker:hover,
+.osm-poi-marker:focus-visible {
+  width: 28px;
+  height: 28px;
+  outline: none;
+  background: #fff;
+  z-index: 3;
+}
