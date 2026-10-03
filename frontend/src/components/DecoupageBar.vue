@@ -63,13 +63,22 @@ function apply(variante: Variante) {
   if (decoupage) emit('apply', decoupage)
 }
 
+// Confirmation dans le bouton lui-même (« Supprimer ? Oui / Non ») plutôt que
+// window.confirm, que certains navigateurs bloquent sans rien afficher
+const confirmingId = ref<string | null>(null)
+const removingId = ref<string | null>(null)
+const removeError = ref<string | null>(null)
+
 async function removeVariante(variante: Variante) {
-  const label = `Supprimer le découpage en ${daysLabel(varianteDays(variante))} ?`
-  if (!window.confirm(label)) return
+  removingId.value = variante._id
+  removeError.value = null
   try {
     await remove(variante._id)
+    confirmingId.value = null
   } catch (e) {
-    window.alert(e instanceof Error ? e.message : 'Suppression impossible')
+    removeError.value = e instanceof Error ? e.message : 'Suppression impossible'
+  } finally {
+    removingId.value = null
   }
 }
 
@@ -143,17 +152,35 @@ function propose() {
             Voir en {{ daysLabel(varianteDays(variante)) }}
             <span v-if="variante.isStale" class="variante-note">trek modifié</span>
           </button>
+          <span
+            v-if="variante.canDelete && confirmingId === variante._id"
+            class="variante-confirm"
+            role="group"
+            :aria-label="`Supprimer le découpage en ${daysLabel(varianteDays(variante))} ?`"
+          >
+            Supprimer ?
+            <button
+              type="button"
+              class="confirm-yes"
+              :disabled="removingId === variante._id"
+              @click="removeVariante(variante)"
+            >
+              {{ removingId === variante._id ? '…' : 'Oui' }}
+            </button>
+            <button type="button" class="confirm-no" @click="confirmingId = null">Non</button>
+          </span>
           <button
-            v-if="variante.canDelete"
+            v-else-if="variante.canDelete"
             type="button"
             class="variante-remove"
             :aria-label="`Supprimer le découpage en ${daysLabel(varianteDays(variante))}`"
-            @click="removeVariante(variante)"
+            @click="confirmingId = variante._id"
           >
             ×
           </button>
         </li>
       </ul>
+      <p v-if="removeError" class="field-error" role="alert">{{ removeError }}</p>
     </div>
 
     <div v-if="isNew" class="banner" role="status">
@@ -302,6 +329,48 @@ function propose() {
   font: inherit;
   font-size: 1.1rem;
   cursor: pointer;
+}
+.variante-item:has(.variante-confirm) .variante-btn {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.variante-confirm {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0 0.4rem 0 0.6rem;
+  border: 1px solid var(--color-danger);
+  border-left: none;
+  border-radius: 0 var(--radius-pill) var(--radius-pill) 0;
+  background: var(--color-danger-soft);
+  color: var(--color-text);
+  font-size: 0.85rem;
+}
+.confirm-yes,
+.confirm-no {
+  padding: 0.2rem 0.55rem;
+  border: none;
+  border-radius: var(--radius-pill);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.confirm-yes {
+  background: var(--color-danger);
+  color: var(--color-on-accent);
+}
+.confirm-no {
+  background: none;
+  color: var(--color-text-muted);
+}
+.confirm-no:hover {
+  color: var(--color-text);
+}
+.confirm-yes:focus-visible,
+.confirm-no:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
 .variante-remove:hover {
   color: var(--color-danger);
