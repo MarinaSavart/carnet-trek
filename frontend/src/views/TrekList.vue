@@ -3,6 +3,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import TreksMap from '../components/TreksMap.vue'
+import MapLayout from '../components/MapLayout.vue'
 import { useTreksStore, type MapView } from '../stores/treks'
 import type { TrekSummary } from '../types/trek'
 import { getEtapeColor } from '../utils/etapeColors'
@@ -117,123 +118,76 @@ function formatDistance(km: number): string {
 </script>
 
 <template>
-  <div class="page">
-    <div class="heading">
-      <div class="heading-row">
-        <h1>Mes treks</h1>
-        <RouterLink to="/treks/new" class="btn btn-primary">+ Nouveau trek</RouterLink>
-      </div>
-      <div v-if="summaries.length" class="search" role="search">
-        <label for="trek-search" class="visually-hidden">Rechercher un trek</label>
-        <span class="search-icon" aria-hidden="true">⌕</span>
-        <input
-          id="trek-search"
-          v-model="search"
-          type="search"
-          class="input search-input"
-          placeholder="Rechercher un trek ou une région…"
-          autocomplete="off"
-          aria-describedby="search-count"
-        />
-        <button
-          v-if="isSearching"
-          type="button"
-          class="search-clear"
-          aria-label="Effacer la recherche"
-          @click="search = ''"
-        >
-          ×
-        </button>
-      </div>
-      <p id="search-count" class="search-count" aria-live="polite">
-        <template v-if="isSearching">
-          {{ results.length }} trek{{ results.length > 1 ? 's' : '' }} trouvé{{
-            results.length > 1 ? 's' : ''
-          }}
-        </template>
-      </p>
-    </div>
-
-    <div class="list-column">
-      <p v-if="isLoading" class="status" role="status">Chargement…</p>
-
-      <div v-else-if="error" class="status" role="alert">
-        <p>{{ error }}</p>
-        <button type="button" class="btn" @click="load">Réessayer</button>
-      </div>
-
-      <div v-else-if="!summaries.length" class="status">
-        <p>Aucun trek pour l'instant.</p>
-        <RouterLink to="/treks/new" class="btn">Créer mon premier trek</RouterLink>
-      </div>
-
-      <div v-else-if="!results.length" class="status">
-        <p>Aucun trek ne correspond à « {{ search.trim() }} ».</p>
-        <button type="button" class="btn" @click="search = ''">Effacer la recherche</button>
-      </div>
-
-      <template v-else>
-        <section v-if="hasView" class="group" aria-labelledby="nearby-title">
-          <h2 id="nearby-title" class="group-title">
-            Dans cette zone <span class="count">{{ placed.nearby.length }}</span>
-          </h2>
-          <div v-if="!placed.nearby.length" class="status">
-            <p>Aucun trek dans la zone affichée.</p>
-            <button type="button" class="btn" @click="map?.fitAll()">Voir tous les treks</button>
-          </div>
-        </section>
-
-        <ul class="treks" :aria-labelledby="hasView ? 'nearby-title' : undefined">
-          <li
-            v-for="{ trek, distanceKm } in hasView ? placed.nearby : placed.elsewhere"
-            :key="trek._id"
-            class="trek-item"
-            :class="{ 'is-highlighted': highlightedId === trek._id }"
-            :style="{ '--trek-color': colors[trek._id] }"
-            @mouseenter="highlightedId = trek._id"
-            @mouseleave="highlightedId = null"
+  <MapLayout panel-label="Treks">
+    <template #panel>
+      <div class="heading">
+        <div class="heading-row">
+          <h1>Mes treks</h1>
+          <RouterLink to="/treks/new" class="btn btn-primary">+ Nouveau trek</RouterLink>
+        </div>
+        <div v-if="summaries.length" class="search" role="search">
+          <label for="trek-search" class="visually-hidden">Rechercher un trek</label>
+          <span class="search-icon" aria-hidden="true">⌕</span>
+          <input
+            id="trek-search"
+            v-model="search"
+            type="search"
+            class="input search-input"
+            placeholder="Rechercher un trek ou une région…"
+            autocomplete="off"
+            aria-describedby="search-count"
+          />
+          <button
+            v-if="isSearching"
+            type="button"
+            class="search-clear"
+            aria-label="Effacer la recherche"
+            @click="search = ''"
           >
-            <RouterLink :to="`/treks/${trek._id}`" class="trek-link">
-              <img
-                v-if="trek.coverPhotoUrl"
-                :src="trek.coverPhotoUrl"
-                alt=""
-                loading="lazy"
-                class="cover"
-              />
-              <div v-else class="cover cover-empty" aria-hidden="true">⛰</div>
-              <div class="trek-info">
-                <h3>{{ trek.name }}</h3>
-                <p v-if="trek.region || (showDistance && distanceKm !== null)" class="region">
-                  {{ trek.region }}
-                  <template v-if="showDistance && distanceKm !== null">
-                    <span v-if="trek.region" aria-hidden="true"> · </span>
-                    <span class="distance">{{ formatDistance(distanceKm) }}</span>
-                  </template>
-                </p>
-                <p class="stat-number">
-                  {{ trek.distanceKm.toFixed(1) }}
-                  <span class="stat-unit">
-                    km · {{ trek.etapeCount }} étape{{ trek.etapeCount > 1 ? 's' : '' }} ·
-                    {{ formatDuration(trek.durationMin) }}
-                  </span>
-                </p>
-              </div>
-            </RouterLink>
-          </li>
-        </ul>
+            ×
+          </button>
+        </div>
+        <p id="search-count" class="search-count" aria-live="polite">
+          <template v-if="isSearching">
+            {{ results.length }} trek{{ results.length > 1 ? 's' : '' }} trouvé{{
+              results.length > 1 ? 's' : ''
+            }}
+          </template>
+        </p>
+      </div>
 
-        <section
-          v-if="hasView && placed.elsewhere.length"
-          class="group"
-          aria-labelledby="elsewhere-title"
-        >
-          <h2 id="elsewhere-title" class="group-title">
-            Plus loin <span class="count">{{ placed.elsewhere.length }}</span>
-          </h2>
-          <ul class="treks treks-compact">
+      <div class="list-column">
+        <p v-if="isLoading" class="status" role="status">Chargement…</p>
+
+        <div v-else-if="error" class="status" role="alert">
+          <p>{{ error }}</p>
+          <button type="button" class="btn" @click="load">Réessayer</button>
+        </div>
+
+        <div v-else-if="!summaries.length" class="status">
+          <p>Aucun trek pour l'instant.</p>
+          <RouterLink to="/treks/new" class="btn">Créer mon premier trek</RouterLink>
+        </div>
+
+        <div v-else-if="!results.length" class="status">
+          <p>Aucun trek ne correspond à « {{ search.trim() }} ».</p>
+          <button type="button" class="btn" @click="search = ''">Effacer la recherche</button>
+        </div>
+
+        <template v-else>
+          <section v-if="hasView" class="group" aria-labelledby="nearby-title">
+            <h2 id="nearby-title" class="group-title">
+              Dans cette zone <span class="count">{{ placed.nearby.length }}</span>
+            </h2>
+            <div v-if="!placed.nearby.length" class="status">
+              <p>Aucun trek dans la zone affichée.</p>
+              <button type="button" class="btn" @click="map?.fitAll()">Voir tous les treks</button>
+            </div>
+          </section>
+
+          <ul class="treks" :aria-labelledby="hasView ? 'nearby-title' : undefined">
             <li
-              v-for="{ trek, distanceKm } in placed.elsewhere"
+              v-for="{ trek, distanceKm } in hasView ? placed.nearby : placed.elsewhere"
               :key="trek._id"
               class="trek-item"
               :class="{ 'is-highlighted': highlightedId === trek._id }"
@@ -242,19 +196,68 @@ function formatDistance(km: number): string {
               @mouseleave="highlightedId = null"
             >
               <RouterLink :to="`/treks/${trek._id}`" class="trek-link">
-                <span class="color-dot" aria-hidden="true" />
-                <span class="compact-name">{{ trek.name }}</span>
-                <span class="compact-meta">
-                  {{ distanceKm === null ? 'sans tracé' : formatDistance(distanceKm) }}
-                </span>
+                <img
+                  v-if="trek.coverPhotoUrl"
+                  :src="trek.coverPhotoUrl"
+                  alt=""
+                  loading="lazy"
+                  class="cover"
+                />
+                <div v-else class="cover cover-empty" aria-hidden="true">⛰</div>
+                <div class="trek-info">
+                  <h3>{{ trek.name }}</h3>
+                  <p v-if="trek.region || (showDistance && distanceKm !== null)" class="region">
+                    {{ trek.region }}
+                    <template v-if="showDistance && distanceKm !== null">
+                      <span v-if="trek.region" aria-hidden="true"> · </span>
+                      <span class="distance">{{ formatDistance(distanceKm) }}</span>
+                    </template>
+                  </p>
+                  <p class="stat-number">
+                    {{ trek.distanceKm.toFixed(1) }}
+                    <span class="stat-unit">
+                      km · {{ trek.etapeCount }} étape{{ trek.etapeCount > 1 ? 's' : '' }} ·
+                      {{ formatDuration(trek.durationMin) }}
+                    </span>
+                  </p>
+                </div>
               </RouterLink>
             </li>
           </ul>
-        </section>
-      </template>
-    </div>
 
-    <aside class="map-column" aria-label="Carte des treks">
+          <section
+            v-if="hasView && placed.elsewhere.length"
+            class="group"
+            aria-labelledby="elsewhere-title"
+          >
+            <h2 id="elsewhere-title" class="group-title">
+              Plus loin <span class="count">{{ placed.elsewhere.length }}</span>
+            </h2>
+            <ul class="treks treks-compact">
+              <li
+                v-for="{ trek, distanceKm } in placed.elsewhere"
+                :key="trek._id"
+                class="trek-item"
+                :class="{ 'is-highlighted': highlightedId === trek._id }"
+                :style="{ '--trek-color': colors[trek._id] }"
+                @mouseenter="highlightedId = trek._id"
+                @mouseleave="highlightedId = null"
+              >
+                <RouterLink :to="`/treks/${trek._id}`" class="trek-link">
+                  <span class="color-dot" aria-hidden="true" />
+                  <span class="compact-name">{{ trek.name }}</span>
+                  <span class="compact-meta">
+                    {{ distanceKm === null ? 'sans tracé' : formatDistance(distanceKm) }}
+                  </span>
+                </RouterLink>
+              </li>
+            </ul>
+          </section>
+        </template>
+      </div>
+    </template>
+
+    <template #map>
       <TreksMap
         ref="map"
         :treks="results"
@@ -265,65 +268,14 @@ function formatDistance(km: number): string {
         @select="router.push(`/treks/${$event}`)"
         @view-change="onViewChange"
       />
-    </aside>
-  </div>
+    </template>
+  </MapLayout>
 </template>
 
 <style scoped>
-.page {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: var(--space-lg) var(--space-md);
-  /* Même largeur de carte que sur la page d'un trek */
-  --map-width: clamp(420px, 48vw, 640px);
-
-  /* Mobile : carte en haut, liste en dessous */
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  grid-template-areas: 'heading' 'map' 'list';
-  gap: var(--space-md);
-}
-.heading {
-  grid-area: heading;
-}
 .list-column {
-  grid-area: list;
+  margin-top: var(--space-sm);
 }
-/* L'écart entre la carte et la liste est déjà donné par la grille */
-.list-column > :first-child {
-  margin-top: 0;
-}
-.map-column {
-  grid-area: map;
-  height: 55vh;
-  min-height: 320px;
-  border: var(--border-hairline);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-soft);
-  overflow: hidden;
-}
-
-/* Desktop : liste à gauche, carte fixe à droite (voir TrekDetail.vue) */
-@media (min-width: 960px) {
-  .page {
-    display: block;
-  }
-  .heading,
-  .list-column {
-    margin-right: calc(var(--map-width) + var(--space-lg));
-  }
-  .list-column {
-    margin-top: var(--space-md);
-  }
-  .map-column {
-    position: fixed;
-    top: calc(var(--navbar-height) + var(--space-md));
-    right: max(var(--space-md), calc((100vw - 1200px) / 2 + var(--space-md)));
-    width: var(--map-width);
-    height: calc(100vh - var(--navbar-height) - 2 * var(--space-md));
-  }
-}
-
 .heading-row {
   display: flex;
   flex-wrap: wrap;
