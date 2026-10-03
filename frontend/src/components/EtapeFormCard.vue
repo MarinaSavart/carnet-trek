@@ -7,12 +7,16 @@ import { DIFFICULTY_LABELS } from '../utils/difficulty'
 import { getEtapeColor } from '../utils/etapeColors'
 import { POI_ICONS } from '../utils/poi'
 import PoiEditor from './PoiEditor.vue'
-import type { POI } from '../types/trek'
+import TrackEditor from './TrackEditor.vue'
+import type { GeoJSONLineString, POI } from '../types/trek'
 
 defineProps<{
   index: number
   count: number
   errors?: EtapeErrors
+  /** Traces des étapes voisines, affichées dans l'éditeur de trace */
+  previousTrack?: GeoJSONLineString | null
+  nextTrack?: GeoJSONLineString | null
 }>()
 
 const emit = defineEmits<{
@@ -56,7 +60,10 @@ async function loadGpx(file: File | undefined) {
     gpxError.value = 'Le fichier doit être au format .gpx'
     return
   }
+  await applyGpx(file)
+}
 
+async function applyGpx(file: File) {
   try {
     const gpx = parseGpx(await file.text(), etape.value.key)
     if (gpx.track.coordinates.length < 2) {
@@ -68,6 +75,7 @@ async function loadGpx(file: File | undefined) {
       gpx,
       // Une nouvelle trace remplace l'éventuelle trace actuelle
       existingGpxName: null,
+      existingGpxUrl: null,
       track: gpx.track,
       // Les points du nouveau GPX remplacent les précédents (modifiables ensuite)
       pois: gpx.waypoints,
@@ -89,10 +97,23 @@ function removeGpx() {
     gpxFile: null,
     gpx: null,
     existingGpxName: null,
+    existingGpxUrl: null,
     track: null,
     // Sans trace, le serveur effacerait les points : on les envoie pour les garder
     poisEdited: etape.value.pois.length > 0,
   })
+}
+
+// --- Trace : éditeur sur carte (création ou modification) ---
+
+const isEditingTrack = ref(false)
+
+// La trace éditée revient comme un nouveau fichier GPX : même traitement qu'un import
+async function saveTrack({ file, durationMin }: { file: File; durationMin: number }) {
+  isEditingTrack.value = false
+  await applyGpx(file)
+  // Plus d'horaires dans la trace modifiée : la durée devient l'estimation (modifiable)
+  etape.value.durationMin = durationMin
 }
 
 // --- Points d'intérêt : éditeur sur carte ---
@@ -263,7 +284,22 @@ function onPhotosDrop(e: DragEvent) {
           <span><strong>Choisir un fichier .gpx</strong> ou le glisser ici</span>
         </label>
         <p v-if="gpxError" class="field-error">{{ gpxError }}</p>
+        <button type="button" class="btn track-edit-btn" @click="isEditingTrack = true">
+          {{ etape.track ? 'Éditer la trace sur la carte' : 'Tracer sur la carte' }}
+        </button>
       </div>
+      <TrackEditor
+        v-if="isEditingTrack"
+        :title="etape.name.trim() || `Étape ${index + 1}`"
+        :gpx-file="etape.gpxFile"
+        :gpx-url="etape.gpxFile ? null : etape.existingGpxUrl"
+        :fallback-track="etape.track"
+        :pois="etape.pois"
+        :previous-track="previousTrack ?? null"
+        :next-track="nextTrack ?? null"
+        @save="saveTrack"
+        @close="isEditingTrack = false"
+      />
 
       <!-- Points d'intérêt -->
       <div class="field span-2">
@@ -479,6 +515,10 @@ function onPhotosDrop(e: DragEvent) {
   padding: var(--space-xs) var(--space-sm);
   border: var(--border-hairline);
   border-radius: var(--radius);
+}
+.track-edit-btn {
+  align-self: flex-start;
+  margin-top: var(--space-xs);
 }
 .pois-summary {
   display: flex;

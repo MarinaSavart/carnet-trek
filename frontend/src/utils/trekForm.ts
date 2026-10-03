@@ -38,6 +38,8 @@ export interface EtapeDraft {
   hadGpx: boolean
   /** Modification : nom de la trace GPX actuelle, null si retirée (ou remplacée) */
   existingGpxName: string | null
+  /** Modification : URL de la trace GPX actuelle (relue par l'éditeur, pour les altitudes) */
+  existingGpxUrl: string | null
   /** Tracé affiché dans l'éditeur de points d'intérêt (nouveau GPX ou trace actuelle) */
   track: GeoJSONLineString | null
   /** Points d'intérêt de l'étape (ceux du GPX, ou déjà enregistrés) */
@@ -78,6 +80,7 @@ export function createEtapeDraft(): EtapeDraft {
     existingPhotos: [],
     hadGpx: false,
     existingGpxName: null,
+    existingGpxUrl: null,
     track: null,
     pois: [],
     poisEdited: false,
@@ -109,6 +112,7 @@ export function trekToDraft(trek: Trek): TrekDraft {
         })),
         hadGpx: Boolean(etape.gpxFile),
         existingGpxName: etape.gpxFile?.originalName ?? null,
+        existingGpxUrl: etape.gpxFile?.url ?? null,
         track: etape.gpxTrack ?? null,
         pois: etape.pois ?? [],
       })),

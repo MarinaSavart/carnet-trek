@@ -211,6 +211,8 @@ onBeforeUnmount(() => {
             :index="index"
             :count="draft.etapes.length"
             :errors="errors.byEtape[etape.key]"
+            :previous-track="draft.etapes[index - 1]?.track"
+            :next-track="draft.etapes[index + 1]?.track"
             @move="moveEtape(index, $event)"
             @remove="removeEtape(index)"
           />

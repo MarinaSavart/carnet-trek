@@ -208,3 +208,20 @@ export async function fetchOsmPois(bbox: BBox, signal?: AbortSignal): Promise<Os
     ({ coordinates: [lon, lat] }) => lon >= west && lon <= east && lat >= south && lat <= north,
   )
 }
+
+/** Point utile déjà chargé le plus proche, à moins de `maxKm` (pour nommer un point de passage) */
+export function nearestLoadedOsmPoi([lon, lat]: [number, number], maxKm: number): OsmPoi | null {
+  // Distance approchée, suffisante à cette échelle : 1° de latitude ≈ 111 km
+  const lonScale = Math.cos((lat * Math.PI) / 180)
+  let best: OsmPoi | null = null
+  let bestKm = maxKm
+  for (const poi of poisById.values()) {
+    const [pLon, pLat] = poi.coordinates
+    const km = Math.hypot((pLon - lon) * lonScale, pLat - lat) * 111
+    if (km <= bestKm) {
+      best = poi
+      bestKm = km
+    }
+  }
+  return best
+}

@@ -174,6 +174,15 @@ function showOsmPopup(osm: OsmPoi) {
   button.focus()
 }
 
+// MapLibre place marqueurs et bulles dans le conteneur de la carte : un clic dessus
+// remonte aussi comme un clic sur la carte, à ignorer
+function isOnOverlay(event: Event): boolean {
+  return (
+    event.target instanceof Element &&
+    !!event.target.closest('.maplibregl-marker, .maplibregl-popup')
+  )
+}
+
 function renderTrack() {
   if (!map || !props.track) return
   map.addSource('etape-track', {
@@ -292,6 +301,7 @@ onMounted(() => {
 
   // Clic sur la carte (hors marqueur) : nouveau point à cet endroit
   map.on('click', (e) => {
+    if (isOnOverlay(e.originalEvent)) return
     if (osmPopup?.isOpen()) {
       osmPopup.remove()
       return
