@@ -28,15 +28,14 @@ export function useVariantes(trekId: MaybeRefOrGetter<string | undefined>) {
     { immediate: true },
   )
 
-  async function save(groups: string[][]): Promise<Variante> {
+  async function save(input: Pick<Variante, 'groups' | 'cuts'>): Promise<Variante> {
     const id = toValue(trekId)
     if (!id) throw new Error('Trek non chargé')
-    const variante = await api.createVariante(id, groups)
+    const variante = await api.createVariante(id, input)
     // Découpage déjà proposé par quelqu'un d'autre : l'API renvoie l'existant
     if (!variantes.value.some((v) => v._id === variante._id)) {
-      variantes.value = [...variantes.value, variante].sort(
-        (a, b) => b.groups.length - a.groups.length,
-      )
+      const days = (v: Variante) => v.groups.length + v.cuts.length
+      variantes.value = [...variantes.value, variante].sort((a, b) => days(b) - days(a))
     }
     return variante
   }

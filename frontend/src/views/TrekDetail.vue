@@ -10,6 +10,7 @@ import TrekOverviewMap from '../components/TrekOverviewMap.vue'
 import PhotoGallery from '../components/PhotoGallery.vue'
 import NavigateToStart from '../components/NavigateToStart.vue'
 import DecoupageBar from '../components/DecoupageBar.vue'
+import CutPicker from '../components/CutPicker.vue'
 import ElevationProfile, {
   type ProfileHover,
   type ProfileSegment,
@@ -17,7 +18,8 @@ import ElevationProfile, {
 import type { GalleryPhoto } from '../types/trek'
 import { formatDuration } from '../utils/format'
 import { getEtapeColor } from '../utils/etapeColors'
-import { groupIndexes } from '../utils/decoupage'
+import { cutName, decoupageDays, describePieces, formatKm } from '../utils/decoupage'
+import { canCut } from '../utils/etapeGeometry'
 
 const route = useRoute()
 const router = useRouter()
@@ -30,16 +32,34 @@ const sourceEtapes = computed(() =>
   [...(trek.value?.etapes ?? [])].sort((a, b) => a.order - b.order),
 )
 
-// Découpage choisi par le visiteur (étapes fusionnées) : la liste, la carte et le profil
-// affichent ces étapes ; le trek lui-même n'est jamais modifié
-const { nights, displayEtapes, query, setNights, toggleNight, reset } = useDecoupage(sourceEtapes)
+// Découpage choisi par le visiteur (étapes fusionnées ou coupées) : la liste, la carte et
+// le profil affichent ces journées ; le trek lui-même n'est jamais modifié
+const { decoupage, displayEtapes, query, setDecoupage, toggleNight, addCut, removeCut, reset } =
+  useDecoupage(sourceEtapes)
 const etapes = displayEtapes
 const isEditingDecoupage = ref(false)
 
-// Mode découpage : groupe (= étape affichée) de chaque étape d'origine, pour la couleur
-const groupOfEtape = computed(() =>
-  groupIndexes(nights.value).flatMap((group, groupIndex) => group.map(() => groupIndex)),
-)
+// Mode découpage : journée où commence chaque étape d'origine, pour la couleur
+const dayOfEtape = computed(() => {
+  const days = decoupageDays(sourceEtapes.value, decoupage.value)
+  return sourceEtapes.value.map((_, index) =>
+    Math.max(
+      0,
+      days.findIndex((pieces) => pieces.some((p) => p.index === index)),
+    ),
+  )
+})
+
+const cutsOf = (index: number) =>
+  decoupage.value.cuts.filter((cut) => cut.etape === index).map((cut) => cut.km)
+
+// Étape dont le sélecteur « nuit dans cette étape » est ouvert
+const cutPickerFor = ref<number | null>(null)
+
+function onCutAdd(index: number, km: number) {
+  addCut(index, km)
+  cutPickerFor.value = null
+}
 
 // « Hendaye → Olhette » → « Olhette » ; sans flèche, le nom complet
 function arrivalName(name: string): string {
@@ -186,24 +206,25 @@ function openEtape(etapeId: string) {
         v-model:editing="isEditingDecoupage"
         :trek-id="trek._id"
         :etapes="sourceEtapes"
-        :nights="nights"
-        @apply="setNights"
+        :decoupage="decoupage"
+        @apply="setDecoupage"
         @reset="reset"
       />
     </header>
 
     <section class="etapes-column" aria-label="Étapes">
-      <!-- Mode découpage : étapes d'origine, séparées par les nuits que l'on peut retirer -->
+      <!-- Mode découpage : étapes d'origine, séparées par les nuits que l'on peut retirer,
+           et nuits ajoutées au milieu d'une étape -->
       <ol v-if="isEditingDecoupage" class="etapes">
         <template v-for="(etape, index) in sourceEtapes" :key="etape._id">
           <li
             class="etape-item is-compact"
-            :style="{ '--etape-color': getEtapeColor(groupOfEtape[index] ?? 0) }"
+            :style="{ '--etape-color': getEtapeColor(dayOfEtape[index] ?? 0) }"
           >
             <div class="etape-heading">
               <h2 class="etape-title">
                 <span class="etape-order" aria-hidden="true">{{
-                  (groupOfEtape[index] ?? 0) + 1
+                  (dayOfEtape[index] ?? 0) + 1
                 }}</span>
                 <span class="visually-hidden">Étape d'origine {{ etape.order }} :</span>
                 {{ etape.name }}
@@ -214,16 +235,48 @@ function openEtape(etapeId: string) {
               <span title="Durée">⏱︎ {{ formatDuration(etape.durationMin) }}</span>
               <span title="Dénivelé positif">↗ {{ etape.elevationGain }} m</span>
             </p>
+            <ul v-if="cutsOf(index).length" class="cuts">
+              <li v-for="km in cutsOf(index)" :key="km" class="cut">
+                🌙 Nuit à {{ cutName(etape, km) }}
+                <span class="cut-km">km {{ formatKm(km) }}</span>
+                <button
+                  type="button"
+                  class="cut-remove"
+                  :aria-label="`Retirer la nuit à ${cutName(etape, km)}`"
+                  @click="removeCut(index, km)"
+                >
+                  ×
+                </button>
+              </li>
+            </ul>
+            <CutPicker
+              v-if="cutPickerFor === index"
+              :etape="etape"
+              :existing-kms="cutsOf(index)"
+              @add="onCutAdd(index, $event)"
+              @preview="mapCursor = $event"
+              @close="cutPickerFor = null"
+            />
+            <button
+              v-else-if="canCut(etape)"
+              type="button"
+              class="add-cut"
+              @click="cutPickerFor = index"
+            >
+              + Ajouter une nuit dans cette étape
+            </button>
           </li>
           <li v-if="index < sourceEtapes.length - 1" class="night">
             <button
               type="button"
               class="night-toggle"
-              :class="{ 'is-off': !nights[index] }"
-              :aria-pressed="nights[index]"
+              :class="{ 'is-off': !decoupage.nights[index] }"
+              :aria-pressed="decoupage.nights[index]"
               @click="toggleNight(index)"
             >
-              <template v-if="nights[index]">🌙 Nuit à {{ arrivalName(etape.name) }}</template>
+              <template v-if="decoupage.nights[index]">
+                🌙 Nuit à {{ arrivalName(etape.name) }}
+              </template>
               <template v-else>Pas d'arrêt à {{ arrivalName(etape.name) }} : on continue</template>
             </button>
           </li>
@@ -255,8 +308,8 @@ function openEtape(etapeId: string) {
               <span title="Dénivelé positif">↗ {{ etape.elevationGain }} m</span>
               <span title="Dénivelé négatif">↘ {{ etape.elevationLoss }} m</span>
             </p>
-            <p v-if="etape.sources" class="etape-sources">
-              Fusion des étapes {{ etape.sources.map((s) => s.order).join(', ') }}
+            <p v-if="etape.pieces" class="etape-sources">
+              {{ describePieces(etape.pieces) }}
             </p>
             <p v-if="etape.pois.length || etape.photos?.length" class="etape-pois">
               <span v-if="etape.pois.length">
@@ -478,6 +531,57 @@ function openEtape(etapeId: string) {
   color: var(--color-accent);
   font-size: 0.85rem;
   margin: 0.25rem 0 0;
+}
+.cuts {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  list-style: none;
+  padding: 0 0 0 2.35rem;
+  margin: var(--space-xs) 0 0;
+}
+.cut {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+.cut-km {
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+}
+.cut-remove {
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: var(--color-text-muted);
+  font: inherit;
+  cursor: pointer;
+}
+.cut-remove:hover {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+.add-cut {
+  margin: var(--space-xs) 0 0 2.35rem;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--color-accent);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.add-cut:hover {
+  text-decoration: underline;
+}
+.cut-remove:focus-visible,
+.add-cut:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
 .etape-item.is-compact {
   padding: 0.6rem var(--space-sm);

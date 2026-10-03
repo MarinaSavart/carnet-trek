@@ -15,6 +15,7 @@ import { formatDuration } from '../utils/format'
 import { getEtapeColor } from '../utils/etapeColors'
 import { POI_ICONS } from '../utils/poi'
 import { buildMergedGpx } from '../utils/gpxExport'
+import { describePieces } from '../utils/decoupage'
 
 const route = useRoute()
 const router = useRouter()
@@ -43,9 +44,9 @@ const start = computed(
 )
 const gpxDownload = computed(() => {
   const current = etape.value
-  if (current?.sources) {
-    const sources = current.sources
-    return { name: `${current.name}.gpx`, build: () => buildMergedGpx(current.name, sources) }
+  if (current?.pieces) {
+    const pieces = current.pieces
+    return { name: `${current.name}.gpx`, build: () => buildMergedGpx(current.name, pieces) }
   }
   return current?.gpxFile ? { url: current.gpxFile.url, name: current.gpxFile.originalName } : null
 })
@@ -98,8 +99,8 @@ function openEtape(etapeId: string) {
         <p class="eyebrow">
           <span class="etape-order" aria-hidden="true">{{ etape.order }}</span>
           Étape {{ index + 1 }} sur {{ etapes.length }}
-          <span v-if="etape.sources" class="eyebrow-merged">
-            · fusion des étapes {{ etape.sources.map((s) => s.order).join(', ') }}
+          <span v-if="etape.pieces" class="eyebrow-merged">
+            · {{ describePieces(etape.pieces) }}
           </span>
         </p>
         <div class="title-row">

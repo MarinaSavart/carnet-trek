@@ -225,3 +225,8 @@ export function nearestLoadedOsmPoi([lon, lat]: [number, number], maxKm: number)
   }
   return best
 }
+
+/** Tous les points utiles déjà chargés pendant la session (aucune requête) */
+export function loadedOsmPois(): OsmPoi[] {
+  return [...poisById.values()]
+}

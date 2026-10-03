@@ -1,8 +1,11 @@
 import type { Etape } from '../types/trek'
+import type { Piece } from './decoupage'
+import { haversineKm } from './geo'
 
-// GPX d'une étape fusionnée : un segment de tracé par étape d'origine. Les fichiers
-// d'origine sont relus pour garder altitudes et horaires ; une étape sans fichier
-// est reconstituée à partir de son tracé (sans altitude).
+// GPX d'une journée d'un découpage : un segment de tracé par morceau d'étape. Les fichiers
+// d'origine sont relus pour garder altitudes et horaires, et coupés au bon km quand la
+// journée ne prend qu'une partie d'une étape ; une étape sans fichier est reconstituée
+// à partir de son tracé (sans altitude).
 
 interface TrackPoint {
   lat: string
@@ -79,8 +82,47 @@ function pointXml(tag: string, point: Waypoint, indent: string): string {
   return `${indent}<${tag} lat="${escapeXml(point.lat)}" lon="${escapeXml(point.lon)}">${children}</${tag}>`
 }
 
-export async function buildMergedGpx(name: string, etapes: Etape[]): Promise<string> {
-  const parts = await Promise.all(etapes.map(readEtape))
+const lonLat = (point: TrackPoint): [number, number] => [Number(point.lon), Number(point.lat)]
+
+// Garde la partie entre deux positions (km mesurés sur la trace, comme pour la coupe) ;
+// un point d'intérêt va avec le morceau où se trouve le point de trace le plus proche
+function slicePart(
+  part: { points: TrackPoint[]; waypoints: Waypoint[] },
+  fromKm: number,
+  toKm: number,
+) {
+  const cumulative = [0]
+  for (let i = 1; i < part.points.length; i++) {
+    cumulative.push(
+      cumulative[i - 1]! + haversineKm(lonLat(part.points[i - 1]!), lonLat(part.points[i]!)),
+    )
+  }
+  const inRange = (km: number) => km >= fromKm && km <= toKm
+  const nearestKm = (waypoint: Waypoint) => {
+    let best = 0
+    let bestDistance = Infinity
+    part.points.forEach((point, i) => {
+      const distance = haversineKm(lonLat(point), lonLat(waypoint))
+      if (distance < bestDistance) {
+        best = i
+        bestDistance = distance
+      }
+    })
+    return cumulative[best] ?? 0
+  }
+  return {
+    points: part.points.filter((_, i) => inRange(cumulative[i]!)),
+    waypoints: part.waypoints.filter((waypoint) => inRange(nearestKm(waypoint))),
+  }
+}
+
+export async function buildMergedGpx(name: string, pieces: Piece[]): Promise<string> {
+  const parts = await Promise.all(
+    pieces.map(async (piece) => {
+      const part = await readEtape(piece.etape)
+      return piece.whole ? part : slicePart(part, piece.fromKm, piece.toKm)
+    }),
+  )
   const waypoints = parts.flatMap((p) => p.waypoints).map((w) => pointXml('wpt', w, '  '))
   const segments = parts.map(
     (p) =>

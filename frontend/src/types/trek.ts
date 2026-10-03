@@ -96,6 +96,8 @@ export interface Variante {
   _id: string
   /** Identifiants des étapes d'origine, groupe par groupe */
   groups: string[][]
+  /** Nuits au milieu d'une étape : identifiant de l'étape, km sur sa trace */
+  cuts: { etape: string; km: number }[]
   /** Le trek a changé depuis l'enregistrement : le découpage ne s'applique plus */
   isStale: boolean
   /** Auteur du découpage ou du trek */
