@@ -45,6 +45,27 @@ const EARTH_RADIUS_KM = 6371
 // de quelques centaines de pixels, et ça allège le document Mongo)
 const MAX_PROFILE_POINTS = 1500
 
+// Préfixes écrits à l'export (voir frontend/src/utils/gpxWaypoints.ts) : retirés du nom,
+// ils donnent le type quand le fichier n'a pas de symbole reconnu
+const NAME_PREFIX_TO_POI_TYPE: Record<string, PoiType> = {
+  EAU: 'point_eau',
+  REFUGE: 'refuge',
+  CAMPING: 'camping',
+  SOMMET: 'sommet',
+  RAVITO: 'ravitaillement',
+}
+const NAME_PREFIX = /^(EAU|REFUGE|CAMPING|SOMMET|RAVITO) · (.+)$/
+
+function readPoiNameAndType(wpt: Element): { name: string; type: PoiType } {
+  const rawName = childText(wpt, 'name') ?? 'Point sans nom'
+  const symbolType = SYMBOL_TO_POI_TYPE[childText(wpt, 'sym')?.toLowerCase() ?? '']
+  const prefixed = NAME_PREFIX.exec(rawName)
+  return {
+    name: prefixed ? prefixed[2]! : rawName,
+    type: symbolType ?? (prefixed ? NAME_PREFIX_TO_POI_TYPE[prefixed[1]!] : undefined) ?? 'autre',
+  }
+}
+
 export class GpxError extends Error {}
 
 function haversineKm([lon1, lat1]: [number, number], [lon2, lat2]: [number, number]): number {
@@ -135,8 +156,7 @@ export function parseGpx(xml: string): ParsedGpx {
   const lastTime = times[times.length - 1]
 
   const waypoints = Array.from(doc.getElementsByTagName('wpt')).map((wpt): ParsedPoi => ({
-    type: SYMBOL_TO_POI_TYPE[childText(wpt, 'sym')?.toLowerCase() ?? ''] ?? 'autre',
-    name: childText(wpt, 'name') ?? 'Point sans nom',
+    ...readPoiNameAndType(wpt),
     notes: childText(wpt, 'desc'),
     location: { type: 'Point', coordinates: readLonLat(wpt) },
   }))

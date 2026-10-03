@@ -8,7 +8,7 @@ import { useDecoupage } from '../composables/useDecoupage'
 import DifficultyBadge from '../components/DifficultyBadge.vue'
 import TrekOverviewMap from '../components/TrekOverviewMap.vue'
 import PhotoGallery from '../components/PhotoGallery.vue'
-import NavigateToStart from '../components/NavigateToStart.vue'
+import ActionsMenu from '../components/ActionsMenu.vue'
 import DecoupageBar from '../components/DecoupageBar.vue'
 import CutPicker from '../components/CutPicker.vue'
 import ElevationProfile, {
@@ -19,6 +19,8 @@ import type { GalleryPhoto } from '../types/trek'
 import { formatDuration } from '../utils/format'
 import { getEtapeColor } from '../utils/etapeColors'
 import { cutName, decoupageDays, describePieces, formatKm } from '../utils/decoupage'
+import { buildMergedGpx } from '../utils/gpxExport'
+import { trackLengthKm } from '../utils/etapeGeometry'
 import { canCut } from '../utils/etapeGeometry'
 
 const route = useRoute()
@@ -124,6 +126,21 @@ function onTrackHover(value: ProfileHover | null) {
   mapCursor.value = value?.coordinates ?? null
 }
 
+// Trace du trek entier, toutes étapes fusionnées en une seule trace (quel que soit le
+// découpage affiché)
+const trekGpx = computed(() => {
+  const current = trek.value
+  if (!current || !sourceEtapes.value.some((e) => e.gpxFile || e.gpxTrack)) return null
+  const pieces = sourceEtapes.value.map((etape, index) => ({
+    etape,
+    index,
+    fromKm: 0,
+    toKm: trackLengthKm(etape),
+    whole: true,
+  }))
+  return { name: `${current.name}.gpx`, build: () => buildMergedGpx(current.name, pieces) }
+})
+
 const isDeleting = ref(false)
 
 async function removeTrek() {
@@ -155,18 +172,20 @@ function openEtape(etapeId: string) {
       <div class="title-bar">
         <div class="header-top">
           <RouterLink to="/" class="back-link">← Treks</RouterLink>
-          <div v-if="auth.canEdit(trek)" class="owner-actions">
-            <RouterLink :to="`/treks/${trek._id}/modifier`" class="btn">Modifier</RouterLink>
-            <button type="button" class="btn" :disabled="isDeleting" @click="removeTrek">
-              {{ isDeleting ? 'Suppression…' : 'Supprimer' }}
-            </button>
-          </div>
+          <ActionsMenu
+            :start="start"
+            :gpx="trekGpx"
+            gpx-label="Télécharger le GPX du trek"
+            :edit-to="auth.canEdit(trek) ? `/treks/${trek._id}/modifier` : null"
+            :can-delete="auth.canEdit(trek)"
+            :is-deleting="isDeleting"
+            @delete="removeTrek"
+          />
         </div>
         <h1>{{ trek.name }}</h1>
         <p class="region">{{ trek.region }}</p>
       </div>
       <p class="description">{{ trek.description }}</p>
-      <NavigateToStart v-if="start" :start="start" class="navigate" />
 
       <PhotoGallery :photos="photos" />
 
@@ -355,10 +374,6 @@ function openEtape(etapeId: string) {
   justify-content: space-between;
   gap: var(--space-sm);
 }
-.owner-actions {
-  display: flex;
-  gap: var(--space-xs);
-}
 .page-status {
   max-width: 1200px;
   margin: 0 auto;
@@ -375,9 +390,6 @@ function openEtape(etapeId: string) {
 .description {
   color: var(--color-text-muted);
   max-width: 65ch;
-}
-.navigate {
-  margin-top: var(--space-xs);
 }
 .totals {
   display: grid;

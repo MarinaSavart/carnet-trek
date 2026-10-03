@@ -284,7 +284,8 @@ function pieceId(piece: Piece): string {
     : `${piece.etape._id}@${piece.fromKm.toFixed(2)}-${piece.toKm.toFixed(2)}`
 }
 
-function piecePois(piece: Piece): POI[] {
+/** Points d'intérêt d'un morceau d'étape (tous, pour une étape entière) */
+export function piecePois(piece: Piece): POI[] {
   if (piece.whole) return piece.etape.pois
   return piece.etape.pois.filter((poi) => {
     const located = locateOnTrack(piece.etape, poi.location.coordinates)
