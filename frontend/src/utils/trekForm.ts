@@ -1,5 +1,6 @@
 import type { Difficulty, GeoJSONLineString, POI, Trek } from '../types/trek'
 import type { ParsedGpx } from './gpx'
+import { newId } from './id'
 
 export interface PhotoDraft {
   id: string
@@ -65,7 +66,7 @@ export interface TrekDraftErrors {
 
 export function createEtapeDraft(): EtapeDraft {
   return {
-    key: crypto.randomUUID(),
+    key: newId(),
     id: null,
     name: '',
     description: '',

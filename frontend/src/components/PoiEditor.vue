@@ -6,6 +6,7 @@ import { OsmPoiLayer, osmPoiStatusLabel, type OsmPoiStatus } from '../lib/osmPoi
 import type { GeoJSONLineString, POI, POIType } from '../types/trek'
 import type { OsmPoi } from '../utils/overpass'
 import { POI_ICONS } from '../utils/poi'
+import { newId } from '../utils/id'
 
 // Éditeur plein écran des points d'intérêt d'une étape : ajout depuis OpenStreetMap ou
 // par clic sur la carte, modification, déplacement (glisser le marqueur), suppression.
@@ -73,7 +74,7 @@ function submitForm() {
     return
   }
   const poi: POI = {
-    _id: current.id ?? `new-${crypto.randomUUID()}`,
+    _id: current.id ?? `new-${newId()}`,
     type: current.type,
     name: current.name.trim(),
     notes: current.notes.trim() || undefined,
@@ -96,7 +97,7 @@ function addFromOsm(osm: OsmPoi) {
   pois.value = [
     ...pois.value,
     {
-      _id: `new-${crypto.randomUUID()}`,
+      _id: `new-${newId()}`,
       type: osm.type,
       name: osm.name,
       notes: osm.notes,

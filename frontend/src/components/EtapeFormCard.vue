@@ -9,6 +9,7 @@ import { POI_ICONS } from '../utils/poi'
 import PoiEditor from './PoiEditor.vue'
 import TrackEditor from './TrackEditor.vue'
 import type { GeoJSONLineString, POI } from '../types/trek'
+import { newId } from '../utils/id'
 
 defineProps<{
   index: number
@@ -144,7 +145,7 @@ const isDraggingPhotos = ref(false)
 function addPhotos(files: FileList | null | undefined) {
   const images = Array.from(files ?? []).filter((f) => f.type.startsWith('image/'))
   etape.value.photos.push(
-    ...images.map((file) => ({ id: crypto.randomUUID(), file, url: URL.createObjectURL(file) })),
+    ...images.map((file) => ({ id: newId(), file, url: URL.createObjectURL(file) })),
   )
 }
 
